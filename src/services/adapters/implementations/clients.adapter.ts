@@ -8,10 +8,12 @@ import type {
 	Client,
 	ClientBookingItem,
 	ClientsListParams,
+	CreateCRMStatusInput,
 	CRMStatusItem,
 	CreateClientInput,
 	IClientsService,
 	PaginatedResponse,
+	UpdateCRMStatusInput,
 	UpdateClientInput,
 } from '../../contracts'
 
@@ -36,6 +38,28 @@ function mapSource(value: unknown): Client['source_platform'] {
 		return source
 	}
 	return 'manual'
+}
+
+function mapStatusItem(dto: unknown): CRMStatusItem | null {
+	const record = asRecord(dto)
+	if (!record) {
+		return null
+	}
+
+	const id = asString(record.id)
+	const name = asString(record.name)
+	if (!id || !name) {
+		return null
+	}
+
+	return {
+		id,
+		name,
+		color: asString(record.color) || undefined,
+		position: typeof record.position === 'number' ? record.position : undefined,
+		is_active:
+			typeof record.is_active === 'boolean' ? record.is_active : undefined,
+	}
 }
 
 function mapClient(dto: unknown): Client {
@@ -399,22 +423,67 @@ export class ClientsAdapter
 	async listStatuses(): Promise<CRMStatusItem[]> {
 		const response = await this.extraRequestor.get<unknown>('/api/crm/statuses/')
 		const record = asRecord(response) ?? {}
-		const rawItems = Array.isArray(record.items)
-			? record.items
-			: Array.isArray(record.results)
-				? record.results
-				: []
+		const rawItems = Array.isArray(response)
+			? response
+			: Array.isArray(record.items)
+				? record.items
+				: Array.isArray(record.results)
+					? record.results
+					: []
 		return rawItems
-			.map(item => asRecord(item))
-			.filter((item): item is UnknownRecord => item !== null)
-			.map(item => ({
-				id: asString(item.id),
-				name: asString(item.name),
-				color: asString(item.color) || undefined,
-				position: typeof item.position === 'number' ? item.position : undefined,
-				is_active: typeof item.is_active === 'boolean' ? item.is_active : undefined,
-			}))
-			.filter(item => item.id && item.name)
+			.map(mapStatusItem)
+			.filter((item): item is CRMStatusItem => item !== null)
+	}
+
+	async createStatus(input: CreateCRMStatusInput): Promise<CRMStatusItem> {
+		const response = await this.extraRequestor.post<unknown>('/api/crm/statuses/', {
+			name: asString(input.name),
+			color: asString(input.color) || undefined,
+			position:
+				typeof input.position === 'number' && Number.isFinite(input.position)
+					? input.position
+					: undefined,
+			is_active:
+				typeof input.is_active === 'boolean' ? input.is_active : undefined,
+		})
+		const mapped = mapStatusItem(response)
+		if (!mapped) {
+			throw new Error('Failed to create status')
+		}
+		return mapped
+	}
+
+	async updateStatus(id: string, input: UpdateCRMStatusInput): Promise<CRMStatusItem> {
+		const payload: UnknownRecord = {}
+		if (input.name !== undefined) {
+			payload.name = asString(input.name)
+		}
+		if (input.color !== undefined) {
+			payload.color = asString(input.color)
+		}
+		if (input.position !== undefined) {
+			payload.position =
+				typeof input.position === 'number' && Number.isFinite(input.position)
+					? input.position
+					: null
+		}
+		if (input.is_active !== undefined) {
+			payload.is_active = Boolean(input.is_active)
+		}
+
+		const response = await this.extraRequestor.patch<unknown>(
+			`/api/crm/statuses/${id}/`,
+			payload,
+		)
+		const mapped = mapStatusItem(response)
+		if (!mapped) {
+			throw new Error('Failed to update status')
+		}
+		return mapped
+	}
+
+	async deleteStatus(id: string): Promise<void> {
+		await this.extraRequestor.delete(`/api/crm/statuses/${id}/`)
 	}
 
 	async listClientBookings(clientId: string): Promise<ClientBookingItem[]> {

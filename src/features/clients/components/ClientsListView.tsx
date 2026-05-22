@@ -12,18 +12,25 @@ import {
 } from '../../../components/shared/data';
 import { useList } from '../../../components/hooks';
 import { services } from '../../../services';
-import type { Client, ClientsListParams } from '../../../services/contracts';
+import type { Client, ClientsListParams, CRMStatusItem } from '../../../services/contracts';
 
 export interface ClientsListViewProps {
+  tableMode?: TableMode;
+  onTableModeChange?: (mode: TableMode) => void;
   onRowClick?: (client: Client) => void;
   onEditClient?: (client: Client) => void;
   onDeleteClient?: (client: Client) => void;
+  onEditStatus?: (status: CRMStatusItem) => void;
+  onDeleteStatus?: (status: CRMStatusItem) => void;
   selectedClientId?: string | null;
   canManageClients?: boolean;
+  canManageStatuses?: boolean;
   onStatsChange?: (stats: { visible: number; total: number; loading: boolean }) => void;
+  onStatusesCountChange?: (count: number) => void;
 }
 
 type SelectOption = { value: string; label: string };
+type TableMode = 'clients' | 'statuses';
 
 const labelClassName =
   'text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted';
@@ -59,13 +66,78 @@ function getStatusTone(status: string | undefined, label: string | undefined): '
   return 'warning';
 }
 
+function parseHexColor(hexColor: string): [number, number, number] | null {
+  const normalized = hexColor.replace('#', '').trim();
+  if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
+    return null;
+  }
+
+  const red = Number.parseInt(normalized.slice(0, 2), 16);
+  const green = Number.parseInt(normalized.slice(2, 4), 16);
+  const blue = Number.parseInt(normalized.slice(4, 6), 16);
+  if (![red, green, blue].every(Number.isFinite)) {
+    return null;
+  }
+
+  return [red, green, blue];
+}
+
+function rgbToHex(red: number, green: number, blue: number): string {
+  const toHex = (value: number) => {
+    const safe = Math.max(0, Math.min(255, Math.round(value)));
+    return safe.toString(16).padStart(2, '0');
+  };
+
+  return `#${toHex(red)}${toHex(green)}${toHex(blue)}`;
+}
+
+function mixRgb(
+  source: [number, number, number],
+  target: [number, number, number],
+  ratio: number,
+): [number, number, number] {
+  const safeRatio = Math.max(0, Math.min(1, ratio));
+  return [
+    source[0] + (target[0] - source[0]) * safeRatio,
+    source[1] + (target[1] - source[1]) * safeRatio,
+    source[2] + (target[2] - source[2]) * safeRatio,
+  ];
+}
+
+function getStatusBadgePalette(hexColor: string): { background: string; border: string; text: string } {
+  const parsed = parseHexColor(hexColor);
+  if (!parsed) {
+    return {
+      background: '#EEF2F6',
+      border: '#C9D2DC',
+      text: '#1F2933',
+    };
+  }
+
+  const backgroundRgb = mixRgb(parsed, [255, 255, 255], 0.84);
+  const borderRgb = mixRgb(parsed, [255, 255, 255], 0.58);
+  const textRgb = mixRgb(parsed, [0, 0, 0], 0.34);
+
+  return {
+    background: rgbToHex(backgroundRgb[0], backgroundRgb[1], backgroundRgb[2]),
+    border: rgbToHex(borderRgb[0], borderRgb[1], borderRgb[2]),
+    text: rgbToHex(textRgb[0], textRgb[1], textRgb[2]),
+  };
+}
+
 export function ClientsListView({
+  tableMode = 'clients',
+  onTableModeChange,
   onRowClick,
   onEditClient,
   onDeleteClient,
+  onEditStatus,
+  onDeleteStatus,
   selectedClientId,
   canManageClients = false,
+  canManageStatuses = false,
   onStatsChange,
+  onStatusesCountChange,
 }: ClientsListViewProps) {
   const { i18n } = useTranslation();
   const isRu = i18n.language === 'ru';
@@ -82,8 +154,12 @@ export function ClientsListView({
         statusLabel: 'Статус',
         sourceLabel: 'Источник',
         orderLabel: 'Сортировка',
+        clientsTab: 'Клиенты',
+        statusesTab: 'Статусы',
         listTitle: 'Список клиентов',
         listHint: 'Нажмите на строку, чтобы открыть профиль.',
+        statusesListTitle: 'Статусы клиентов',
+        statusesListHint: 'Справочник статусов из API.',
         columns: {
           name: 'Клиент',
           phone: 'Телефон',
@@ -94,6 +170,8 @@ export function ClientsListView({
         edit: 'Редактировать',
         delete: 'Удалить',
         empty: 'Клиенты не найдены',
+        statusesEmpty: 'Статусы не найдены',
+        statusesEmptyDescription: 'API не вернул статусы.',
       }
     : {
         searchPlaceholder: 'Ism, telefon yoki izoh bo\'yicha qidiring...',
@@ -106,8 +184,12 @@ export function ClientsListView({
         statusLabel: 'Holat',
         sourceLabel: 'Manba',
         orderLabel: 'Saralash',
+        clientsTab: 'Mijozlar',
+        statusesTab: 'Statuslar',
         listTitle: 'Mijozlar ro\'yxati',
         listHint: 'Profilni ko\'rish uchun satrni bosing.',
+        statusesListTitle: 'Mijoz statuslari',
+        statusesListHint: 'API dan statuslar ro\'yxati.',
         columns: {
           name: 'Mijoz',
           phone: 'Telefon',
@@ -118,12 +200,15 @@ export function ClientsListView({
         edit: 'Tahrirlash',
         delete: 'O\'chirish',
         empty: 'Mijozlar topilmadi',
+        statusesEmpty: 'Statuslar topilmadi',
+        statusesEmptyDescription: 'API statuslar qaytarmadi.',
       };
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
   const [ordering, setOrdering] = useState<string>('-updated_at');
+  const [statusCatalog, setStatusCatalog] = useState<CRMStatusItem[]>([]);
   const [statusOptionsFromApi, setStatusOptionsFromApi] = useState<SelectOption[]>([]);
   const [filters, setFilters] = useState<ClientsListParams>({
     search: '',
@@ -151,6 +236,10 @@ export function ClientsListView({
   }, [onStatsChange, state.items.length, state.total, state.isLoading]);
 
   useEffect(() => {
+    onStatusesCountChange?.(statusCatalog.length);
+  }, [onStatusesCountChange, statusCatalog.length]);
+
+  useEffect(() => {
     void (async () => {
       try {
         const items = await (services.clients as any).listStatuses?.();
@@ -166,6 +255,17 @@ export function ClientsListView({
           }));
 
         if (mapped.length > 0) {
+          const catalog = items
+            .filter((item: any) => item && item.id != null && item.name)
+            .map((item: any) => ({
+              id: String(item.id),
+              name: String(item.name),
+              color: typeof item.color === 'string' ? item.color : undefined,
+              position: typeof item.position === 'number' ? item.position : undefined,
+              is_active:
+                typeof item.is_active === 'boolean' ? item.is_active : undefined,
+            }));
+          setStatusCatalog(catalog);
           setStatusOptionsFromApi(mapped);
         }
       } catch {
@@ -208,6 +308,27 @@ export function ClientsListView({
     return map;
   }, [statusOptionsFromApi]);
 
+  const statusColorByValue = useMemo(() => {
+    const map = new Map<string, string>();
+    statusCatalog.forEach((status) => {
+      if (status?.id && status?.color) {
+        map.set(String(status.id), status.color);
+      }
+    });
+    return map;
+  }, [statusCatalog]);
+
+  const statusesTableData = useMemo(() => {
+    return [...statusCatalog].sort((left, right) => {
+      const leftPos = typeof left.position === 'number' ? left.position : Number.MAX_SAFE_INTEGER;
+      const rightPos = typeof right.position === 'number' ? right.position : Number.MAX_SAFE_INTEGER;
+      if (leftPos === rightPos) {
+        return left.name.localeCompare(right.name);
+      }
+      return leftPos - rightPos;
+    });
+  }, [statusCatalog]);
+
   const columns = useMemo<DataTableColumn<Client>[]>(
     () => [
       {
@@ -248,14 +369,27 @@ export function ClientsListView({
             client.status_label ||
             (client.status ? statusLabelByValue.get(String(client.status)) : undefined) ||
             String(client.status || '-');
+          const statusColor = client.status ? statusColorByValue.get(String(client.status)) : undefined;
 
-          return (
-            <StatusBadge
-              status={String(client.status || 'unknown')}
-              label={resolvedLabel}
-              tone={getStatusTone(client.status, resolvedLabel)}
-            />
-          );
+          if (statusColor) {
+            const normalizedColor =
+              /^#([0-9a-fA-F]{6})$/.test(statusColor) ? statusColor : '#9AA4AE';
+            const palette = getStatusBadgePalette(normalizedColor);
+            return (
+              <span
+                className="inline-flex min-h-6 items-center rounded-full px-2.5 text-[12px] font-semibold tracking-[0.02em]"
+                style={{
+                  backgroundColor: palette.background,
+                  color: palette.text,
+                  border: `1px solid ${palette.border}`,
+                }}
+              >
+                {resolvedLabel}
+              </span>
+            );
+          }
+
+          return <StatusBadge status={String(client.status || 'unknown')} label={resolvedLabel} tone={getStatusTone(client.status, resolvedLabel)} />;
         },
       },
       ...(canManageClients
@@ -294,7 +428,84 @@ export function ClientsListView({
           ]
         : []),
     ],
-    [canManageClients, isRu, onDeleteClient, onEditClient, statusLabelByValue, tx],
+    [canManageClients, isRu, onDeleteClient, onEditClient, statusColorByValue, statusLabelByValue, tx],
+  );
+
+  const statusColumns = useMemo<DataTableColumn<CRMStatusItem>[]>(
+    () => [
+      {
+        key: 'name',
+        label: isRu ? 'Статус' : 'Holat',
+        render: (status) => (
+          <div className="flex items-center gap-2">
+            <span
+              className="inline-flex h-2.5 w-2.5 rounded-full ring-1 ring-border-soft/45"
+              style={{ backgroundColor: status.color || 'currentColor' }}
+            />
+            <span className={tablePrimaryTextClassName}>{status.name}</span>
+          </div>
+        ),
+      },
+      {
+        key: 'color',
+        label: isRu ? 'Цвет' : 'Rang',
+        render: (status) => (
+          <span className={tableSecondaryTextClassName}>
+            {status.color || '-'}
+          </span>
+        ),
+      },
+      {
+        key: 'position',
+        label: isRu ? 'Позиция' : 'Pozitsiya',
+        render: (status) => (
+          <span className={tablePrimaryTextClassName}>
+            {typeof status.position === 'number' ? status.position : '-'}
+          </span>
+        ),
+      },
+      {
+        key: 'is_active',
+        label: isRu ? 'Состояние' : 'Holati',
+        render: (status) => (
+          <StatusBadge
+            status={status.is_active ? 'active' : 'inactive'}
+            label={status.is_active ? (isRu ? 'Активный' : 'Faol') : (isRu ? 'Неактивный' : 'Nofaol')}
+            tone={status.is_active ? 'success' : 'neutral'}
+          />
+        ),
+      },
+      ...(canManageStatuses
+        ? [
+            {
+              key: 'actions',
+              label: tx.columns.actions,
+              align: 'right' as const,
+              render: (status: CRMStatusItem) => (
+                <div className="flex items-center justify-end gap-1.5">
+                  <button
+                    type="button"
+                    className={actionButtonClassName}
+                    onClick={() => onEditStatus?.(status)}
+                    aria-label={tx.edit}
+                  >
+                    <FiEdit2 className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    className={actionButtonClassName}
+                    onClick={() => onDeleteStatus?.(status)}
+                    aria-label={tx.delete}
+                  >
+                    <FiTrash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ),
+            },
+          ]
+        : []),
+    ],
+    [canManageStatuses, isRu, onDeleteStatus, onEditStatus, tx.columns.actions, tx.delete, tx.edit],
   );
 
   const handleSearch = (value: string) => {
@@ -332,69 +543,114 @@ export function ClientsListView({
   const totalPages = Math.max(1, Math.ceil((state.total || 0) / (filters.page_size || 20)));
   const currentPage = filters.page || 1;
 
+  const isClientsMode = tableMode === 'clients';
+
   return (
     <div className="flex flex-col gap-4">
-      <FilterBar>
-        <SearchInput
-          value={searchQuery}
-          onChange={handleSearch}
-          placeholder={tx.searchPlaceholder}
-        />
-
-        <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
-          <span className={labelClassName}>{tx.statusLabel}</span>
-          <FilterSelect
-            value={statusFilter}
-            options={statusOptions}
-            onChange={applyStatusFilter}
-            disabled={state.isLoading}
+      {isClientsMode ? (
+        <FilterBar>
+          <SearchInput
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder={tx.searchPlaceholder}
           />
-        </label>
 
-        <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
-          <span className={labelClassName}>{tx.sourceLabel}</span>
-          <FilterSelect
-            value={sourceFilter}
-            options={sourceOptions}
-            onChange={applySourceFilter}
-            disabled={state.isLoading}
-          />
-        </label>
+          <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
+            <span className={labelClassName}>{tx.statusLabel}</span>
+            <FilterSelect
+              value={statusFilter}
+              options={statusOptions}
+              onChange={applyStatusFilter}
+              disabled={state.isLoading}
+            />
+          </label>
 
-        <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_240px]">
-          <span className={labelClassName}>{tx.orderLabel}</span>
-          <FilterSelect
-            value={ordering}
-            options={orderingOptions}
-            onChange={applyOrdering}
-            disabled={state.isLoading}
-          />
-        </label>
-      </FilterBar>
+          <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
+            <span className={labelClassName}>{tx.sourceLabel}</span>
+            <FilterSelect
+              value={sourceFilter}
+              options={sourceOptions}
+              onChange={applySourceFilter}
+              disabled={state.isLoading}
+            />
+          </label>
+
+          <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_240px]">
+            <span className={labelClassName}>{tx.orderLabel}</span>
+            <FilterSelect
+              value={ordering}
+              options={orderingOptions}
+              onChange={applyOrdering}
+              disabled={state.isLoading}
+            />
+          </label>
+        </FilterBar>
+      ) : null}
 
       <div className="grid min-w-0 gap-3">
         <div className="flex flex-wrap items-center justify-between gap-2 px-1">
           <div className="flex items-center gap-2">
-            <h2 className="m-0 text-[1rem] font-semibold text-text-primary">{tx.listTitle}</h2>
-            <span className="text-[12px] font-medium text-text-muted">{tx.listHint}</span>
+            <h2 className="m-0 text-[1rem] font-semibold text-text-primary">
+              {isClientsMode ? tx.listTitle : tx.statusesListTitle}
+            </h2>
+            <span className="text-[12px] font-medium text-text-muted">
+              {isClientsMode ? tx.listHint : tx.statusesListHint}
+            </span>
+          </div>
+          <div className="inline-flex items-center gap-1 rounded-lg bg-surface-subtle p-1 ring-1 ring-border-soft/40">
+            <button
+              type="button"
+              className={[
+                'inline-flex min-h-8 items-center rounded-md px-3 text-xs font-semibold transition duration-fast',
+                isClientsMode
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-text-secondary hover:bg-surface-card hover:text-text-primary',
+              ].join(' ')}
+              onClick={() => onTableModeChange?.('clients')}
+            >
+              {tx.clientsTab}
+            </button>
+            <button
+              type="button"
+              className={[
+                'inline-flex min-h-8 items-center rounded-md px-3 text-xs font-semibold transition duration-fast',
+                !isClientsMode
+                  ? 'bg-primary text-primary-foreground'
+                  : 'text-text-secondary hover:bg-surface-card hover:text-text-primary',
+              ].join(' ')}
+              onClick={() => onTableModeChange?.('statuses')}
+            >
+              {tx.statusesTab}
+            </button>
           </div>
         </div>
 
         <div className="min-w-0 [&_.data-table__row--clickable:hover_.status-badge]:-translate-y-px">
-          <DataTable
-            data={state.items}
-            columns={columns}
-            rowKey="id"
-            selectedRowKey={selectedClientId ?? null}
-            loading={state.isLoading}
-            onRowClick={onRowClick}
-            emptyTitle={tx.empty}
-            emptyDescription={isRu ? 'Измените параметры поиска или фильтры.' : 'Qidiruv yoki filtrlarni o\'zgartiring.'}
-          />
+          {isClientsMode ? (
+            <DataTable
+              data={state.items}
+              columns={columns}
+              rowKey="id"
+              selectedRowKey={selectedClientId ?? null}
+              loading={state.isLoading}
+              onRowClick={onRowClick}
+              emptyTitle={tx.empty}
+              emptyDescription={isRu ? 'Измените параметры поиска или фильтры.' : 'Qidiruv yoki filtrlarni o\'zgartiring.'}
+            />
+          ) : (
+            <DataTable
+              data={statusesTableData}
+              columns={statusColumns}
+              rowKey="id"
+              loading={false}
+              emptyTitle={tx.statusesEmpty}
+              emptyDescription={tx.statusesEmptyDescription}
+            />
+          )}
         </div>
       </div>
 
-      {state.total > 0 ? (
+      {isClientsMode && state.total > 0 ? (
         <Pagination
           currentPage={Math.min(currentPage, totalPages)}
           totalPages={totalPages}

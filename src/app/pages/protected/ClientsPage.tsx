@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog';
+import { FilterSelect, Switch } from '../../../components/shared/data';
 import AppIcon from '../../../components/shared/icons/AppIcon';
 import { EmptyState, PageHeader, PageLayout, PageSection } from '../../../components/shared/page';
 import ClientDeleteDialog from '../../../features/clients/components/ClientDeleteDialog';
@@ -9,16 +11,25 @@ import { ClientsFormPanel } from '../../../features/clients/components/ClientsFo
 import { ClientsListView } from '../../../features/clients/components/ClientsListView';
 import { services } from '../../../services';
 import { useAuth } from '../../../auth';
-import type { Client } from '../../../services/contracts';
+import type { Client, CRMStatusItem } from '../../../services/contracts';
+
+const STATUS_COLOR_OPTIONS = [
+  { value: '#9AA4AE', key: 'neutral' },
+  { value: '#1FA971', key: 'success' },
+  { value: '#E0A84F', key: 'warning' },
+  { value: '#D95C5C', key: 'danger' },
+] as const;
 
 function ClientsPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
   const canManageClients = hasPermission('can_manage_clients');
+  const canManageStatuses = hasPermission('can_manage_statuses');
   const canViewBookings = hasPermission('can_view_bookings');
   const canManageBookings = hasPermission('can_manage_bookings');
+  const isRu = i18n.language === 'ru';
 
   const tx = {
     eyebrow: t('clients.page.eyebrow'),
@@ -38,8 +49,22 @@ function ClientsPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [listRefreshKey, setListRefreshKey] = useState(0);
   const [stats, setStats] = useState({ visible: 0, total: 0, loading: true });
+  const [statusesCount, setStatusesCount] = useState(0);
   const [hasError, setHasError] = useState(false);
   const [actionMessage, setActionMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [tableMode, setTableMode] = useState<'clients' | 'statuses'>('clients');
+  const [statusToDelete, setStatusToDelete] = useState<CRMStatusItem | null>(null);
+  const [isDeletingStatus, setIsDeletingStatus] = useState(false);
+  const [statusFormMode, setStatusFormMode] = useState<'create' | 'edit'>('create');
+  const [editingStatus, setEditingStatus] = useState<CRMStatusItem | null>(null);
+  const [isStatusFormOpen, setIsStatusFormOpen] = useState(false);
+  const [isSavingStatus, setIsSavingStatus] = useState(false);
+  const [statusForm, setStatusForm] = useState({
+    name: '',
+    color: '#9AA4AE',
+    position: '',
+    is_active: true,
+  });
 
   useEffect(() => {
     const state = location.state as { clientId?: string } | null;
@@ -78,6 +103,10 @@ function ClientsPage() {
     setEditingClient(null);
     setClientToDelete(null);
     setIsDeleting(false);
+    setStatusToDelete(null);
+    setIsDeletingStatus(false);
+    setIsStatusFormOpen(false);
+    setEditingStatus(null);
   }, [location.pathname]);
 
   function openCreateForm() {
@@ -89,6 +118,47 @@ function ClientsPage() {
     setIsFormOpen(true);
   }
 
+  async function openCreateStatusForm() {
+    if (!canManageStatuses) {
+      return;
+    }
+
+    let nextPosition = '';
+    try {
+      const items = await (services.clients as any).listStatuses?.();
+      if (Array.isArray(items) && items.length > 0) {
+        const maxPosition = items.reduce((max: number, item: any) => {
+          if (!item || item.position == null) {
+            return max;
+          }
+
+          const positionNumber = Number(item.position);
+          if (!Number.isFinite(positionNumber)) {
+            return max;
+          }
+
+          return Math.max(max, positionNumber);
+        }, 0);
+
+        nextPosition = String(maxPosition + 1);
+      } else {
+        nextPosition = '1';
+      }
+    } catch {
+      nextPosition = '';
+    }
+
+    setStatusFormMode('create');
+    setEditingStatus(null);
+    setStatusForm({
+      name: '',
+      color: '#9AA4AE',
+      position: nextPosition,
+      is_active: true,
+    });
+    setIsStatusFormOpen(true);
+  }
+
   function openEditForm(client: Client) {
     if (!canManageClients) {
       return;
@@ -96,6 +166,27 @@ function ClientsPage() {
 
     setEditingClient(client);
     setIsFormOpen(true);
+  }
+
+  function openEditStatusForm(status: CRMStatusItem) {
+    if (!canManageStatuses) {
+      return;
+    }
+
+    setStatusFormMode('edit');
+    setEditingStatus(status);
+    setStatusForm({
+      name: status.name || '',
+      color:
+        status.color &&
+        STATUS_COLOR_OPTIONS.some((entry) => entry.value === status.color)
+          ? status.color
+          : '#9AA4AE',
+      position:
+        typeof status.position === 'number' ? String(status.position) : '',
+      is_active: status.is_active ?? true,
+    });
+    setIsStatusFormOpen(true);
   }
 
   function handleClientSaved(client: Client) {
@@ -111,6 +202,14 @@ function ClientsPage() {
     }
 
     setClientToDelete(client);
+  }
+
+  function handleDeleteStatusFromList(status: CRMStatusItem) {
+    if (!canManageStatuses) {
+      return;
+    }
+
+    setStatusToDelete(status);
   }
 
 
@@ -138,6 +237,75 @@ function ClientsPage() {
     }
   }
 
+  async function handleSaveStatus() {
+    if (!canManageStatuses || !statusForm.name.trim()) {
+      return;
+    }
+
+    setIsSavingStatus(true);
+
+    try {
+      const payload = {
+        name: statusForm.name.trim(),
+        color: statusForm.color.trim() || undefined,
+        position:
+          statusForm.position.trim().length > 0
+            ? Number(statusForm.position)
+            : undefined,
+        is_active: statusForm.is_active,
+      };
+
+      if (
+        payload.position !== undefined &&
+        (!Number.isFinite(payload.position) || payload.position < 0)
+      ) {
+        throw new Error(isRu ? 'РџРѕР·РёС†РёСЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ С‡РёСЃР»РѕРј' : 'Pozitsiya raqam boвЂlishi kerak');
+      }
+
+      if (statusFormMode === 'create') {
+        await (services.clients as any).createStatus?.(payload);
+      } else if (editingStatus) {
+        await (services.clients as any).updateStatus?.(editingStatus.id, payload);
+      }
+
+      setIsStatusFormOpen(false);
+      setEditingStatus(null);
+      setListRefreshKey((current) => current + 1);
+    } catch (error) {
+      setActionMessage({
+        type: 'error',
+        text:
+          error instanceof Error
+            ? error.message
+            : isRu
+              ? 'РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ СЃС‚Р°С‚СѓСЃ'
+              : 'Statusni saqlab boвЂlmadi',
+      });
+    } finally {
+      setIsSavingStatus(false);
+    }
+  }
+
+  async function handleConfirmDeleteStatus() {
+    if (!statusToDelete || !canManageStatuses) {
+      return;
+    }
+
+    setIsDeletingStatus(true);
+    try {
+      await (services.clients as any).deleteStatus?.(statusToDelete.id);
+      setStatusToDelete(null);
+      setListRefreshKey((current) => current + 1);
+    } catch {
+      setActionMessage({
+        type: 'error',
+        text: isRu ? 'РќРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ СЃС‚Р°С‚СѓСЃ' : 'Statusni oвЂchirib boвЂlmadi',
+      });
+    } finally {
+      setIsDeletingStatus(false);
+    }
+  }
+
   const handleStatsChange = useCallback((next: { visible: number; total: number; loading: boolean }) => {
     setStats((current) => {
       if (
@@ -156,6 +324,26 @@ function ClientsPage() {
     }
   }, []);
 
+  const statusColorSelectOptions = STATUS_COLOR_OPTIONS.map((entry) => ({
+    value: entry.value,
+    label:
+      entry.key === 'neutral'
+        ? isRu
+          ? 'Серый'
+          : 'Kulrang'
+        : entry.key === 'success'
+          ? isRu
+            ? 'Зелёный'
+            : 'Yashil'
+          : entry.key === 'warning'
+            ? isRu
+              ? 'Жёлтый'
+              : 'Sariq'
+            : isRu
+              ? 'Красный'
+              : 'Qizil',
+  }));
+
   const header = (
     <PageHeader
       eyebrow={tx.eyebrow}
@@ -167,15 +355,32 @@ function ClientsPage() {
             <button
               type="button"
               className="inline-flex min-h-9 items-center gap-2 rounded-lg bg-primary px-3.5 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
-              onClick={openCreateForm}
+              onClick={tableMode === 'clients' ? openCreateForm : openCreateStatusForm}
             >
               <AppIcon name="plus" className="h-4 w-4" aria-hidden="true" />
-              {tx.newClient}
+              {tableMode === 'clients'
+                ? tx.newClient
+                : isRu
+                  ? 'РќРѕРІС‹Р№ СЃС‚Р°С‚СѓСЃ'
+                  : 'Yangi status'}
+            </button>
+          ) : tableMode === 'statuses' && canManageStatuses ? (
+            <button
+              type="button"
+              className="inline-flex min-h-9 items-center gap-2 rounded-lg bg-primary px-3.5 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
+              onClick={openCreateStatusForm}
+            >
+              <AppIcon name="plus" className="h-4 w-4" aria-hidden="true" />
+              {isRu ? 'РќРѕРІС‹Р№ СЃС‚Р°С‚СѓСЃ' : 'Yangi status'}
             </button>
           ) : null}
           <span className="inline-flex min-h-8 items-center gap-2 rounded-pill bg-success-bg px-3 text-[12px] font-semibold text-success">
             <AppIcon name="clients" className="h-3.5 w-3.5" aria-hidden="true" />
-            {stats.visible} {tx.visible}
+            {tableMode === 'clients'
+              ? `${stats.visible} ${tx.visible}`
+              : isRu
+                ? `${statusesCount} СЃС‚Р°С‚СѓСЃРѕРІ`
+                : `${statusesCount} status`}
           </span>
           {selectedClientId ? (
             <span className="inline-flex min-h-8 items-center gap-2 rounded-pill bg-primary/12 px-3 text-[12px] font-semibold text-text-accent">
@@ -202,12 +407,18 @@ function ClientsPage() {
         <PageSection>
           <ClientsListView
             key={listRefreshKey}
+            tableMode={tableMode}
+            onTableModeChange={setTableMode}
             onRowClick={(client) => setSelectedClientId(client.id)}
             onEditClient={openEditForm}
             onDeleteClient={handleDeleteFromList}
+            onEditStatus={openEditStatusForm}
+            onDeleteStatus={handleDeleteStatusFromList}
             selectedClientId={selectedClientId}
             canManageClients={canManageClients}
+            canManageStatuses={canManageStatuses}
             onStatsChange={handleStatsChange}
+            onStatusesCountChange={setStatusesCount}
           />
         </PageSection>
       </PageLayout>
@@ -304,6 +515,167 @@ function ClientsPage() {
           onConfirm={() => {
             void handleConfirmDelete();
           }}
+        />
+      ) : null}
+
+      {isStatusFormOpen ? (
+        <div
+          className="fixed inset-0 z-[155] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
+          role="presentation"
+          onClick={() => {
+            if (!isSavingStatus) {
+              setIsStatusFormOpen(false);
+              setEditingStatus(null);
+            }
+          }}
+        >
+          <aside
+            className="h-full w-full max-w-[560px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <header className="mb-4 rounded-xl bg-surface-card p-4 shadow-sm ring-1 ring-border-soft/40">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
+                    {isRu ? 'РЎС‚Р°С‚СѓСЃ' : 'Status'}
+                  </p>
+                  <h2 className="mt-1 font-display text-[1.45rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-text-primary">
+                    {statusFormMode === 'create'
+                      ? isRu
+                        ? 'РЎРѕР·РґР°С‚СЊ СЃС‚Р°С‚СѓСЃ'
+                        : 'Status yaratish'
+                      : isRu
+                        ? 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЃС‚Р°С‚СѓСЃ'
+                        : 'Statusni tahrirlash'}
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-surface-subtle text-text-primary shadow-sm transition duration-fast hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:opacity-60"
+                  onClick={() => {
+                    if (!isSavingStatus) {
+                      setIsStatusFormOpen(false);
+                      setEditingStatus(null);
+                    }
+                  }}
+                  disabled={isSavingStatus}
+                  aria-label={t('common.cancel')}
+                >
+                  <AppIcon name="close" className="h-4.5 w-4.5" aria-hidden="true" />
+                </button>
+              </div>
+            </header>
+
+            <div className="grid gap-3">
+              <label className="grid gap-1.5">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                  {isRu ? 'РќР°Р·РІР°РЅРёРµ' : 'Nomi'}
+                </span>
+                <input
+                  type="text"
+                  value={statusForm.name}
+                  onChange={(event) =>
+                    setStatusForm((current) => ({ ...current, name: event.target.value }))
+                  }
+                  className="w-full rounded-lg border border-border-soft/60 bg-surface-card px-3.5 py-2.5 text-sm font-medium text-text-primary placeholder:text-text-muted outline-none transition duration-fast focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                  disabled={isSavingStatus}
+                />
+              </label>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label className="grid gap-1.5">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                    {isRu ? 'Цвет' : 'Rang'}
+                  </span>
+                  <FilterSelect
+                    value={statusForm.color}
+                    options={statusColorSelectOptions}
+                    onChange={(value) =>
+                      setStatusForm((current) => ({ ...current, color: value }))
+                    }
+                    disabled={isSavingStatus}
+                  />
+                </label>
+
+                <label className="grid gap-1.5">
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
+                    {isRu ? 'Позиция' : 'Pozitsiya'}
+                  </span>
+                  <input
+                    type="number"
+                    value={statusForm.position}
+                    onChange={(event) =>
+                      setStatusForm((current) => ({ ...current, position: event.target.value }))
+                    }
+                    className="w-full rounded-lg border border-border-soft/60 bg-surface-card px-3.5 py-2.5 text-sm font-medium text-text-primary placeholder:text-text-muted outline-none transition duration-fast focus:border-primary/50 focus:ring-2 focus:ring-primary/20"
+                    disabled={isSavingStatus}
+                  />
+                </label>
+              </div>
+
+              <div className="inline-flex items-center justify-between gap-4 rounded-lg bg-surface-card px-3.5 py-2.5 ring-1 ring-border-soft/35">
+                <span className="text-sm font-medium text-text-primary">
+                  {isRu ? 'Активный статус' : 'Faol status'}
+                </span>
+                <Switch
+                  checked={statusForm.is_active}
+                  onChange={(nextValue) =>
+                    setStatusForm((current) => ({
+                      ...current,
+                      is_active: nextValue,
+                    }))
+                  }
+                  disabled={isSavingStatus}
+                />
+              </div>
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  className="inline-flex min-h-10 items-center justify-center rounded-lg bg-surface-card px-4 text-sm font-semibold text-text-secondary shadow-sm ring-1 ring-border-soft/40 transition duration-fast hover:bg-surface-subtle hover:text-text-primary"
+                  onClick={() => {
+                    if (!isSavingStatus) {
+                      setIsStatusFormOpen(false);
+                      setEditingStatus(null);
+                    }
+                  }}
+                  disabled={isSavingStatus}
+                >
+                  {t('common.cancel')}
+                </button>
+                <button
+                  type="button"
+                  className="ml-auto inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent disabled:opacity-60"
+                  onClick={() => {
+                    void handleSaveStatus();
+                  }}
+                  disabled={isSavingStatus || !statusForm.name.trim()}
+                >
+                  {isSavingStatus ? t('common.loading') : t('common.save')}
+                </button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      ) : null}
+
+      {statusToDelete ? (
+        <ConfirmDialog
+          eyebrow={isRu ? 'РЈРґР°Р»РµРЅРёРµ СЃС‚Р°С‚СѓСЃР°' : 'Statusni oвЂchirish'}
+          title={isRu ? `РЈРґР°Р»РёС‚СЊ СЃС‚Р°С‚СѓСЃ "${statusToDelete.name}"?` : `"${statusToDelete.name}" statusini oвЂchirasizmi?`}
+          description={isRu ? 'Р­С‚Рѕ РґРµР№СЃС‚РІРёРµ РЅРµР»СЊР·СЏ РѕС‚РјРµРЅРёС‚СЊ.' : 'Bu amalni ortga qaytarib boвЂlmaydi.'}
+          cancelLabel={t('common.cancel')}
+          confirmLabel={t('common.delete')}
+          confirmTone="danger"
+          isBusy={isDeletingStatus}
+          onCancel={() => {
+            if (!isDeletingStatus) {
+              setStatusToDelete(null);
+            }
+          }}
+          onConfirm={() => {
+            void handleConfirmDeleteStatus();
+          }}
+          ariaLabel={isRu ? 'РЈРґР°Р»РёС‚СЊ СЃС‚Р°С‚СѓСЃ' : 'Statusni oвЂchirish'}
         />
       ) : null}
     </>

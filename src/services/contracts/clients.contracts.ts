@@ -54,6 +54,20 @@ export interface CRMStatusItem {
 	is_active?: boolean
 }
 
+export interface CreateCRMStatusInput {
+	name: string
+	color?: string
+	position?: number
+	is_active?: boolean
+}
+
+export interface UpdateCRMStatusInput {
+	name?: string
+	color?: string
+	position?: number
+	is_active?: boolean
+}
+
 export interface Client extends BaseEntity {
 	lead?: string | null
 	lead_id?: string | null
@@ -121,6 +135,9 @@ export interface IClientsService {
 
 	// Backend crm extensions
 	listStatuses?(): Promise<CRMStatusItem[]>
+	createStatus?(input: CreateCRMStatusInput): Promise<CRMStatusItem>
+	updateStatus?(id: string, input: UpdateCRMStatusInput): Promise<CRMStatusItem>
+	deleteStatus?(id: string): Promise<void>
 	listClientBookings?(clientId: string): Promise<ClientBookingItem[]>
 	createClientBooking?(
 		clientId: string,
