@@ -1,0 +1,235 @@
+# Renaissance Clinic Frontend Pages va API Map
+
+Bu hujjat frontend uchun page tuzilmasini va ularga kerak bo'ladigan API endpointlarni beradi.
+Faqat endpoint pathlar berilgan, host yo'q.
+
+## 1. Public/Auth Pages
+
+### 1.1 Login Page
+- Maqsad: foydalanuvchini tizimga kiritish
+- API:
+  - `POST /api/auth/login/`
+  - `POST /api/auth/refresh/`
+  - `GET /api/auth/me/`
+
+### 1.2 Register Page (agar kerak bo'lsa)
+- Maqsad: operator rolda yangi user yaratish
+- API:
+  - `POST /api/auth/register/`
+
+## 2. Admin Panel Pages
+
+Admin ko'radigan bo'limlar:
+- Dashboard
+- Leads
+- Clients
+- Products
+- Chats
+- Contracts
+- Notifications
+
+### 2.1 Dashboard Page
+- Maqsad: umumiy KPI va period stats
+- API:
+  - `GET /api/common/dashboard/`
+- Sana filter query:
+  - `date_from=YYYY-MM-DD`
+  - `date_to=YYYY-MM-DD`
+- Misol:
+  - `/api/common/dashboard/?date_from=2026-04-01&date_to=2026-04-07`
+
+### 2.2 Leads Page
+- Maqsad: lead list/detail/create/update
+- API:
+  - `GET /api/leads/`
+  - `POST /api/leads/`
+  - `GET /api/leads/{id}/`
+  - `PUT /api/leads/{id}/`
+  - `PATCH /api/leads/{id}/`
+  - `DELETE /api/leads/{id}/`
+
+### 2.3 Clients Page
+- Maqsad: clients list/detail/create/update
+- API:
+  - `GET /api/clients/`
+  - `POST /api/clients/`
+  - `GET /api/clients/{id}/`
+  - `PUT /api/clients/{id}/`
+  - `PATCH /api/clients/{id}/`
+  - `DELETE /api/clients/{id}/`
+
+### 2.4 Products Page
+- Maqsad: product katalogi va category boshqaruvi
+- API:
+  - `GET /api/products/`
+  - `POST /api/products/`
+  - `GET /api/products/{id}/`
+  - `PUT /api/products/{id}/`
+  - `PATCH /api/products/{id}/`
+  - `DELETE /api/products/{id}/`
+  - `GET /api/products/categories/`
+  - `POST /api/products/categories/`
+  - `GET /api/products/categories/{id}/`
+  - `PUT /api/products/categories/{id}/`
+  - `PATCH /api/products/categories/{id}/`
+  - `DELETE /api/products/categories/{id}/`
+- Filter query (products list):
+  - `category`
+  - `search`
+  - `price_from`
+  - `price_to`
+
+### 2.5 Chats Page
+- Maqsad: chat sessionlar va message oqimi
+- API:
+  - `GET /api/chat/sessions/`
+  - `GET /api/chat/sessions/{id}/`
+  - `GET /api/chat/sessions/{id}/messages/`
+  - `POST /api/chat/messages/inbound/`
+- Realtime WebSocket:
+  - `GET /ws/chat/{session_id}/` (WS ulanish)
+
+### 2.6 Contracts Page
+- Maqsad: shartnoma lifecycle va fayl bilan ishlash
+- API:
+  - `GET /api/contracts/`
+  - `POST /api/contracts/`
+  - `GET /api/contracts/{id}/`
+  - `PUT /api/contracts/{id}/`
+  - `PATCH /api/contracts/{id}/`
+  - `DELETE /api/contracts/{id}/`
+  - `POST /api/contracts/{id}/recalculate/`
+  - `GET /api/contracts/{id}/download-file/`
+- File upload:
+  - `POST /api/contracts/` yoki `PATCH /api/contracts/{id}/` da `multipart/form-data` bilan `file` maydoni
+
+### 2.7 Notifications Page
+- Maqsad: system notification list va read update
+- API:
+  - `GET /api/notifications/`
+  - `GET /api/notifications/{id}/`
+  - `PUT /api/notifications/{id}/`
+  - `PATCH /api/notifications/{id}/`
+
+## 3. Developer Panel Pages
+
+Developer admindagi hamma page'larni ko'radi va qo'shimcha bo'limlar:
+- Integrations
+- AI Settings
+- Logs
+- Users
+
+### 3.1 Integrations Config Page
+- Maqsad: integration token/settinglarni boshqarish
+- API:
+  - `GET /api/integrations/configs/`
+  - `PATCH /api/integrations/configs/`
+
+### 3.2 AI Settings Page
+- Maqsad: AI model/temperature/follow-up vaqtlarini boshqarish
+- API:
+  - `GET /api/ai/settings/`
+  - `POST /api/ai/settings/`
+  - `GET /api/ai/settings/{id}/`
+  - `PUT /api/ai/settings/{id}/`
+  - `PATCH /api/ai/settings/{id}/`
+  - `DELETE /api/ai/settings/{id}/`
+
+### 3.3 Logs Page
+- Maqsad: API va AI loglarni ko'rish
+- API:
+  - `GET /api/logs/api/`
+  - `GET /api/logs/api/{id}/`
+  - `GET /api/logs/ai/`
+  - `GET /api/logs/ai/{id}/`
+
+### 3.4 Users Management Page
+- Maqsad: user create/update/role/permissions boshqaruvi
+- API:
+  - `GET /api/users/`
+  - `POST /api/users/`
+  - `GET /api/users/{id}/`
+  - `PUT /api/users/{id}/`
+  - `PATCH /api/users/{id}/`
+  - `DELETE /api/users/{id}/`
+  - `GET /api/users/{id}/permissions/`
+
+## 4. Telegram WebApp Pages (MVP)
+
+### 4.1 WebApp Bootstrap
+- API:
+  - `GET /api/integrations/telegram/webapp/bootstrap/`
+
+### 4.2 WebApp Profile
+- API:
+  - `GET /api/integrations/telegram/webapp/profile/`
+
+### 4.3 WebApp Orders
+- API:
+  - `GET /api/integrations/telegram/webapp/orders/`
+
+### 4.4 WebApp Categories + Category Detail
+- API:
+  - `GET /api/integrations/telegram/webapp/categories/`
+  - `GET /api/integrations/telegram/webapp/categories/{category_id}/`
+
+### 4.5 WebApp Catalog
+- API:
+  - `GET /api/integrations/telegram/webapp/catalog/`
+- Filter query:
+  - `category`
+  - `search`
+  - `price_from`
+  - `price_to`
+
+### 4.6 WebApp Favorites
+- API:
+  - `GET /api/integrations/telegram/webapp/favorites/`
+  - `POST /api/integrations/telegram/webapp/favorites/`
+
+### 4.7 WebApp Reviews
+- API:
+  - `GET /api/integrations/telegram/webapp/reviews/`
+  - `POST /api/integrations/telegram/webapp/reviews/`
+
+### 4.8 WebApp Checkout
+- API:
+  - `POST /api/integrations/telegram/webapp/checkout/`
+
+## 5. Health va Docs Pages
+
+### 5.1 Health
+- API:
+  - `GET /api/common/health/`
+
+### 5.2 API Docs
+- API:
+  - `GET /api/docs/`
+  - `GET /api/schema/`
+
+## 6. Frontend Routing Tavsiya (qisqa)
+
+Admin/Developer SPA route taklifi:
+- `/login`
+- `/dashboard`
+- `/leads`
+- `/clients`
+- `/products`
+- `/chats`
+- `/contracts`
+- `/notifications`
+- `/integrations` (developer)
+- `/ai-settings` (developer)
+- `/logs` (developer)
+- `/users` (developer)
+
+WebApp route taklifi:
+- `/webapp`
+- `/webapp/profile`
+- `/webapp/orders`
+- `/webapp/categories`
+- `/webapp/catalog`
+- `/webapp/favorites`
+- `/webapp/reviews`
+- `/webapp/checkout`
+

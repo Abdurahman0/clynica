@@ -1,0 +1,214 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		/* Primary - Forest Green (Green NRG Brand) */
+		--color-primary: 34 139 34; /* Forest Green */
+		--color-primary-foreground: 255 255 255;
+		--color-primary-accent: 60 179 113; /* Medium Sea Green */
+		--color-primary-soft: 144 238 144; /* Light Green */
+		--color-primary-strong: 25 100 25; /* Dark Green */
+
+		--color-background-default: 248 250 252; /* Slate 50 */
+		--color-background-subtle: 241 245 249; /* Slate 100 */
+		--color-background-elevated: 255 255 255;
+		--color-background-inverse: 15 23 42; /* Slate 900 */
+		--color-background-overlay: 15 23 42;
+		--color-background-ghost: 148 163 184; /* Slate 400 */
+
+		--color-surface-default: 255 255 255;
+		--color-surface-subtle: 248 250 252;
+		--color-surface-card: 255 255 255;
+		--color-surface-muted: 241 245 249;
+
+		--color-text-primary: 15 23 42; /* Slate 900 */
+		--color-text-secondary: 71 85 105; /* Slate 600 */
+		--color-text-muted: 148 163 184; /* Slate 400 */
+		--color-text-accent: 34 139 34; /* Primary Green */
+		--color-text-inverse: 248 250 252;
+
+		--color-border-soft: 226 232 240; /* Slate 200 */
+		--color-border-subtle: 241 245 249; /* Slate 100 */
+		--color-border-accent: 144 238 144; /* Light Green */
+		--color-border-inverse: 30 41 59; /* Slate 800 */
+
+		--color-success: 34 139 34; /* Green */
+		--color-success-bg: 209 250 229;
+		--color-warning: 217 119 6; /* Amber */
+		--color-warning-bg: 254 243 199;
+		--color-danger: 239 68 68; /* Red */
+		--color-danger-bg: 254 226 226;
+		--color-info: 34 139 34; /* Green */
+		--color-info-bg: 220 252 231;
+
+		--color-neutral: 100 116 139;
+		--color-neutral-bg: 241 245 249;
+		--color-scrollbar-thumb: 203 213 225;
+		--color-scrollbar-thumb-hover: 148 163 184;
+
+		font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+		line-height: 1.5;
+		font-weight: 400;
+		font-synthesis: none;
+		text-rendering: optimizeLegibility;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	html[data-theme='dark'] {
+		/* Primary - Light Green for dark mode */
+		--color-primary: 144 238 144; /* Light Green */
+		--color-primary-foreground: 15 23 42;
+		--color-primary-accent: 144 238 144; /* Light Green */
+		--color-primary-soft: 34 80 34; /* Dark Green */
+		--color-primary-strong: 34 120 34; /* Medium Dark Green */
+
+		--color-background-default: 15 23 42; /* Slate 900 */
+		--color-background-subtle: 11 15 25; /* Deeper Slate */
+		--color-background-elevated: 30 41 59; /* Slate 800 */
+		--color-background-inverse: 248 250 252;
+		--color-background-overlay: 2 6 23; /* Slate 950 */
+		--color-background-ghost: 71 85 105; /* Slate 600 */
+
+		--color-surface-default: 15 23 42;
+		--color-surface-subtle: 30 41 59; /* Slate 800 */
+		--color-surface-card: 15 23 42;
+		--color-surface-muted: 15 23 42;
+
+		--color-text-primary: 248 250 252; /* Slate 50 */
+		--color-text-secondary: 148 163 184; /* Slate 400 */
+		--color-text-muted: 100 116 139; /* Slate 500 */
+		--color-text-accent: 144 238 144; /* Light Green */
+		--color-text-inverse: 15 23 42;
+
+		--color-border-soft: 51 65 85; /* Slate 700 */
+		--color-border-subtle: 30 41 59; /* Slate 800 */
+		--color-border-accent: 144 238 144; /* Light Green */
+		--color-border-inverse: 226 232 240;
+
+		--color-success: 52 211 153; /* Teal Green */
+		--color-success-bg: 6 78 59;
+		--color-warning: 251 191 36;
+		--color-warning-bg: 120 53 15;
+		--color-danger: 248 113 113;
+		--color-danger-bg: 127 29 29;
+		--color-info: 96 165 250;
+		--color-info-bg: 30 58 138;
+		--color-neutral: 148 163 184;
+		--color-neutral-bg: 51 65 85;
+		--color-scrollbar-thumb: 51 65 85;
+		--color-scrollbar-thumb-hover: 71 85 105;
+	}
+
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	html {
+		color-scheme: light;
+		scrollbar-color: rgb(var(--color-scrollbar-thumb) / 0.42) transparent;
+		scrollbar-width: thin;
+		overflow-x: clip;
+	}
+
+	html[data-theme='dark'] {
+		color-scheme: dark;
+	}
+
+	body {
+		margin: 0;
+		min-width: 320px;
+		min-height: 100vh;
+		overflow-x: hidden;
+		color: rgb(var(--color-text-primary));
+		background-color: rgb(var(--color-background-default));
+		background-image: radial-gradient(
+			circle at 0% 0%,
+			rgb(var(--color-primary) / 0.05),
+			transparent 40%
+		);
+		transition:
+			background-color 180ms ease,
+			color 180ms ease;
+	}
+
+	button,
+	input,
+	textarea,
+	select {
+		font: inherit;
+	}
+
+	a {
+		color: inherit;
+	}
+
+	#root {
+		min-height: 100vh;
+		width: 100%;
+	}
+
+	::selection {
+		background: rgb(var(--color-primary) / 0.2);
+		color: rgb(var(--color-text-primary));
+	}
+
+	*::-webkit-scrollbar {
+		width: 8px;
+		height: 8px;
+	}
+
+	*::-webkit-scrollbar-track {
+		background: transparent;
+	}
+
+	*::-webkit-scrollbar-thumb {
+		border: 1px solid transparent;
+		border-radius: 999px;
+		background: rgb(var(--color-scrollbar-thumb) / 0.32);
+		background-clip: padding-box;
+	}
+
+	*::-webkit-scrollbar-thumb:hover {
+		background: rgb(var(--color-scrollbar-thumb-hover) / 0.42);
+		background-clip: padding-box;
+	}
+
+	/* Autofill styling for browser password/autocomplete managers */
+	input:-webkit-autofill,
+	input:-webkit-autofill:hover,
+	input:-webkit-autofill:focus,
+	textarea:-webkit-autofill,
+	textarea:-webkit-autofill:hover,
+	textarea:-webkit-autofill:focus,
+	select:-webkit-autofill,
+	select:-webkit-autofill:hover,
+	select:-webkit-autofill:focus {
+		-webkit-box-shadow: 0 0 0 1000px #f8fdf8 inset !important;
+		-webkit-text-fill-color: #228b22 !important;
+		caret-color: #155015 !important;
+		color: #228b22 !important;
+	}
+
+	/* Dark mode autofill */
+	html[data-theme='dark'] input:-webkit-autofill,
+	html[data-theme='dark'] input:-webkit-autofill:hover,
+	html[data-theme='dark'] input:-webkit-autofill:focus,
+	html[data-theme='dark'] textarea:-webkit-autofill,
+	html[data-theme='dark'] textarea:-webkit-autofill:hover,
+	html[data-theme='dark'] textarea:-webkit-autofill:focus,
+	html[data-theme='dark'] select:-webkit-autofill,
+	html[data-theme='dark'] select:-webkit-autofill:hover,
+	html[data-theme='dark'] select:-webkit-autofill:focus {
+		-webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+		-webkit-text-fill-color: #90ee90 !important;
+		caret-color: #90ee90 !important;
+		color: #90ee90 !important;
+	}
+}

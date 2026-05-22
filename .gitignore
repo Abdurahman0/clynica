@@ -1,0 +1,10 @@
+node_modules
+dist
+.DS_Store
+*.local
+*.env
+tmp_docs.html
+tmp_live_schema.json
+tmp_live_schema.yaml
+tmp_docs_live_check.html
+tmp_live_schema_from_server.yaml

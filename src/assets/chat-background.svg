@@ -1,0 +1,36 @@
+<svg width="1200" height="1800" viewBox="0 0 1200 1800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="1200" y1="0" x2="0" y2="1800" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e8f5e9"/>
+      <stop offset="0.48" stop-color="#eafaed"/>
+      <stop offset="1" stop-color="#f1f8f5"/>
+    </linearGradient>
+    <radialGradient id="glowBlue" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(940 360) rotate(120) scale(430 430)">
+      <stop stop-color="#90ee90" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#90ee90" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowMint" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(260 650) rotate(72) scale(380 380)">
+      <stop stop-color="#8EE7DA" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#8EE7DA" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur40" x="-120" y="-120" width="1440" height="2040" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="20"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="1800" fill="url(#bg)"/>
+  <circle cx="940" cy="360" r="430" fill="url(#glowBlue)"/>
+  <circle cx="260" cy="650" r="380" fill="url(#glowMint)"/>
+
+  <g filter="url(#blur40)" opacity="0.4">
+    <path d="M-80 1160C220 980 520 980 820 1160C980 1260 1120 1280 1280 1260V1880H-80V1160Z" fill="#d4f1d4"/>
+    <path d="M-80 1300C260 1120 560 1140 900 1310C1050 1385 1150 1400 1280 1380V1880H-80V1300Z" fill="#c0e8d8"/>
+  </g>
+
+  <g opacity="0.22" stroke="#7cb47c" stroke-width="2">
+    <path d="M120 180C240 210 360 210 480 180C600 150 720 150 840 180C960 210 1080 210 1200 180"/>
+    <path d="M0 340C120 310 240 310 360 340C480 370 600 370 720 340C840 310 960 310 1080 340C1140 355 1170 355 1200 350"/>
+    <path d="M0 520C140 485 280 485 420 520C560 555 700 555 840 520C980 485 1120 485 1200 505"/>
+    <path d="M0 820C150 790 300 790 450 820C600 850 750 850 900 820C1050 790 1140 790 1200 800"/>
+  </g>
+</svg>

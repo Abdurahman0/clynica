@@ -1,0 +1,2515 @@
+﻿{
+  "common": {
+    "appName": "Renaissance Clinic",
+    "loading": "Загрузка...",
+    "save": "Сохранить",
+    "clear": "Очистить",
+    "cancel": "Отмена",
+    "create": "Добавить",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "search": "Поиск",
+    "all": "Все",
+    "yes": "Да",
+    "no": "Нет",
+    "na": "Недоступно",
+    "active": "Активный",
+    "inactive": "Неактивный",
+    "unassigned": "Не назначено",
+    "notAvailable": "Недоступно",
+    "language": "Язык",
+    "languages": {
+      "uz": "Узбекский",
+      "ru": "Русский"
+    }
+  },
+  "routes": {
+    "home": {
+      "title": "Главная",
+      "description": "Страница перенаправления в зависимости от состояния сессии."
+    },
+    "login": {
+      "title": "Вход",
+      "description": "Страница входа в систему."
+    },
+    "access-denied": {
+      "title": "Доступ запрещён",
+      "description": "Сообщение для страниц без разрешения."
+    },
+    "not-found": {
+      "title": "Страница не найдена",
+      "description": "Резервная страница для неизвестных маршрутов."
+    },
+    "dashboard": {
+      "title": "Панель управления",
+      "description": "Основные показатели и общая аналитика."
+    },
+    "leads": {
+      "title": "Лиды",
+      "description": "Управление лидами и отслеживание."
+    },
+    "customers": {
+      "title": "Клиенты",
+      "description": "Список клиентов и профили."
+    },
+    "clients": {
+      "title": "Клиенты",
+      "description": "Список клиентов и профили."
+    },
+    "products": {
+      "title": "Товары",
+      "description": "Управление каталогом, ценами и остатками."
+    },
+    "contracts": {
+      "title": "Договоры",
+      "description": "Управление договорами и документами."
+    },
+    "orders": {
+      "title": "Заказы",
+      "description": "Управление заказами."
+    },
+    "couriers": {
+      "title": "Курьеры",
+      "description": "Управление профилями курьеров и назначениями доставки."
+    },
+    "agents": {
+      "title": "Агенты",
+      "description": "Управление профилями агентов и закреплёнными товарами."
+    },
+    "payments": {
+      "title": "Платежи",
+      "description": "Статус платежей и транзакции."
+    },
+    "chat": {
+      "title": "Чат",
+      "description": "Окно общения и сообщений."
+    },
+    "notifications": {
+      "title": "Уведомления",
+      "description": "Важные события и предупреждения."
+    },
+    "profile": {
+      "title": "Профиль",
+      "description": "Настройки и данные пользователя."
+    },
+    "users": {
+      "title": "Пользователи",
+      "description": "Управление участниками команды и разрешениями."
+    },
+    "operator-kpi": {
+      "title": "KPI операторов",
+      "description": "Показатели эффективности операторов и распределения."
+    },
+    "integrations": {
+      "title": "Интеграции",
+      "description": "Подключения внешних сервисов."
+    },
+    "ai-settings": {
+      "title": "Настройки ИИ",
+      "description": "Конфигурация искусственного интеллекта."
+    },
+    "logs": {
+      "title": "Журналы",
+      "description": "Системные события и журналы аудита."
+    },
+    "audit-requests": {
+      "title": "Запросы аудита",
+      "description": "Запросы на энергоаудит и процесс выдачи заключения."
+    }
+  },
+  "navigation": {
+    "groups": {
+      "main": "Рабочее пространство",
+      "operations": "Операции",
+      "communication": "Связь",
+      "system": "Управление"
+    },
+    "captions": {
+      "dashboard": "Общее",
+      "profile": "Аккаунт",
+      "users": "Разрешения",
+      "integrations": "Подключения",
+      "leads": "Поток лидов",
+      "customers": "Клиенты",
+      "clients": "Клиенты",
+      "products": "Каталог",
+      "contracts": "Договоры",
+      "orders": "Заказы",
+      "couriers": "Доставка",
+      "agents": "Агенты",
+      "payments": "Транзакции",
+      "chat": "Сообщения",
+      "notifications": "Оповещения",
+      "ai-settings": "Рабочее место",
+      "logs": "Аудит",
+      "audit-requests": "Энергоаудит"
+    }
+  },
+  "topbar": {
+    "menuOpen": "Открыть навигацию",
+    "themeToggle": "Сменить тему",
+    "refresh": "Обновить страницу",
+    "notifications": "Уведомления",
+    "profileMenu": "Открыть меню профиля",
+    "profile": "Профиль",
+    "logout": "Выйти",
+    "noRole": "Нет роли",
+    "noEmail": "Нет email"
+  },
+  "auth": {
+    "login": {
+      "eyebrow": "Renaissance Clinic",
+      "subtitle": "Платформа управления CRM",
+      "usernameLabel": "Имя пользователя",
+      "usernamePlaceholder": "developer",
+      "passwordLabel": "Пароль",
+      "usernameError": "Введите имя пользователя.",
+      "passwordError": "Пароль должен содержать не менее 8 символов.",
+      "invalidCredentials": "Неверное имя пользователя или пароль.",
+      "signIn": "Войти",
+      "signingIn": "Вход...",
+      "hidePassword": "Скрыть пароль",
+      "showPassword": "Показать пароль",
+      "footerRights": "© 2026 Renaissance Clinic. Все права защищены.",
+      "footerPowered": "Разработчик"
+    },
+    "accessDenied": {
+      "eyebrow": "Контроль доступа",
+      "title": "Доступ запрещён",
+      "description": "Вы вошли в систему, но у вас нет разрешения для этой страницы.",
+      "currentAccount": "Текущий аккаунт:",
+      "notSignedIn": "Не выполнен вход",
+      "role": "Роль:",
+      "goAllowed": "Перейти на разрешённую страницу",
+      "signOut": "Выйти",
+      "goLogin": "Перейти на страницу входа"
+    }
+  },
+  "shared": {
+    "table": {
+      "emptyTitle": "Записи не найдены",
+      "emptyDescription": "Будет показано здесь, когда данные появятся.",
+      "loadingTitle": "Таблица загружается",
+      "loadingDescription": "Строки появятся, когда данные будут готовы.",
+      "reorderRow": "Изменить порядок"
+    },
+    "searchInput": {
+      "placeholder": "Поиск"
+    },
+    "pagination": {
+      "page": "Страница",
+      "of": "из",
+      "totalItems": "всего записей",
+      "previous": "Назад",
+      "next": "Далее"
+    },
+    "filterSelect": {
+      "select": "Выберите"
+    },
+    "emptyState": {
+      "title": "Данные не найдены",
+      "description": "Нужные данные пока недоступны."
+    },
+    "loadingState": {
+      "title": "Загрузка",
+      "description": "Получение данных."
+    },
+    "placeholder": {
+      "sectionTitle": "Основа страницы",
+      "sectionDescription": "Пример общей структуры страницы для этого модуля.",
+      "emptyTitle": "Интерфейс модуля ещё не готов",
+      "emptyDescription": "В следующих задачах этот раздел будет заполнен реальным контентом.",
+      "nextStateTitle": "Следующее состояние",
+      "loadingPatternTitle": "Состояние загрузки",
+      "loadingPatternHeading": "Будущая загрузка данных",
+      "loadingPatternDescription": "Когда сервисы будут подключены, это состояние будет использоваться как временный интерфейс загрузки.",
+      "publicRoute": "Публичная страница",
+      "protectedRoute": "Защищённая страница",
+      "routeId": "ID страницы",
+      "navigation": "Навигация",
+      "listed": "Показано",
+      "hidden": "Скрыто",
+      "access": "Доступ",
+      "allowedRoles": "Разрешённые роли",
+      "accessStrategy": "Стратегия доступа"
+    }
+  },
+  "dashboard": {
+    "loadingTitle": "Загрузка панели управления",
+    "loadingDescription": "Получение аналитики и распределений.",
+    "errorTitle": "Панель управления недоступна",
+    "errorDescription": "Не удалось загрузить данные панели управления.",
+    "title": "Панель управления",
+    "welcome": "Добро пожаловать",
+    "workspaceFallback": "Рабочее пространство",
+    "totalLeads": "Всего клиентов",
+    "sourceDataHint": "Данные по источникам появятся после добавления новых клиентов.",
+    "metrics": {
+      "leads": "Клиенты",
+      "customers": "Клиенты",
+      "orders": "Заказы",
+      "pendingPayments": "Ожидающие платежи",
+      "unreadMessages": "Непрочитанные сообщения",
+      "revenue": "Доход",
+      "newLeads": "новых клиентов",
+      "newCustomers": "новых клиентов",
+      "completed": "завершено",
+      "pending": "ожидается",
+      "activeSessions": "активных сессий",
+      "collected": "собрано",
+      "collectedAmount": "Собрано (сумма)",
+      "pipelineAmount": "В ожидании (сумма)",
+      "totalClients": "Всего клиентов",
+      "activeBookings": "Активные записи",
+      "cameCount": "Пришли",
+      "noShowCount": "Не пришли"
+    },
+    "sections": {
+      "trend": "Тренды",
+      "source": "Источники клиентов",
+      "leadStatus": "Статусы клиентов",
+      "contractStatus": "Статус договора",
+      "orderStatus": "Статус заказа",
+      "paymentStatus": "Статус платежа",
+      "chatChannels": "Каналы чата",
+      "performance": "Ключевые показатели",
+      "topProducts": "Топ товары",
+      "regionDemand": "Спрос по регионам",
+      "managerPerformance": "Эффективность менеджеров"
+    },
+    "descriptions": {
+      "trend": "Динамика лидов, клиентов и заказов за выбранный период.",
+      "source": "Распределение обращений по каналам Telegram и ручному вводу.",
+      "leadStatus": "Распределение статусов по воронке.",
+      "contractStatus": "Распределение по статусам договоров.",
+      "topProducts": "Список самых продаваемых товаров по объёму продаж.",
+      "regionDemand": "Распределение клиентов по регионам за выбранный период.",
+      "managerPerformance": "Показатели менеджеров по общему, выигранным и потерянным клиентам."
+    },
+    "performance": {
+      "leadConversionRate": "Коэффициент конверсии клиентов",
+      "orderCompletionRate": "Коэффициент завершения заказов",
+      "averageOrderValue": "Средняя стоимость заказа"
+    },
+    "topProducts": {
+      "hint": "Смотрите строки товаров для подробностей",
+      "empty": "Топ товары пока недоступны.",
+      "columns": {
+        "product": "Товар",
+        "sold": "Продано",
+        "revenue": "Выручка"
+      }
+    },
+    "regionDemand": {
+      "empty": "Данные по регионам не найдены.",
+      "emptyDescription": "За выбранный период нет данных по регионам.",
+      "columns": {
+        "region": "Регион",
+        "total": "Клиенты"
+      }
+    },
+    "managerPerformance": {
+      "empty": "Данные по менеджерам не найдены.",
+      "emptyDescription": "За выбранный период нет данных по менеджерам.",
+      "columns": {
+        "manager": "Менеджер",
+        "total": "Всего",
+        "won": "Выиграно",
+        "lost": "Потеряно"
+      }
+    },
+    "noLeads": "Лидов нет",
+    "filters": {
+      "intervalLabel": "Интервал",
+      "dateFrom": "Дата начала",
+      "dateTo": "Дата окончания",
+      "customRange": "Диапазон дат",
+      "pickRange": "Выберите диапазон дат",
+      "clearRange": "Очистить",
+      "presets": {
+        "today": "Сегодня",
+        "7d": "7Д",
+        "30d": "30Д"
+      },
+      "intervals": {
+        "day": "По дням",
+        "week": "По неделям",
+        "month": "По месяцам"
+      }
+    },
+    "publicApi": {
+      "title": "Публичные API",
+      "subtitle": "Проверка данных компании и калькулятора субсидии.",
+      "companyTitle": "Информация о компании",
+      "companyDescription": "Публичный endpoint с реквизитами, платформой и прайс-матрицей.",
+      "loadCompany": "Загрузить данные компании",
+      "loadingCompany": "Загрузка...",
+      "companyError": "Не удалось получить информацию о компании.",
+      "companyEmpty": "Нажмите кнопку, чтобы загрузить данные компании.",
+      "subsidyTitle": "Калькулятор субсидии",
+      "subsidyDescription": "Рассчитать итоговую цену по типу панели, инвертора и мощности.",
+      "panelType": "Тип панели",
+      "inverterType": "Тип инвертора",
+      "requestedPower": "Запрошенная мощность (кВт)",
+      "auditPower": "Аудитная мощность (кВт)",
+      "calculate": "Рассчитать",
+      "calculating": "Расчет...",
+      "subsidyError": "Не удалось рассчитать субсидию.",
+      "subsidyEmpty": "Введите параметры и нажмите «Рассчитать».",
+      "basePrice": "Базовая цена",
+      "subsidyAmount": "Сумма субсидии",
+      "customerAmount": "Сумма для клиента",
+      "referencePower": "Опорная мощность субсидии",
+      "panelTypes": {
+        "jinkoJa": "Jinko / JA Renaissance Clinic",
+        "longiHiMoX10": "Longi HI MO X10"
+      },
+      "inverterTypes": {
+        "deye": "Deye",
+        "solax": "Solax"
+      }
+    }
+  },
+  "leads": {
+    "pipelineEyebrow": "Воронка",
+    "title": "Лиды",
+    "lead": "Лид",
+    "newLead": "Новый лид",
+    "subtitle": "Управляйте сортировкой, коммуникацией и отслеживанием в одной очереди.",
+    "visible": "отображается",
+    "filters": "фильтр",
+    "allStatuses": "Все статусы",
+    "allChannels": "Все каналы",
+    "allOperators": "Все операторы",
+    "status": "Статус",
+    "channel": "Канал",
+    "assignedOperator": "Назначенный оператор",
+    "orderBy": "Сортировка",
+    "updatedNewest": "Обновлено (сначала новые)",
+    "updatedOldest": "Обновлено (сначала старые)",
+    "createdNewest": "Добавлено (сначала новые)",
+    "createdOldest": "Добавлено (сначала старые)",
+    "searchPlaceholder": "Поиск по лиду, телефону или username...",
+    "count": "лид",
+    "unknownHandle": "неизвестно",
+    "detailOpen": "Детали открыты",
+    "queueTitle": "Очередь лидов",
+    "queueHint": "Нажмите на строку, чтобы открыть детали",
+    "emptyTitle": "Подходящие лиды не найдены",
+    "emptyDescription": "Попробуйте изменить поиск или фильтры.",
+    "errorTitle": "Лиды недоступны",
+    "errorDescription": "Не удалось загрузить лиды из текущего сервиса.",
+    "contact": "Контакт",
+    "source": "Источник",
+    "owner": "Ответственный",
+    "lastActivity": "Последняя активность",
+    "noPhone": "Нет телефона",
+    "noEmail": "Нет email",
+    "awaitingOutreach": "Ожидает контакта",
+    "dmSent": "Сообщение отправлено",
+    "unassigned": "Не назначено",
+    "replied": "Ответ получен",
+    "awaitingReply": "Ожидается ответ",
+    "actions": {
+      "column": "Действия",
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "statusUpdateError": "Не удалось обновить статус лида."
+    },
+    "form": {
+      "eyebrow": "Форма лида",
+      "createTitle": "Добавить новый лид",
+      "editTitle": "Редактировать лид",
+      "createSubtitle": "Введите данные нового лида для воронки продаж.",
+      "editSubtitle": "Обновите профиль лида и управляйте его статусом.",
+      "close": "Закрыть форму лида",
+      "fullName": "Полное имя",
+      "fullNamePlaceholder": "Имя и фамилия",
+      "phone": "Телефон",
+      "email": "Email",
+      "instagram": "Имя пользователя Instagram",
+      "telegram": "Имя пользователя Telegram",
+      "source": "Источник",
+      "status": "Статус",
+      "operator": "Ответственный оператор",
+      "notes": "Примечание",
+      "notesPlaceholder": "Напишите краткое примечание по лиду",
+      "metadata": "Метаданные (JSON)",
+      "requiredError": "Заполните обязательные поля.",
+      "metadataError": "Метаданные должны быть только в формате JSON object.",
+      "saveError": "Не удалось сохранить лид.",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "createSubmit": "Добавить лид",
+      "editSubmit": "Сохранить изменения"
+    },
+    "deleteDialog": {
+      "eyebrow": "Удаление лида",
+      "title": "Удалить лид \"{{name}}\"",
+      "description": "Это действие необратимо. Лид будет полностью удалён из истории.",
+      "deleting": "Удаление...",
+      "confirm": "Да, удалить"
+    },
+    "detail": {
+      "ariaLabel": "Детали лида",
+      "profile": "Профиль лида",
+      "titleFallback": "Детали лида",
+      "close": "Закрыть детали лида",
+      "loadingTitle": "Загрузка деталей лида",
+      "loadingDescription": "Получение данных профиля и активности.",
+      "errorTitle": "Лид недоступен",
+      "errorDescription": "Не удалось загрузить выбранный лид.",
+      "contactTitle": "Контакт",
+      "contactDescription": "Основной профиль и данные назначения.",
+      "phone": "Телефон",
+      "email": "Email",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "source": "Источник",
+      "owner": "Ответственный",
+      "activityTitle": "Активность",
+      "activityDescription": "Лента времени и сигналы коммуникации.",
+      "created": "Добавлен",
+      "updated": "Обновлён",
+      "lastContact": "Последний контакт",
+      "lastMessage": "Последнее сообщение",
+      "leadReplied": "Лид ответил",
+      "dmSent": "Сообщение отправлено",
+      "notesTitle": "Примечания",
+      "notesDescription": "Контекст перед следующим контактом.",
+      "noNotes": "Пока нет примечаний.",
+      "metadataTitle": "Метаданные",
+      "statusControl": "Обновить статус лида",
+      "readOnlyHint": "У вас нет прав на редактирование лида."
+    }
+  },
+  "customers": {
+    "eyebrow": "Воронка",
+    "title": "Клиенты",
+    "subtitle": "Отслеживайте список клиентов и назначенных операторов.",
+    "newCustomer": "Новый клиент",
+    "searchPlaceholder": "Поиск по клиенту, телефону или адресу...",
+    "allOperators": "Все операторы",
+    "assignedOperator": "Назначенный оператор",
+    "orderBy": "Сортировка",
+    "updatedNewest": "Обновлено (сначала новые)",
+    "updatedOldest": "Обновлено (сначала старые)",
+    "createdNewest": "Добавлено (сначала новые)",
+    "createdOldest": "Добавлено (сначала старые)",
+    "records": "записей",
+    "activeFilters": "активных фильтров",
+    "rowSelected": "Строка выбрана",
+    "directoryTitle": "Каталог клиентов",
+    "directoryHint": "Найдите нужного клиента через поиск и фильтры.",
+    "emptyTitle": "Подходящий клиент не найден",
+    "emptyDescription": "Измените поисковый запрос или фильтр оператора.",
+    "errorTitle": "Клиенты недоступны",
+    "errorDescription": "Не удалось загрузить клиентов из текущего сервиса.",
+    "loadingTitle": "Загрузка клиентов",
+    "loadingDescription": "Получение списка клиентов.",
+    "columns": {
+      "customer": "Клиент",
+      "phone": "Телефон",
+      "email": "Email",
+      "address": "Адрес",
+      "operator": "Оператор",
+      "created": "Дата добавления",
+      "updated": "Дата обновления",
+      "actions": "Действия"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить"
+    },
+    "noEmail": "Нет email",
+    "noPhone": "Нет телефона",
+    "noNotes": "Нет примечания",
+    "noAddress": "Нет адреса",
+    "defaultCountry": "Узбекистан",
+    "noLeadLink": "Лид не связан",
+    "leadPrefix": "Лид",
+    "detail": {
+      "ariaLabel": "Детали клиента",
+      "profile": "Профиль клиента",
+      "titleFallback": "Детали клиента",
+      "close": "Закрыть детали клиента",
+      "loadingTitle": "Загрузка деталей клиента",
+      "loadingDescription": "Получение данных клиента.",
+      "errorTitle": "Клиент недоступен",
+      "errorDescription": "Не удалось загрузить выбранного клиента.",
+      "contactTitle": "Контакт",
+      "contactDescription": "Основные данные и связи.",
+      "phone": "Телефон",
+      "email": "Email",
+      "address": "Адрес",
+      "operator": "Ответственный оператор",
+      "linkedLead": "Связанный лид",
+      "notes": "Примечание",
+      "metadata": "Метаданные",
+      "created": "Добавлен",
+      "updated": "Обновлён",
+      "readOnlyHint": "У вас нет прав на редактирование клиента."
+    },
+    "form": {
+      "eyebrow": "Форма клиента",
+      "createTitle": "Добавить нового клиента",
+      "editTitle": "Редактировать клиента",
+      "createSubtitle": "Введите данные нового клиента для CRM.",
+      "editSubtitle": "Обновите профиль клиента.",
+      "close": "Закрыть форму клиента",
+      "fullName": "Полное имя",
+      "fullNamePlaceholder": "Имя и фамилия",
+      "phone": "Телефон",
+      "email": "Email",
+      "address": "Адрес",
+      "addressPlaceholder": "Улица и дом",
+      "lead": "Связанный лид",
+      "operator": "Ответственный оператор",
+      "notes": "Примечание",
+      "notesPlaceholder": "Напишите краткое примечание по клиенту",
+      "metadata": "Метаданные (JSON)",
+      "noLead": "Без лида",
+      "requiredError": "Заполните обязательные поля.",
+      "metadataError": "Метаданные должны быть только JSON object.",
+      "saveError": "Не удалось сохранить клиента.",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "createSubmit": "Добавить клиента",
+      "editSubmit": "Сохранить изменения"
+    },
+    "deleteDialog": {
+      "eyebrow": "Удаление клиента",
+      "title": "Удалить клиента \"{{name}}\"",
+      "description": "Это действие необратимо. Запись клиента будет полностью удалена.",
+      "deleting": "Удаление...",
+      "confirm": "Да, удалить"
+    }
+  },
+  "users": {
+    "eyebrow": "Управление",
+    "title": "Пользователи",
+    "subtitle": "Управляйте аккаунтами команды и разрешениями.",
+    "newUser": "Новый пользователь",
+    "records": "пользователей",
+    "activeFilters": "активных фильтров",
+    "searchPlaceholder": "Поиск по email, имени или телефону...",
+    "loadingTitle": "Загрузка пользователей",
+    "loadingDescription": "Получение списка аккаунтов.",
+    "errorTitle": "Пользователи недоступны",
+    "errorDescription": "Не удалось загрузить пользователей из текущего сервиса.",
+    "emptyTitle": "Подходящий пользователь не найден",
+    "emptyDescription": "Попробуйте изменить поиск или параметры фильтра.",
+    "listTitle": "Пользователи команды",
+    "listHint": "Нажмите на строку, чтобы посмотреть детали",
+    "fullAccessShort": "Полный доступ",
+    "permissionsCount": "{{count}} разрешений",
+    "columns": {
+      "user": "Пользователь",
+      "role": "Роль",
+      "phone": "Телефон",
+      "status": "Статус",
+      "permissions": "Разрешения",
+      "created": "Добавлен",
+      "updated": "Обновлён",
+      "actions": "Действия"
+    },
+    "filters": {
+      "allRoles": "Все роли",
+      "allStatuses": "Все статусы",
+      "role": "Роль",
+      "status": "Статус"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "activate": "Активировать",
+      "deactivate": "Деактивировать",
+      "toggling": "Обновление...",
+      "toggleError": "Не удалось обновить статус пользователя."
+    },
+    "detail": {
+      "ariaLabel": "Детали пользователя",
+      "profile": "Профиль пользователя",
+      "titleFallback": "Детали пользователя",
+      "close": "Закрыть панель деталей",
+      "loadingTitle": "Загрузка деталей пользователя",
+      "loadingDescription": "Получение данных аккаунта и разрешений.",
+      "errorTitle": "Пользователь не найден",
+      "errorDescription": "Не удалось загрузить выбранного пользователя.",
+      "accountTitle": "Данные аккаунта",
+      "accountDescription": "Основной профиль и статус доступа.",
+      "phone": "Телефон",
+      "role": "Роль",
+      "createdBy": "Создал",
+      "status": "Статус",
+      "permissions": "Индивидуальные разрешения",
+      "developerPermissionsHint": "Роль Developer автоматически имеет все разрешения.",
+      "noPermissions": "Индивидуальные разрешения не назначены.",
+      "createdAt": "Добавлен",
+      "updatedAt": "Обновлён",
+      "readOnlyHint": "У вас нет прав на управление пользователем."
+    },
+    "form": {
+      "eyebrow": "Форма пользователя",
+      "createTitle": "Добавить пользователя",
+      "editTitle": "Редактировать пользователя",
+      "createSubtitle": "Введите настройки нового аккаунта и роли.",
+      "editSubtitle": "Обновите аккаунт пользователя и его разрешения.",
+      "close": "Закрыть форму",
+      "fullName": "Полное имя",
+      "fullNamePlaceholder": "Имя и фамилия",
+      "email": "Email",
+      "phone": "Телефон",
+      "password": "Пароль",
+      "passwordRequired": "Минимум 8 символов",
+      "passwordOptional": "Оставьте пустым, если не хотите менять пароль",
+      "role": "Роль",
+      "activeUser": "Активный пользователь",
+      "activeHint": "Неактивный пользователь не сможет войти в систему.",
+      "permissionsTitle": "Разрешения оператора",
+      "permissionsDescription": "Выберите нужные коды разрешений для оператора.",
+      "permissionsLoadError": "Не удалось загрузить каталог разрешений. Попробуйте позже.",
+      "requiredError": "Заполните обязательные поля.",
+      "emailError": "Введите корректный email адрес.",
+      "passwordError": "Пароль должен содержать не менее 8 символов.",
+      "saveError": "Не удалось сохранить пользователя.",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "createSubmit": "Добавить пользователя",
+      "editSubmit": "Сохранить изменения",
+      "applyRoleDefaults": "Применить права роли ({{count}})",
+      "permissionGroups": {
+        "viewing": "Права просмотра",
+        "managing": "Права управления",
+        "updating": "Права изменения",
+        "communication": "Права коммуникации",
+        "other": "Другие права"
+      }
+    },
+    "deleteDialog": {
+      "eyebrow": "Удаление пользователя",
+      "title": "Удалить пользователя \"{{name}}\"",
+      "description": "Это действие необратимо. Пользователь будет полностью удалён.",
+      "deleting": "Удаление...",
+      "confirm": "Да, удалить"
+    }
+  },
+  "products": {
+    "title": "Товары",
+    "subtitle": "Управляйте ценами, остатками и активным статусом из одного каталога.",
+    "newProduct": "Новый товар",
+    "newCategory": "Новая категория",
+    "allCurrencies": "Все валюты",
+    "allStatuses": "Все статусы",
+    "allReviewsModes": "Отзывы: все",
+    "reviewsEnabled": "Отзывы включены",
+    "reviewsDisabled": "Отзывы отключены",
+    "reviewsFilterLabel": "Отзывы",
+    "status": "Статус",
+    "currency": "Валюта",
+    "orderBy": "Сортировка",
+    "updatedNewest": "Обновлено (сначала новые)",
+    "updatedOldest": "Обновлено (сначала старые)",
+    "createdNewest": "Добавлено (сначала новые)",
+    "createdOldest": "Добавлено (сначала старые)",
+    "nameAz": "Название (A-Z)",
+    "nameZa": "Название (Z-A)",
+    "priceHighLow": "Цена (по убыванию)",
+    "priceLowHigh": "Цена (по возрастанию)",
+    "searchPlaceholder": "Поиск по названию товара, SKU или описанию...",
+    "categorySearchPlaceholder": "Поиск по названию или коду категории...",
+    "records": "записей",
+    "categoriesRecords": "категорий",
+    "categoriesCountLabel": "категории",
+    "activeFilters": "активных",
+    "catalogTitle": "Каталог товаров",
+    "catalogHint": "Нажмите на строку, чтобы посмотреть детали",
+    "categoriesCatalogTitle": "Каталог категорий",
+    "categoriesCatalogHint": "Выберите действие для редактирования категории",
+    "loadingTitle": "Загрузка товаров",
+    "loadingDescription": "Получение данных каталога.",
+    "errorTitle": "Товары недоступны",
+    "errorDescription": "Не удалось загрузить товары из текущего сервиса.",
+    "emptyTitle": "Подходящий товар не найден",
+    "emptyDescription": "Измените поиск или комбинацию фильтров.",
+    "categoriesEmptyTitle": "Подходящая категория не найдена",
+    "categoriesEmptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+    "categoriesErrorTitle": "Категории недоступны",
+    "categoriesErrorDescription": "Не удалось загрузить категории из текущего сервиса.",
+    "categoryReorderError": "Не удалось сохранить порядок категорий.",
+    "categoryNoDescription": "Нет описания",
+    "columns": {
+      "product": "Товар",
+      "sku": "SKU",
+      "price": "Цена",
+      "priceAfterSubsidy": "Цена с субсидией",
+      "subsidyAmount": "Субсидия",
+      "currency": "Валюта",
+      "stock": "Минимальный запас",
+      "status": "Статус",
+      "updated": "Дата обновления",
+      "actions": "Действия"
+    },
+    "stockStatus": {
+      "in_stock": "В наличии",
+      "low_stock": "Мало",
+      "out_of_stock": "Нет в наличии"
+    },
+    "categoryColumns": {
+      "name": "Категория",
+      "code": "Код",
+      "sortOrder": "Порядок",
+      "status": "Статус",
+      "updated": "Дата обновления",
+      "actions": "Действия"
+    },
+    "noDescription": "Нет описания",
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить"
+    },
+    "categoryActions": {
+      "edit": "Редактировать",
+      "delete": "Удалить"
+    },
+    "categoryForm": {
+      "ariaLabel": "Форма добавления категории",
+      "eyebrow": "Форма категории",
+      "createTitle": "Новая категория",
+      "editTitle": "Редактировать категорию",
+      "createSubtitle": "Добавьте новую категорию для товаров.",
+      "editSubtitle": "Обновите данные категории.",
+      "name": "Название категории",
+      "namePlaceholder": "Например: солнечные панели",
+      "code": "Код",
+      "sortOrder": "Порядковый номер",
+      "sortOrderHint": "Меньшее число выше. 1 — самый верх.",
+      "description": "Описание",
+      "descriptionPlaceholder": "Краткое описание категории",
+      "active": "Активная категория",
+      "activeHint": "Переключите категорию в активное или неактивное состояние.",
+      "create": "Добавить категорию",
+      "save": "Сохранить изменения",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "requiredError": "Введите название категории.",
+      "sortOrderError": "Введите корректный порядковый номер.",
+      "saveError": "Не удалось сохранить категорию."
+    },
+    "categoryDeleteDialog": {
+      "ariaLabel": "Окно удаления категории",
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить категорию \"{{name}}\"?",
+      "description": "Это действие удалит категорию из списка и не может быть отменено.",
+      "confirm": "Удалить категорию",
+      "deleting": "Удаление..."
+    },
+    "detail": {
+      "eyebrow": "Профиль товара",
+      "titleFallback": "Детали товара",
+      "skuPrefix": "SKU",
+      "close": "Закрыть детали товара",
+      "loadingTitle": "Загрузка деталей товара",
+      "loadingDescription": "Получение профиля товара и метаданных.",
+      "errorTitle": "Товар недоступен",
+      "errorDescription": "Не удалось загрузить выбранный товар.",
+      "images": "Изображения товара",
+      "imagesDesc": "Прикреплённые изображения для каталога.",
+      "noImages": "Для товара не загружены изображения.",
+      "deleteImage": "Удалить изображение",
+      "sectionDetails": "Информация о товаре",
+      "sectionDetailsDesc": "Профиль каталога и наличие.",
+      "sectionLifecycle": "История",
+      "sectionLifecycleDesc": "История создания и обновлений.",
+      "sectionMetadata": "Метаданные",
+      "price": "Цена",
+      "subsidyEnabled": "Субсидия",
+      "subsidyAmount": "Сумма субсидии",
+      "priceAfterSubsidy": "Цена с субсидией",
+      "stockQuantity": "Количество товаров",
+      "description": "Описание",
+      "created": "Добавлен",
+      "updated": "Обновлён",
+      "reviewsEnabled": "Отзывы",
+      "noDescription": "Нет описания.",
+      "editProduct": "Редактировать товар",
+      "deleteProduct": "Удалить товар"
+    },
+    "form": {
+      "eyebrow": "Форма товара",
+      "createTitle": "Добавить товар",
+      "editTitle": "Редактировать товар",
+      "createSubtitle": "Добавьте новый товар в каталог.",
+      "editSubtitle": "Обновите данные выбранного товара.",
+      "close": "Закрыть форму товара",
+      "name": "Название товара",
+      "sku": "SKU",
+      "skuAutoHint": "SKU создаётся автоматически по категории.",
+      "description": "Описание",
+      "category": "Категория",
+      "categoryPlaceholder": "Например: care",
+      "price": "Цена",
+      "stockQuantity": "Количество товаров",
+      "currency": "Валюта",
+      "activeProduct": "Активный товар",
+      "activeProductHint": "Включите или выключите отображение товара в операциях.",
+      "recommendedProduct": "Рекомендуемый товар",
+      "recommendedProductHint": "Отметьте товар как рекомендуемый.",
+      "subsidyEnabled": "Субсидия включена",
+      "subsidyEnabledHint": "Включите или выключите субсидию для этого товара.",
+      "reviewsEnabled": "Принимать отзывы",
+      "reviewsEnabledHint": "Включите или отключите отзывы для этого товара.",
+      "currentImages": "Текущие изображения",
+      "images": "Изображения",
+      "primaryImage": "Основное изображение",
+      "otherImages": "Обычные изображения",
+      "selectedImages": "изображений выбрано",
+      "ordinaryImageOne": "Обычное изображение 1",
+      "ordinaryImageTwo": "Обычное изображение 2",
+      "removeImage": "Удалить изображение",
+      "imageDeleteError": "Не удалось удалить изображение.",
+      "noImages": "Изображения не найдены.",
+      "metadata": "Метаданные (JSON)",
+      "imagesMinError": "При добавлении товара выберите минимум 1 изображение.",
+      "imagesMaxError": "При добавлении товара можно выбрать не более 3 изображений.",
+      "createSubmit": "Добавить товар",
+      "editSubmit": "Сохранить изменения",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "requiredError": "Заполните обязательные поля.",
+      "metadataError": "Метаданные должны быть только в формате JSON object.",
+      "priceError": "Цена должна быть положительным числом или нулём.",
+      "stockError": "Количество товаров должно быть целым положительным числом или нулём.",
+      "saveError": "Не удалось сохранить товар."
+    },
+    "deleteDialog": {
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить товар {{name}}?",
+      "description": "Это действие удалит товар из каталога. Отменить его невозможно.",
+      "confirm": "Удалить товар",
+      "deleting": "Удаление...",
+      "orderCheckInProgress": "Проверяется связь с заказами. Пожалуйста, подождите.",
+      "linkedOrderError": "Этот товар используется в заказах. Удалить нельзя, переведите товар в неактивный статус.",
+      "deleteError": "Не удалось удалить товар."
+    }
+  },
+  "orders": {
+    "title": "Заказы",
+    "subtitle": "Управляйте и контролируйте поток заказов в одной панели.",
+    "newOrder": "Новый заказ",
+    "allStatuses": "Все статусы",
+    "allSources": "Все источники",
+    "allFulfillmentMethods": "Все способы выполнения",
+    "status": "Статус",
+    "source": "Источник",
+    "fulfillmentMethod": "Способ выполнения",
+    "fulfillmentDelivery": "Доставка",
+    "fulfillmentPickup": "Самовывоз",
+    "aiGenerated": "Добавлено ИИ",
+    "aiAll": "Все",
+    "aiYes": "ИИ",
+    "aiNo": "Вручную",
+    "orderBy": "Сортировка",
+    "updatedNewest": "Обновлено (сначала новые)",
+    "updatedOldest": "Обновлено (сначала старые)",
+    "createdNewest": "Добавлено (сначала новые)",
+    "createdOldest": "Добавлено (сначала старые)",
+    "totalHighLow": "Сумма (по убыванию)",
+    "totalLowHigh": "Сумма (по возрастанию)",
+    "searchPlaceholder": "Поиск по контакту, телефону, адресу или ID...",
+    "records": "записей",
+    "views": {
+      "orders": "Заказы",
+      "reviews": "Отзывы"
+    },
+    "reviews": {
+      "boardTitle": "Список отзывов",
+      "emptyTitle": "Отзывы не найдены",
+      "emptyDescription": "Отзывов пока нет.",
+      "submittedNewest": "Прислано (сначала новые)",
+      "submittedOldest": "Прислано (сначала старые)",
+      "searchPlaceholder": "Поиск по отзыву или клиенту...",
+      "records": "записей",
+      "columns": {
+        "reviewer": "Автор отзыва",
+        "comment": "Отзыв",
+        "source": "Источник",
+        "submittedAt": "Дата отправки",
+        "actions": "Действия"
+      },
+      "actions": {
+        "delete": "Удалить отзыв"
+      },
+      "deleteDialog": {
+        "eyebrow": "Удаление отзыва",
+        "title": "Удалить отзыв для \"{{id}}\"",
+        "description": "Это действие необратимо. Отзыв будет полностью удалён.",
+        "deleting": "Удаление...",
+        "confirm": "Удалить отзыв"
+      }
+    },
+    "activeFilters": "активных фильтров",
+    "detailOpen": "Детали открыты",
+    "itemsSuffix": "позиций",
+    "boardTitle": "Список заказов",
+    "boardHint": "Нажмите на строку, чтобы открыть детали",
+    "loadingTitle": "Загрузка заказов",
+    "loadingDescription": "Подготовка списка заказов и фильтров.",
+    "errorTitle": "Заказы недоступны",
+    "errorDescription": "Не удалось загрузить заказы из текущего сервиса.",
+    "emptyTitle": "Подходящий заказ не найден",
+    "emptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+    "columns": {
+      "order": "Заказ",
+      "customerContact": "Клиент / Контакт",
+      "source": "Источник",
+      "status": "Статус",
+      "totalAmount": "Общая сумма",
+      "aiGenerated": "ИИ",
+      "updated": "Дата обновления",
+      "actions": "Действия"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "recalculate": "Пересчитать",
+      "recalculating": "Пересчёт..."
+    },
+    "detail": {
+      "ariaLabel": "Детали заказа",
+      "eyebrow": "Профиль заказа",
+      "titleFallback": "Детали заказа",
+      "close": "Закрыть детали заказа",
+      "aiYes": "Добавлено ИИ",
+      "aiNo": "Добавлено вручную",
+      "loadingTitle": "Загрузка деталей заказа",
+      "loadingDescription": "Получение профиля заказа и позиций.",
+      "errorTitle": "Заказ недоступен",
+      "errorDescription": "Не удалось загрузить выбранный заказ.",
+      "sectionContact": "Контакт и связь",
+      "sectionContactDescription": "Данные клиента, лида и доставки.",
+      "contactPhone": "Телефон контакта",
+      "shippingAddress": "Адрес доставки",
+      "fulfillmentMethod": "Способ выполнения",
+      "customer": "Клиент",
+      "lead": "Лид",
+      "noCustomer": "Клиент не назначен",
+      "noLead": "Лид не связан",
+      "sectionItems": "Позиции заказа",
+      "sectionItemsDescription": "Разбивка по товарам, количеству и ценам.",
+      "itemProduct": "Товар",
+      "itemQty": "Количество",
+      "itemUnitPrice": "Цена за единицу",
+      "itemLineTotal": "Итог по строке",
+      "sectionLifecycle": "История оплаты",
+      "createdAt": "Добавлен",
+      "updatedAt": "Обновлён",
+      "paidAmount": "Оплаченная сумма",
+      "notes": "Примечания",
+      "noNotes": "Примечания не оставлены.",
+      "recalculateError": "Не удалось пересчитать заказ."
+    },
+    "form": {
+      "eyebrow": "Форма заказа",
+      "createTitle": "Добавить заказ",
+      "editTitle": "Редактировать заказ",
+      "createSubtitle": "Быстро добавьте новый заказ.",
+      "editSubtitle": "Обновите данные заказа.",
+      "close": "Закрыть форму заказа",
+      "customer": "Клиент",
+      "lead": "Лид",
+      "noneCustomer": "Без клиента",
+      "noneLead": "Без лида",
+      "status": "Статус",
+      "source": "Источник",
+      "fulfillmentMethod": "Способ выполнения",
+      "contactName": "Имя контакта",
+      "contactPhone": "Телефон контакта",
+      "shippingAddress": "Адрес доставки",
+      "notes": "Примечание",
+      "notesPlaceholder": "Внутренние заметки и напоминания по доставке...",
+      "aiGenerated": "Заказ, добавленный ИИ",
+      "aiGeneratedHint": "Включите, если заказ был создан ИИ.",
+      "itemsTitle": "Позиции заказа",
+      "addItem": "Добавить позицию",
+      "removeItem": "Удалить позицию",
+      "noProducts": "Товары недоступны. Сначала создайте товар.",
+      "product": "Товар",
+      "quantity": "Количество",
+      "unitPrice": "Цена за единицу",
+      "totalAmount": "Общая сумма",
+      "createSubmit": "Добавить заказ",
+      "editSubmit": "Сохранить изменения",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "requiredError": "Заполните обязательные поля.",
+      "itemsRequired": "Добавьте хотя бы одну позицию.",
+      "productRequired": "Выберите товар для каждой позиции.",
+      "saveError": "Не удалось сохранить заказ."
+    },
+    "deleteDialog": {
+      "ariaLabel": "Окно удаления заказа",
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить заказ {{id}}?",
+      "description": "Это действие удалит заказ из списка и не может быть отменено.",
+      "confirm": "Удалить заказ",
+      "deleting": "Удаление..."
+    }
+  },
+  "couriers": {
+    "title": "Курьеры",
+    "subtitle": "Управляйте профилями курьеров и назначениями доставки в одном окне.",
+    "tabs": {
+      "couriers": "Курьеры",
+      "orders": "Заказы курьеров"
+    },
+    "newCourier": "Новый курьер",
+    "records": "записей",
+    "activeFilters": "активных фильтров",
+    "courierDetailOpen": "Детали курьера открыты",
+    "orderDetailOpen": "Детали заказа открыты",
+    "searchCourierPlaceholder": "Поиск по имени курьера, username, телефону или telegram ID...",
+    "searchOrderPlaceholder": "Поиск по заказу, курьеру, статусу или причине...",
+    "filters": {
+      "status": "Статус",
+      "courier": "Курьер",
+      "orderBy": "Сортировка"
+    },
+    "status": {
+      "all": "Все",
+      "active": "Активные",
+      "inactive": "Неактивные"
+    },
+    "orderStatus": {
+      "all": "Все статусы",
+      "pending": "В ожидании",
+      "assigned": "Назначен",
+      "in_transit": "В пути",
+      "delivered": "Доставлен"
+    },
+    "ordering": {
+      "updatedNewest": "Обновлено (сначала новые)",
+      "updatedOldest": "Обновлено (сначала старые)",
+      "createdNewest": "Добавлено (сначала новые)",
+      "createdOldest": "Добавлено (сначала старые)",
+      "nameAsc": "Имя (A-Z)",
+      "nameDesc": "Имя (Z-A)",
+      "statusAsc": "Статус (A-Z)",
+      "statusDesc": "Статус (Z-A)"
+    },
+    "courierListTitle": "Каталог курьеров",
+    "courierListHint": "Нажмите на строку, чтобы открыть профиль.",
+    "courierLoadingTitle": "Загрузка курьеров",
+    "courierLoadingDescription": "Получение списка курьеров и их статусов.",
+    "courierErrorTitle": "Курьеры недоступны",
+    "courierErrorDescription": "Не удалось загрузить курьеров из текущего сервиса.",
+    "courierEmptyTitle": "Подходящий курьер не найден",
+    "courierEmptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+    "orderListTitle": "Заказы курьеров",
+    "orderListHint": "Откройте строку для обновления.",
+    "orderLoadingTitle": "Загрузка заказов курьеров",
+    "orderLoadingDescription": "Получение назначений доставки и статусов.",
+    "orderErrorTitle": "Заказы курьеров недоступны",
+    "orderErrorDescription": "Не удалось загрузить заказы курьеров из текущего сервиса.",
+    "orderEmptyTitle": "Подходящий заказ курьера не найден",
+    "orderEmptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+    "columns": {
+      "courier": "Курьер",
+      "phone": "Телефон",
+      "telegramId": "Telegram ID",
+      "status": "Статус",
+      "updated": "Обновлён",
+      "actions": "Действия",
+      "order": "Заказ",
+      "cancelReason": "Причина отмены"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "open": "Открыть",
+      "setActive": "Активировать",
+      "setInactive": "Деактивировать",
+      "savePatch": "Сохранить",
+      "replacePut": "Заменить",
+      "repostOffer": "Переотправить предложение"
+    },
+    "form": {
+      "eyebrow": "Форма курьера",
+      "titleCreate": "Добавить курьера",
+      "titleEdit": "Редактировать курьера",
+      "close": "Закрыть форму курьера",
+      "firstName": "Имя",
+      "telegramUserId": "Telegram ID пользователя",
+      "username": "Username",
+      "phone": "Телефон",
+      "isActive": "Активный курьер",
+      "isActiveHint": "Неактивные курьеры исключаются из назначений.",
+      "metadata": "Метаданные (JSON)",
+      "firstNameRequired": "Имя обязательно.",
+      "metadataObjectError": "Метаданные должны быть JSON object.",
+      "metadataJsonError": "Метаданные должны быть валидным JSON.",
+      "createSubmit": "Добавить курьера",
+      "editSubmit": "Сохранить изменения",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "saveError": "Не удалось сохранить курьера."
+    },
+    "deleteDialog": {
+      "eyebrow": "Удаление курьера",
+      "title": "Удалить курьера {{name}}",
+      "description": "Это действие необратимо. Запись курьера будет удалена.",
+      "confirm": "Да, удалить",
+      "deleting": "Удаление..."
+    },
+    "detail": {
+      "ariaLabel": "Детали курьера",
+      "title": "Профиль курьера",
+      "close": "Закрыть детали курьера",
+      "loadingTitle": "Загрузка деталей курьера",
+      "loadingDescription": "Получение профиля выбранного курьера.",
+      "errorTitle": "Курьер недоступен",
+      "errorDescription": "Не удалось загрузить выбранного курьера.",
+      "contact": "Контакт",
+      "metadata": "Метаданные",
+      "created": "Создан",
+      "updated": "Обновлён",
+      "noMetadata": "Метаданные отсутствуют.",
+      "readOnlyHint": "Режим только для чтения. Для редактирования требуется право управления курьерами."
+    },
+    "orderDetail": {
+      "ariaLabel": "Детали заказа курьера",
+      "title": "Заказ курьера",
+      "close": "Закрыть детали заказа курьера",
+      "loadingTitle": "Загрузка заказа курьера",
+      "loadingDescription": "Получение деталей назначения заказа.",
+      "errorTitle": "Заказ курьера недоступен",
+      "errorDescription": "Не удалось загрузить выбранный заказ курьера.",
+      "orderSummaryTitle": "Детали заказа",
+      "orderSummaryDescription": "Контакт, адрес и состав заказа.",
+      "orderId": "ID заказа",
+      "status": "Статус",
+      "awaitingCancelReason": "Ожидается причина отмены",
+      "cancelReason": "Причина отмены",
+      "contactName": "Имя контакта",
+      "contactPhone": "Телефон контакта",
+      "shippingAddress": "Адрес доставки",
+      "totalAmount": "Общая сумма",
+      "items": "Товары заказа",
+      "itemColumns": {
+        "product": "Товар",
+        "quantity": "Количество",
+        "unitPrice": "Цена за единицу",
+        "lineTotal": "Итог по строке"
+      },
+      "noItems": "Товары в заказе отсутствуют.",
+      "metadata": "Метаданные (JSON)",
+      "acceptedAt": "Принят",
+      "inTransitAt": "В пути",
+      "deliveredAt": "Доставлен",
+      "updated": "Обновлён",
+      "replacing": "Замена...",
+      "reposting": "Переотправка...",
+      "orderIdRequired": "Для PUT требуется ID заказа.",
+      "saveError": "Не удалось обновить заказ курьера.",
+      "repostError": "Не удалось переотправить предложение.",
+      "readOnlyHint": "Режим только для чтения. Для обновления требуется право управления курьерами."
+    }
+  },
+  "agents": {
+    "eyebrow": "Центр агентов",
+    "title": "Агенты",
+    "subtitle": "Управляйте профилями агентов, статусом активности и закреплёнными товарами в одном окне.",
+    "newAgent": "Новый агент",
+    "records": "записей",
+    "activeFilters": "активных фильтров",
+    "detailOpen": "Детали агента открыты",
+    "searchPlaceholder": "Поиск по имени агента, телефону, telegram chat ID или username...",
+    "boardTitle": "Список агентов",
+    "boardHint": "Нажмите на строку, чтобы открыть детали.",
+    "emptyTitle": "Подходящий агент не найден",
+    "emptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+    "errorTitle": "Агенты недоступны",
+    "errorDescription": "Не удалось загрузить агентов из текущего сервиса.",
+    "loadingTitle": "Загрузка агентов",
+    "loadingDescription": "Получение записей агентов и закреплённых товаров.",
+    "productsCount": "{{count}} товаров",
+    "noProducts": "Товары не закреплены",
+    "filters": {
+      "status": "Статус",
+      "products": "Товар",
+      "allProducts": "Все товары",
+      "selectedProducts": "Выбрано: {{count}}",
+      "orderBy": "Сортировка"
+    },
+    "status": {
+      "all": "Все",
+      "active": "Активные",
+      "inactive": "Неактивные"
+    },
+    "ordering": {
+      "updatedNewest": "Обновлено (сначала новые)",
+      "updatedOldest": "Обновлено (сначала старые)",
+      "createdNewest": "Добавлено (сначала новые)",
+      "createdOldest": "Добавлено (сначала старые)",
+      "nameAsc": "Имя (A-Z)",
+      "nameDesc": "Имя (Z-A)"
+    },
+    "columns": {
+      "agent": "Агент",
+      "phone": "Телефон",
+      "telegramChatId": "Telegram chat ID",
+      "telegramUsername": "Telegram username",
+      "products": "Товары",
+      "status": "Статус",
+      "updated": "Обновлён",
+      "actions": "Действия"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить",
+      "setActive": "Активировать",
+      "setInactive": "Деактивировать"
+    },
+    "form": {
+      "eyebrow": "Форма агента",
+      "titleCreate": "Добавить агента",
+      "titleEdit": "Редактировать агента",
+      "close": "Закрыть форму агента",
+      "fullName": "Полное имя",
+      "phone": "Телефон",
+      "telegramChatId": "Telegram chat ID",
+      "telegramUsername": "Telegram username",
+      "isActive": "Активный агент",
+      "isActiveHint": "Неактивные агенты не используются в новых назначениях.",
+      "products": "Закреплённые товары",
+      "productsHint": "Выберите товары, с которыми работает агент.",
+      "noProducts": "Активные товары не найдены. Сначала добавьте товары.",
+      "fullNameRequired": "Полное имя обязательно.",
+      "createSubmit": "Добавить агента",
+      "editSubmit": "Сохранить изменения",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "saveError": "Не удалось сохранить агента."
+    },
+    "detail": {
+      "ariaLabel": "Детали агента",
+      "title": "Профиль агента",
+      "close": "Закрыть детали агента",
+      "loadingTitle": "Загрузка деталей агента",
+      "loadingDescription": "Получение профиля выбранного агента.",
+      "errorTitle": "Агент недоступен",
+      "errorDescription": "Не удалось загрузить выбранного агента.",
+      "products": "Закреплённые товары",
+      "noProducts": "Закреплённые товары отсутствуют.",
+      "metadata": "Метаданные",
+      "noMetadata": "Метаданные отсутствуют.",
+      "created": "Создан",
+      "updated": "Обновлён",
+      "readOnlyHint": "Режим только для чтения. Для редактирования требуется право управления агентами."
+    },
+    "deleteDialog": {
+      "eyebrow": "Удаление агента",
+      "title": "Удалить агента {{name}}",
+      "description": "Это действие необратимо. Запись агента будет удалена.",
+      "confirm": "Да, удалить",
+      "deleting": "Удаление..."
+    }
+  },
+  "payments": {
+    "title": "Платежи",
+    "subtitle": "Отслеживайте отправленные транзакции, проверяйте ожидающие и завершайте их статус.",
+    "newPayment": "Новый платёж",
+    "all": "Все",
+    "cancel": "Отмена",
+    "notAvailable": "Недоступно",
+    "records": "записей",
+    "activeFilters": "активных фильтров",
+    "detailOpen": "Детали открыты",
+    "searchPlaceholder": "Поиск по отправителю, последним 4 цифрам карты или номеру проверки...",
+    "status": "Статус",
+    "method": "Метод",
+    "order": "Заказ",
+    "orderPlaceholder": "order-001",
+    "orderBy": "Сортировка",
+    "boardTitle": "Список платежей",
+    "boardHint": "Нажмите на строку, чтобы посмотреть детали",
+    "emptyTitle": "Подходящий платёж не найден",
+    "emptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+    "errorTitle": "Платежи недоступны",
+    "errorDescription": "Не удалось загрузить платежи из текущего сервиса.",
+    "loadingTitle": "Загрузка платежей",
+    "loadingDescription": "Получение записей транзакций и статусов проверки.",
+    "noReference": "Нет номера проверки",
+    "columns": {
+      "payment": "Платёж",
+      "amount": "Сумма",
+      "method": "Метод",
+      "status": "Статус",
+      "submittedBy": "Отправитель",
+      "lastFourDigits": "Последние 4 цифры",
+      "order": "Заказ",
+      "updated": "Обновлён",
+      "actions": "Действия"
+    },
+    "ordering": {
+      "updatedNewest": "Обновлено (сначала новые)",
+      "updatedOldest": "Обновлено (сначала старые)",
+      "createdNewest": "Добавлено (сначала новые)",
+      "createdOldest": "Добавлено (сначала старые)",
+      "amountHighLow": "Сумма (по убыванию)",
+      "amountLowHigh": "Сумма (по возрастанию)"
+    },
+    "actions": {
+      "approve": "Подтвердить",
+      "reject": "Отклонить",
+      "verify": "Проверить",
+      "approving": "Подтверждение...",
+      "rejecting": "Отклонение...",
+      "verifying": "Проверка...",
+      "delete": "Удалить",
+      "deleteWithId": "Удалить платёж {{id}}",
+      "updateError": "Сейчас не удалось обновить статус платежа.",
+      "notFoundError": "Платёж не найден."
+    },
+    "detail": {
+      "ariaLabel": "Детали платежа",
+      "titleFallback": "Детали платежа",
+      "close": "Закрыть детали платежа",
+      "orderBadge": "Заказ: {{order}}",
+      "loadingTitle": "Загрузка деталей платежа",
+      "loadingDescription": "Получение временной линии транзакции и данных проверки.",
+      "errorTitle": "Платёж недоступен",
+      "errorDescription": "Не удалось загрузить выбранный платёж.",
+      "sectionOverview": "Общая информация",
+      "sectionOverviewDescription": "Основные данные платежа, аккаунта и связи с заказом.",
+      "submittedBy": "Отправитель",
+      "lastFourDigits": "Последние 4 цифры",
+      "verificationReference": "Номер проверки",
+      "reviewedBy": "Проверил",
+      "sectionScreenshot": "Скриншот чека",
+      "screenshotMissing": "Скриншот чека не прикреплён.",
+      "sectionLifecycle": "История",
+      "createdAt": "Добавлен",
+      "updatedAt": "Обновлён",
+      "reviewedAt": "Проверен",
+      "sectionMetadata": "Метаданные",
+      "readOnlyHint": "Режим только для чтения. Действия по проверке платежей доступны только платежным операторам.",
+      "screenshotAlt": "Скриншот чека для платежа {{id}}"
+    },
+    "form": {
+      "ariaLabel": "Форма добавления платежа",
+      "createTitle": "Добавить платёж",
+      "createSubtitle": "Добавьте новую запись платежа со статусом \"ожидается\".",
+      "close": "Закрыть форму добавления платежа",
+      "amount": "Сумма",
+      "method": "Метод",
+      "submittedBy": "Отправитель",
+      "submittedByPlaceholder": "Имя оператора",
+      "order": "Заказ",
+      "orderPlaceholder": "order-001",
+      "lastFourDigits": "Последние 4 цифры",
+      "verificationReference": "Номер проверки",
+      "verificationPlaceholder": "VRF-2026-10001",
+      "screenshot": "URL чека",
+      "screenshotPlaceholder": "https://...",
+      "metadata": "Метаданные (JSON)",
+      "metadataPlaceholder": "{\"source\":\"manual\",\"risk_score\":22}",
+      "createSubmit": "Добавить платёж",
+      "creating": "Добавление...",
+      "saveError": "Не удалось сохранить платёж.",
+      "amountError": "Сумма должна быть больше 0.",
+      "submittedByRequired": "Имя отправителя обязательно.",
+      "orderRequired": "ID заказа обязателен.",
+      "noEligibleOrders": "Нет подходящих заказов. Для добавления платежа нужен заказ, который не отменён, не завершён и не оплачен.",
+      "metadataObjectError": "Метаданные должны быть JSON object.",
+      "metadataValueError": "Значения метаданных могут быть только string/number/boolean/null.",
+      "metadataInvalid": "Неверный формат метаданных."
+    },
+    "deleteDialog": {
+      "ariaLabel": "Окно удаления платежа",
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить платёж {{id}}?",
+      "description": "Это действие полностью удалит платёж из системы.",
+      "confirm": "Удалить платёж",
+      "deleting": "Удаление..."
+    }
+  },
+  "aiSettings": {
+    "eyebrow": "Настройки ИИ",
+    "title": "Настройки ИИ",
+    "subtitle": "Управляйте поведением AI-агента, prompt и параметрами автоматизации.",
+    "newSetting": "Новая конфигурация",
+    "records": "конфигураций",
+    "activeFilters": "активных фильтров",
+    "searchPlaceholder": "Поиск по названию, модели или system prompt",
+    "listTitle": "Список конфигураций",
+    "listHint": "Одновременно активной может быть только одна конфигурация",
+    "emptyTitle": "Конфигурация не найдена",
+    "emptyDescription": "Измените фильтры и попробуйте снова.",
+    "loadingTitle": "Загрузка настроек ИИ",
+    "loadingDescription": "Получение конфигураций и данных активного профиля.",
+    "errorTitle": "Не удалось загрузить настройки ИИ",
+    "errorDescription": "Произошла ошибка при получении данных из сервиса.",
+    "autoOrderOn": "Автозаказ включён",
+    "autoOrderOff": "Автозаказ выключен",
+    "followUpOn": "Фоллоу-ап включён",
+    "followUpOff": "Фоллоу-ап выключен",
+    "filters": {
+      "allStatuses": "Все статусы",
+      "status": "Статус",
+      "ordering": "Сортировка"
+    },
+    "ordering": {
+      "updatedNewest": "Обновлено (сначала новые)",
+      "updatedOldest": "Обновлено (сначала старые)",
+      "createdNewest": "Добавлено (сначала новые)",
+      "createdOldest": "Добавлено (сначала старые)",
+      "nameAsc": "Название (A-Z)",
+      "nameDesc": "Название (Z-A)",
+      "temperatureHighLow": "Температура (по убыванию)",
+      "temperatureLowHigh": "Температура (по возрастанию)"
+    },
+    "columns": {
+      "name": "Название",
+      "model": "Модель",
+      "temperature": "Температура",
+      "autoOrder": "Автозаказ",
+      "followUp": "Фоллоу-ап",
+      "active": "Активно",
+      "updatedAt": "Обновлено",
+      "actions": "Действия"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "setActive": "Активировать",
+      "activating": "Активация...",
+      "activateError": "Не удалось активировать конфигурацию.",
+      "delete": "Удалить"
+    },
+    "form": {
+      "eyebrow": "Форма конфигурации",
+      "createTitle": "Добавить конфигурацию ИИ",
+      "editTitle": "Редактировать конфигурацию ИИ",
+      "createSubtitle": "Добавьте новый профиль ИИ и при необходимости сразу активируйте его.",
+      "editSubtitle": "Обновите параметры выбранного профиля ИИ.",
+      "close": "Закрыть форму конфигурации",
+      "name": "Название",
+      "namePlaceholder": "Например: Sales Assistant v4",
+      "modelName": "Название модели",
+      "systemPrompt": "System prompt",
+      "systemPromptPlaceholder": "Введите правила поведения и стиль AI-агента...",
+      "systemPromptHint": "Пишите чёткие, краткие и подходящие для бизнеса правила. Этот текст определяет основное поведение агента.",
+      "temperature": "Температура (0-1)",
+      "orderConfidenceThreshold": "Порог уверенности заказа (0-1)",
+      "followUpMinutes": "Задержка фоллоу-апа (в минутах)",
+      "followUpEnabled": "Включить фоллоу-ап",
+      "followUpHint": "Если включено, ИИ начнёт повторный контакт через указанное количество минут.",
+      "followUpMessage": "Сообщение фоллоу-апа",
+      "followUpMessagePlaceholder": "Например: Нужна ещё помощь?",
+      "followUpMessageHint": "Текст сообщения, которое будет отправлено клиенту при фоллоу-апе.",
+      "resumeAfterOperatorMinutes": "Продолжить после паузы оператора (в минутах)",
+      "autoOrderEnabled": "Автозаказ",
+      "autoOrderHint": "Если ИИ достаточно уверен, он автоматически подготовит заказ.",
+      "isActive": "Активная конфигурация",
+      "isActiveHint": "Если включено, другие активные конфигурации будут автоматически отключены.",
+      "requiredError": "Заполните обязательные поля.",
+      "temperatureError": "Температура должна быть в диапазоне от 0 до 1.",
+      "confidenceError": "Порог уверенности должен быть в диапазоне от 0 до 1.",
+      "followUpError": "При включённом фоллоу-апе значение минут должно быть больше 1.",
+      "followUpMessageError": "При включённом фоллоу-апе заполните текст сообщения.",
+      "resumeError": "Значение минут должно быть больше 1.",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "createSubmit": "Добавить конфигурацию",
+      "editSubmit": "Сохранить изменения",
+      "saveError": "Не удалось сохранить конфигурацию."
+    },
+    "detail": {
+      "ariaLabel": "Детали конфигурации ИИ",
+      "eyebrow": "Конфигурация ИИ",
+      "titleFallback": "Детали конфигурации",
+      "close": "Закрыть панель деталей",
+      "loadingTitle": "Загрузка конфигурации",
+      "loadingDescription": "Получение деталей профиля ИИ.",
+      "errorTitle": "Конфигурация не найдена",
+      "errorDescription": "Не удалось загрузить выбранный профиль.",
+      "behaviorTitle": "Параметры поведения",
+      "behaviorDescription": "Настройки модели, threshold и автоматизации.",
+      "updatedBy": "Пользователь, обновивший",
+      "createdAt": "Добавлено",
+      "updatedAt": "Обновлено",
+      "readOnlyHint": "Режим только для чтения. Прав на изменение нет."
+    },
+    "deleteDialog": {
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить конфигурацию \"{{name}}\"?",
+      "description": "Это действие удалит конфигурацию из списка. Удаление активной конфигурации не разрешено.",
+      "confirm": "Удалить конфигурацию",
+      "deleting": "Удаление..."
+    }
+  },
+  "integrations": {
+    "eyebrow": "Интеграции",
+    "title": "Интеграции",
+    "subtitle": "Управляйте подключениями Telegram и Instagram, контролируйте поток событий.",
+    "newConfig": "Новая конфигурация",
+    "configRecords": "конфигураций",
+    "eventRecords": "событий",
+    "loadingTitle": "Загрузка интеграций",
+    "loadingDescription": "Получение данных конфигураций и событий.",
+    "errorTitle": "Не удалось загрузить данные интеграции",
+    "errorDescription": "Произошла ошибка при подключении к сервису.",
+    "secret": "Секретный",
+    "public": "Открытый",
+    "processed": "Обработано",
+    "pending": "Ожидается",
+    "revealValue": "Показать",
+    "hideValue": "Скрыть",
+    "views": {
+      "configs": "Конфигурации",
+      "events": "События"
+    },
+    "providers": {
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "openai": "OpenAI"
+    },
+    "platforms": {
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "userbot": "Userbot",
+      "payment": "Платёж"
+    },
+    "filters": {
+      "allProviders": "Все провайдеры",
+      "allStatuses": "Все статусы",
+      "allTypes": "Все типы",
+      "allPlatforms": "Все платформы",
+      "allProcessed": "Все",
+      "provider": "Провайдер",
+      "status": "Статус",
+      "visibility": "Видимость",
+      "ordering": "Сортировка",
+      "platform": "Платформа",
+      "processed": "Статус обработки"
+    },
+    "ordering": {
+      "updatedNewest": "Обновлено (сначала новые)",
+      "updatedOldest": "Обновлено (сначала старые)",
+      "createdNewest": "Добавлено (сначала новые)",
+      "createdOldest": "Добавлено (сначала старые)",
+      "providerAsc": "Провайдер (A-Z)",
+      "providerDesc": "Провайдер (Z-A)",
+      "keyAsc": "Ключ (A-Z)",
+      "keyDesc": "Ключ (Z-A)",
+      "attemptsHighLow": "Попытки (по убыванию)",
+      "attemptsLowHigh": "Попытки (по возрастанию)"
+    },
+    "actions": {
+      "edit": "Редактировать",
+      "delete": "Удалить"
+    },
+    "configColumns": {
+      "provider": "Провайдер",
+      "key": "Ключ / Метка",
+      "value": "Значение",
+      "visibility": "Конфиденциальность",
+      "active": "Активно",
+      "updatedAt": "Обновлено",
+      "actions": "Действия"
+    },
+    "eventColumns": {
+      "platform": "Платформа",
+      "eventType": "Тип события",
+      "externalId": "External ID",
+      "processed": "Обработано",
+      "attempts": "Попытки",
+      "createdAt": "Добавлено"
+    },
+    "configSearchPlaceholder": "Поиск по провайдеру, ключу или метке",
+    "eventSearchPlaceholder": "Поиск по event_type или external_id",
+    "configEmptyTitle": "Конфигурация не найдена",
+    "configEmptyDescription": "Измените фильтры и попробуйте снова.",
+    "eventEmptyTitle": "События не найдены",
+    "eventEmptyDescription": "Проверьте поиск и фильтры и попробуйте снова.",
+    "configFields": {
+      "provider": "Провайдер",
+      "key": "Ключ",
+      "label": "Метка",
+      "value": "Значение",
+      "isSecret": "Секретное значение",
+      "isActive": "Активно",
+      "updatedBy": "Пользователь, обновивший",
+      "createdAt": "Добавлено",
+      "updatedAt": "Обновлено"
+    },
+    "eventFields": {
+      "platform": "Платформа",
+      "eventType": "Тип события",
+      "externalId": "External ID",
+      "eventKey": "Ключ события",
+      "processed": "Статус",
+      "attempts": "Попытки",
+      "errorMessage": "Ошибка",
+      "payload": "Payload",
+      "createdAt": "Добавлено",
+      "updatedAt": "Обновлено"
+    },
+    "configForm": {
+      "eyebrow": "Форма конфигурации",
+      "createTitle": "Добавить конфигурацию интеграции",
+      "editTitle": "Редактировать конфигурацию интеграции",
+      "createSubtitle": "Добавьте новую конфигурацию для Telegram, Instagram или OpenAI.",
+      "editSubtitle": "Обновите значения выбранной конфигурации.",
+      "close": "Закрыть форму конфигурации",
+      "requiredError": "Заполните обязательные поля.",
+      "saveError": "Не удалось сохранить конфигурацию.",
+      "creating": "Добавление...",
+      "saving": "Сохранение...",
+      "createSubmit": "Добавить конфигурацию",
+      "editSubmit": "Сохранить изменения",
+      "keyPlaceholder": "Например: webhook_secret",
+      "labelPlaceholder": "Например: Telegram Webhook Secret",
+      "valuePlaceholder": "Введите значение",
+      "secretHint": "Если включено, значение будет скрыто в списке.",
+      "activeHint": "Если активно, будет использоваться в потоке интеграции."
+    },
+    "configDetail": {
+      "ariaLabel": "Детали конфигурации интеграции",
+      "eyebrow": "Детали конфигурации",
+      "titleFallback": "Конфигурация",
+      "close": "Закрыть панель деталей",
+      "loadingTitle": "Загрузка конфигурации",
+      "loadingDescription": "Получение данных выбранной конфигурации.",
+      "errorTitle": "Конфигурация не найдена",
+      "errorDescription": "Не удалось загрузить выбранную запись.",
+      "configTitle": "Данные конфигурации",
+      "configDescription": "Проверьте подключение провайдера и параметры безопасности.",
+      "readOnlyHint": "Режим только для чтения. Прав на изменение нет."
+    },
+    "eventDetail": {
+      "ariaLabel": "Детали события интеграции",
+      "eyebrow": "Детали события",
+      "titleFallback": "Детали события",
+      "close": "Закрыть панель деталей",
+      "loadingTitle": "Загрузка события",
+      "loadingDescription": "Получение деталей выбранного события.",
+      "errorTitle": "Событие не найдено",
+      "errorDescription": "Не удалось загрузить выбранное событие.",
+      "eventInfo": "Информация о событии"
+    },
+    "deleteDialog": {
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить конфигурацию \"{{label}}\"?",
+      "description": "Это действие удалит конфигурацию из списка и не может быть отменено.",
+      "confirm": "Удалить конфигурацию",
+      "deleting": "Удаление..."
+    }
+  },
+  "logs": {
+    "columns": {
+      "type": "Тип",
+      "message": "Сообщение",
+      "createdAt": "Добавлено"
+    },
+    "detail": {
+      "ariaLabel": "Детали лога",
+      "eyebrow": "Запись лога",
+      "titleFallback": "Детали лога",
+      "close": "Закрыть детали",
+      "loadingTitle": "Загрузка лога",
+      "loadingDescription": "Получение данных выбранного лога.",
+      "errorTitle": "Лог не найден",
+      "errorDescription": "Не удалось загрузить выбранную запись лога.",
+      "metadataTitle": "Метаданные"
+    }
+  },
+  "profile": {
+    "eyebrow": "Аккаунт",
+    "title": "Профиль",
+    "subtitle": "Управляйте своим аккаунтом и личными настройками.",
+    "editProfile": "Редактировать профиль",
+    "loadingTitle": "Загрузка профиля",
+    "loadingDescription": "Получение данных аккаунта.",
+    "errorTitle": "Профиль недоступен",
+    "errorDescription": "Не удалось загрузить данные аккаунта.",
+    "notSet": "Не указано",
+    "sections": {
+      "editProfile": "Редактировать профиль",
+      "contactInformation": "Контактная информация",
+      "accountDetails": "Детали аккаунта",
+      "permissions": "Разрешения",
+      "security": "Безопасность"
+    },
+    "fields": {
+      "fullName": "Полное имя",
+      "email": "Email",
+      "phone": "Телефон",
+      "role": "Роль",
+      "status": "Статус",
+      "userId": "ID пользователя",
+      "joined": "Дата добавления",
+      "lastActive": "Последняя активность"
+    },
+    "placeholders": {
+      "fullName": "Введите полное имя",
+      "email": "user@example.com",
+      "phone": "+998 90 000 0000",
+      "password": "Минимум 8 символов",
+      "confirmPassword": "Повторите пароль"
+    },
+    "accountStatus": {
+      "title": "Статус аккаунта",
+      "activeHint": "Ваш аккаунт активен и виден в системе.",
+      "inactiveHint": "Ваш аккаунт временно отключён."
+    },
+    "actions": {
+      "changePassword": "Сменить пароль",
+      "saveChanges": "Сохранить изменения",
+      "saving": "Сохранение..."
+    },
+    "password": {
+      "newPasswordTitle": "Новый пароль",
+      "password": "Пароль",
+      "confirmPassword": "Подтвердите пароль",
+      "mismatch": "Пароли не совпадают.",
+      "editModeHint": "Чтобы обновить пароль, используйте раздел в форме редактирования."
+    },
+    "permissions": {
+      "fullAccess": "Полный доступ доступен, отдельные коды разрешений не требуются.",
+      "noneAssigned": "Индивидуальные разрешения не назначены."
+    },
+    "security": {
+      "description": "Управляйте паролем и настройками безопасности."
+    }
+  },
+  "labels": {
+    "roles": {
+      "developer": "Разработчик",
+      "admin": "Администратор",
+      "operator": "Оператор"
+    },
+    "userStatus": {
+      "active": "Активный",
+      "inactive": "Неактивный",
+      "invited": "Приглашён"
+    },
+    "leadStatus": {
+      "new": "Новый",
+      "contacted": "Связались",
+      "qualified": "Квалифицирован",
+      "negotiating": "Переговоры",
+      "converted": "Конвертирован",
+      "lost": "Потерян",
+      "archived": "Архив"
+    },
+    "orderStatus": {
+      "all": "Все договоры",
+      "contract": "Договор",
+      "contracts": "Договоры",
+      "draft": "Черновик",
+      "waiting_payment": "Ожидается оплата",
+      "pending": "Ожидается",
+      "confirmed": "Подтверждён",
+      "paid": "Оплачен",
+      "completed": "Завершён",
+      "cancelled": "Отменён"
+    },
+    "paymentStatus": {
+      "unpaid": "Не оплачен",
+      "pending": "Ожидается",
+      "paid": "Оплачен",
+      "approved": "Подтверждён",
+      "rejected": "Отклонён",
+      "verified": "Проверен",
+      "failed": "Неуспешно",
+      "refunded": "Возвращён",
+      "partially_refunded": "Частично возвращён"
+    },
+    "paymentMethod": {
+      "manual": "Вручную",
+      "payme": "Payme",
+      "click": "Click"
+    },
+    "channels": {
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "website": "Веб-сайт",
+      "marketplace": "Маркетплейс",
+      "webchat": "Веб-чат",
+      "web": "Веб",
+      "referral": "Рекомендация",
+      "manual": "Вручную",
+      "other": "Другое"
+    },
+    "permissions": {
+      "can_access_chats": "Доступ к чатам",
+      "can_view_dashboard": "Просмотр dashboard",
+      "can_view_agents": "Просмотр агентов",
+      "can_manage_agents": "Управление агентами",
+      "can_view_couriers": "Просмотр курьеров",
+      "can_manage_couriers": "Управление курьерами",
+      "can_view_leads": "Просмотр лидов",
+      "can_manage_leads": "Управление лидами",
+      "can_view_customers": "Просмотр клиентов",
+      "can_manage_customers": "Управление клиентами",
+      "can_view_products": "Просмотр товаров",
+      "can_manage_products": "Управление товарами",
+      "can_view_orders": "Просмотр заказов",
+      "can_update_orders": "Обновление заказов",
+      "can_view_payments": "Просмотр платежей",
+      "can_manage_payments": "Управление платежами",
+      "can_chat": "Использование чата",
+      "can_view_notifications": "Просмотр уведомлений",
+      "can_view_conversations": "Просмотр диалогов",
+      "can_manage_conversations": "Управление диалогами",
+      "can_manage_users": "Управление пользователями",
+      "can_view_users": "Просмотр пользователей",
+      "can_view_clients": "Просмотр клиентов",
+      "can_manage_clients": "Управление клиентами",
+      "can_view_bookings": "Просмотр бронирований",
+      "can_manage_bookings": "Управление бронированиями",
+      "can_view_statuses": "Просмотр статусов",
+      "can_manage_statuses": "Управление статусами",
+      "can_view_settings": "Просмотр настроек",
+      "can_manage_settings": "Управление настройками",
+      "can_view_contracts": "Просмотр договоров",
+      "can_manage_contracts": "Управление договорами",
+      "can_manage_integrations": "Управление интеграциями",
+      "can_manage_ai_settings": "Управление настройками ИИ",
+      "can_view_logs": "Просмотр журналов",
+      "can_view_audit_logs": "Просмотр аудиторских журналов",
+      "dashboard": {
+        "view": "Панель управления"
+      },
+      "leads": {
+        "view": "Просмотр лидов",
+        "manage": "Управление лидами"
+      },
+      "clients": {
+        "view": "Просмотр клиентов",
+        "manage": "Управление клиентами"
+      },
+      "products": {
+        "view": "Просмотр товаров",
+        "manage": "Управление товарами"
+      },
+      "chats": {
+        "view": "Просмотр чатов",
+        "manage": "Управление чатами"
+      },
+      "contracts": {
+        "view": "Просмотр договоров",
+        "manage": "Управление договорами"
+      },
+      "notifications": {
+        "view": "Просмотр уведомлений",
+        "manage": "Управление уведомлениями"
+      },
+      "integrations": {
+        "view": "Просмотр интеграций",
+        "manage": "Управление интеграциями"
+      },
+      "ai": {
+        "view": "Просмотр настроек ИИ",
+        "manage": "Управление настройками ИИ"
+      },
+      "logs": {
+        "view": "Просмотр журналов"
+      },
+      "audit_logs": {
+        "view": "Просмотр аудиторских журналов"
+      },
+      "bookings": {
+        "view": "Просмотр бронирований",
+        "manage": "Управление бронированиями"
+      },
+      "conversations": {
+        "view": "Просмотр диалогов",
+        "manage": "Управление диалогами"
+      },
+      "settings": {
+        "view": "Просмотр настроек",
+        "manage": "Управление настройками"
+      },
+      "statuses": {
+        "view": "Просмотр статусов",
+        "manage": "Управление статусами"
+      },
+      "users": {
+        "view": "Просмотр пользователей",
+        "manage": "Управление пользователями"
+      }
+    },
+    "permissionDescriptions": {
+      "can_access_chats": "Разрешает доступ к разделу чатов и диалогов.",
+      "can_view_dashboard": "Разрешает просматривать статистику dashboard.",
+      "can_view_agents": "Разрешает просматривать список агентов и их детали.",
+      "can_manage_agents": "Разрешает добавлять, редактировать и удалять агентов.",
+      "can_view_couriers": "Разрешает просматривать курьеров и заказы курьеров.",
+      "can_manage_couriers": "Разрешает управлять курьерами и заказами курьеров.",
+      "can_view_leads": "Разрешает просматривать список лидов и их детали.",
+      "can_manage_leads": "Разрешает добавлять, редактировать и удалять лиды.",
+      "can_view_customers": "Разрешает просматривать данные клиентов.",
+      "can_manage_customers": "Разрешает добавлять, редактировать и удалять клиентов.",
+      "can_view_products": "Разрешает просматривать каталог товаров.",
+      "can_manage_products": "Разрешает добавлять, редактировать и удалять товары.",
+      "can_view_orders": "Разрешает просматривать список заказов и их детали.",
+      "can_update_orders": "Разрешает обновлять статус заказа и его детали.",
+      "can_view_payments": "Разрешает просматривать список платежей и их детали.",
+      "can_manage_payments": "Разрешает подтверждать, отклонять и управлять платежами.",
+      "can_chat": "Разрешает вести переписку через чат.",
+      "can_view_notifications": "Разрешает просматривать системные уведомления.",
+      "can_view_conversations": "Разрешает просматривать диалоги и сообщения.",
+      "can_manage_conversations": "Разрешает отвечать в диалогах и управлять ими.",
+      "can_manage_users": "Разрешает добавлять, редактировать и удалять пользователей.",
+      "can_view_users": "Разрешает просматривать список пользователей и профиль пользователя.",
+      "can_view_clients": "Разрешает просматривать список клиентов и карточки клиентов.",
+      "can_manage_clients": "Разрешает добавлять, редактировать и удалять клиентов.",
+      "can_view_bookings": "Разрешает просматривать список бронирований и карточки бронирований.",
+      "can_manage_bookings": "Разрешает создавать, редактировать и удалять бронирования.",
+      "can_view_statuses": "Разрешает просматривать список статусов.",
+      "can_manage_statuses": "Разрешает создавать и управлять статусами.",
+      "can_view_settings": "Разрешает просматривать раздел настроек.",
+      "can_manage_settings": "Разрешает управлять разделом настроек.",
+      "can_view_contracts": "Разрешает просматривать список договоров и их детали.",
+      "can_manage_contracts": "Разрешает создавать, редактировать и удалять договоры.",
+      "can_manage_integrations": "Разрешает управлять настройками интеграций.",
+      "can_manage_ai_settings": "Разрешает добавлять и редактировать настройки ИИ.",
+      "can_view_logs": "Разрешает просматривать системные журналы.",
+      "can_view_audit_logs": "Разрешает просматривать аудиторские журналы и историю изменений.",
+      "dashboard": {
+        "view": "Страницы панели управления и KPI"
+      },
+      "leads": {
+        "view": "Просмотр списка лидов и карточки лида",
+        "manage": "Создание, обновление и управление лидами"
+      },
+      "clients": {
+        "view": "Просмотр списка клиентов и карточки клиента",
+        "manage": "Создание, обновление и управление клиентами"
+      },
+      "products": {
+        "view": "Просмотр товаров и данных каталога",
+        "manage": "Создание, обновление и удаление товаров"
+      },
+      "chats": {
+        "view": "Просмотр чатов и сообщений",
+        "manage": "Ответы, пауза ИИ и управление чатами"
+      },
+      "contracts": {
+        "view": "Просмотр договоров и запросов на аудит",
+        "manage": "Создание, обновление и удаление договоров и аудитов"
+      },
+      "notifications": {
+        "view": "Просмотр списка уведомлений",
+        "manage": "Отметка уведомлений как прочитанных и удаление уведомлений"
+      },
+      "integrations": {
+        "view": "Просмотр настроек интеграций",
+        "manage": "Обновление настроек интеграций"
+      },
+      "ai": {
+        "view": "Просмотр настроек ИИ и активных конфигураций ИИ",
+        "manage": "Создание, обновление и удаление настроек ИИ"
+      },
+      "logs": {
+        "view": "Просмотр API- и ИИ-журналов"
+      },
+      "audit_logs": {
+        "view": "Просмотр аудиторских журналов и истории изменений"
+      },
+      "bookings": {
+        "view": "Просмотр списка бронирований и карточки брони",
+        "manage": "Создание, обновление и удаление бронирований"
+      },
+      "conversations": {
+        "view": "Просмотр диалогов и сообщений",
+        "manage": "Ответы в диалогах и управление ими"
+      },
+      "settings": {
+        "view": "Просмотр системных настроек",
+        "manage": "Обновление и управление системными настройками"
+      },
+      "statuses": {
+        "view": "Просмотр списка статусов",
+        "manage": "Создание, обновление и управление статусами"
+      },
+      "users": {
+        "view": "Просмотр списка пользователей и ролей",
+        "manage": "Создание, обновление и удаление пользователей"
+      }
+    }
+  },
+  "placeholders": {
+    "orders": {
+      "summary": "Раздел заказов будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль заказов",
+      "sectionDescription": "Этот раздел готов для списка заказов и управления статусами.",
+      "emptyTitle": "Интерфейс заказов ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс заказов."
+    },
+    "payments": {
+      "summary": "Раздел платежей будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль платежей",
+      "sectionDescription": "Этот раздел готов для управления транзакциями и статусами платежей.",
+      "emptyTitle": "Интерфейс платежей ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс платежей."
+    },
+    "chat": {
+      "summary": "Раздел чата будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль чата",
+      "sectionDescription": "Этот раздел готов для потока сообщений и общения операторов.",
+      "emptyTitle": "Интерфейс чата ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс чата."
+    },
+    "notifications": {
+      "summary": "Раздел уведомлений будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль уведомлений",
+      "sectionDescription": "Этот раздел готов для системных оповещений.",
+      "emptyTitle": "Интерфейс уведомлений ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс уведомлений."
+    },
+    "users": {
+      "summary": "Раздел пользователей будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль пользователей",
+      "sectionDescription": "Этот раздел готов для управления командой и ролями.",
+      "emptyTitle": "Интерфейс пользователей ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс пользователей."
+    },
+    "integrations": {
+      "summary": "Раздел интеграций будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль интеграций",
+      "sectionDescription": "Этот раздел готов для подключений внешних сервисов.",
+      "emptyTitle": "Интерфейс интеграций ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс интеграций."
+    },
+    "aiSettings": {
+      "summary": "Раздел настроек ИИ будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль настроек ИИ",
+      "sectionDescription": "Этот раздел готов для настроек модели и prompt.",
+      "emptyTitle": "Интерфейс настроек ИИ ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс настроек ИИ."
+    },
+    "logs": {
+      "summary": "Раздел журналов будет полностью переведён в функциональное состояние в следующих задачах.",
+      "sectionTitle": "Модуль журналов",
+      "sectionDescription": "Этот раздел готов для аудита и технических записей.",
+      "emptyTitle": "Интерфейс журналов ещё не готов",
+      "emptyDescription": "На следующем этапе будет добавлен реальный интерфейс журналов."
+    },
+    "notFound": {
+      "summary": "Резервная страница для неизвестных маршрутов.",
+      "sectionTitle": "Страница не найдена",
+      "sectionDescription": "Эта публичная страница используется для перенаправления пользователя при ошибочных маршрутах.",
+      "emptyTitle": "Интерфейс 404 ещё не готов",
+      "emptyDescription": "На следующем этапе будут добавлены возможности повторного перенаправления пользователя."
+    }
+  },
+  "auditRequests": {
+    "eyebrow": "Энергоаудит",
+    "title": "Запросы аудита",
+    "subtitle": "Управляйте запросами на аудит, заключениями и статусами в одном окне.",
+    "newAuditRequest": "Новый запрос",
+    "visible": "видно",
+    "detailOpen": "Профиль открыт",
+    "listTitle": "Очередь запросов аудита",
+    "listHint": "Нажмите на строку, чтобы открыть профиль.",
+    "searchPlaceholder": "Поиск по клиенту, договору или телефону...",
+    "emptyTitle": "Запросы аудита не найдены",
+    "emptyDescription": "Измените параметры поиска или фильтры.",
+    "errorTitle": "Запросы аудита недоступны",
+    "errorDescription": "Не удалось загрузить список запросов аудита.",
+    "filters": {
+      "status": "Статус",
+      "client": "Клиент",
+      "clientPlaceholder": "Фильтр по имени клиента",
+      "requestedPower": "Мощность (кВт)",
+      "ordering": "Сортировка",
+      "allStatuses": "Все статусы",
+      "allClients": "Все клиенты"
+    },
+    "ordering": {
+      "updatedNewest": "Обновлено (сначала новые)",
+      "updatedOldest": "Обновлено (сначала старые)",
+      "createdNewest": "Создано (сначала новые)",
+      "createdOldest": "Создано (сначала старые)",
+      "powerHighLow": "Мощность (по убыванию)",
+      "powerLowHigh": "Мощность (по возрастанию)"
+    },
+    "statuses": {
+      "new": "Новый",
+      "moderation": "Модерация",
+      "published": "Опубликован",
+      "paid": "Оплачен",
+      "conclusion_given": "Заключение выдано"
+    },
+    "columns": {
+      "request": "Запрос",
+      "requestedPower": "Запрошенная мощность",
+      "contactPhone": "Контактный телефон",
+      "status": "Статус",
+      "updated": "Обновлено",
+      "actions": "Действия"
+    },
+    "fields": {
+      "client": "Клиент",
+      "contract": "Договор",
+      "requestedPower": "Запрошенная мощность (кВт)",
+      "status": "Статус",
+      "contactPhone": "Контактный телефон",
+      "siteAddress": "Адрес объекта",
+      "notes": "Примечание",
+      "conclusion": "Заключение",
+      "created": "Создан",
+      "updated": "Обновлен"
+    },
+    "form": {
+      "eyebrow": "Форма запроса аудита",
+      "createTitle": "Новый запрос аудита",
+      "editTitle": "Редактирование запроса аудита",
+      "close": "Закрыть форму",
+      "clientPlaceholder": "Выберите клиента",
+      "contractPlaceholder": "Выберите договор",
+      "requiredError": "Заполните обязательные поля: клиент, договор и мощность.",
+      "saveError": "Не удалось сохранить запрос аудита.",
+      "saving": "Сохранение...",
+      "createSubmit": "Создать запрос",
+      "editSubmit": "Сохранить изменения"
+    },
+    "detail": {
+      "eyebrow": "Профиль запроса аудита",
+      "close": "Закрыть панель деталей",
+      "loadingTitle": "Загрузка запроса аудита",
+      "loadingDescription": "Получаем данные запроса аудита.",
+      "errorTitle": "Запрос аудита не найден",
+      "errorDescription": "Выбранный запрос недоступен или удален."
+    },
+    "deleteDialog": {
+      "eyebrow": "Подтверждение удаления",
+      "title": "Удалить запрос \"{{client}}\"?",
+      "description": "Это действие нельзя отменить.",
+      "deleting": "Удаление...",
+      "confirm": "Удалить запрос"
+    }
+  },
+  "contractsPage": {
+    "eyebrow": "Договоры",
+    "title": "Договоры",
+    "subtitle": "Управляйте статусами договоров, панелями и доставкой в одном окне.",
+    "newContract": "Новый договор",
+    "visible": "видно",
+    "detailOpen": "Профиль открыт",
+    "searchPlaceholder": "Поиск по договору, клиенту или телефону...",
+    "statusLabel": "Статус",
+    "panelLabel": "Панель",
+    "inverterLabel": "Инвертор",
+    "powerLabel": "Мощность (кВт)",
+    "allStatuses": "Все статусы",
+    "allPanels": "Все панели",
+    "allInverters": "Все инверторы",
+    "listTitle": "Каталог договоров",
+    "listHint": "Нажмите на строку для просмотра профиля.",
+    "errorTitle": "Договоры недоступны",
+    "errorDescription": "Не удалось загрузить список договоров.",
+    "columns": {
+      "title": "Договор",
+      "amount": "Сумма",
+      "panel": "Панель",
+      "inverter": "Инвертор",
+      "power": "Мощность",
+      "status": "Статус",
+      "updated": "Обновлено",
+      "actions": "Действия"
+    },
+    "statuses": {
+      "draft": "Черновик",
+      "audit_pending": "Аудит ожидается",
+      "audit_paid": "Аудит оплачен",
+      "moderation": "Модерация",
+      "contract_ready": "Договор готов",
+      "payment_pending": "Ожидает оплату",
+      "paid": "Оплачен",
+      "delivered": "Доставлен",
+      "sent": "Отправлен",
+      "signed": "Подписан",
+      "canceled": "Отменен"
+    },
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "pricing": {
+      "button": "Матрица цен",
+      "title": "Таблица цен",
+      "loadingTitle": "Загрузка...",
+      "loadingDescription": "Получаем данные матрицы.",
+      "emptyTitle": "Матрица пуста",
+      "emptyDescription": "Нет данных для отображения.",
+      "subsidy": "Субсидия",
+      "auditPowers": "Поддерживаемый аудит (кВт)",
+      "configurations": "конфигураций",
+      "power": "Мощность",
+      "view": "Открыть",
+      "basePrice": "Базовая цена",
+      "customerPrice": "Цена для клиента",
+      "audit": "Аудит",
+      "currency": "сум"
+    },
+    "form": {
+      "newClient": "Новый клиент",
+      "newClientName": "Имя клиента",
+      "newClientNamePlaceholder": "Например: Иван Петров",
+      "newClientPhone": "Телефон клиента",
+      "newClientPhonePlaceholder": "Например: +998901234567",
+      "newClientRequiredError": "Для нового клиента заполните имя, телефон и название договора.",
+      "subsidyRequiredError": "Заполните поле «Субсидия (%)»."
+    }
+  },
+  "operatorKpi": {
+    "eyebrow": "Эффективность",
+    "title": "KPI операторов",
+    "subtitle": "Показатели операторов за выбранный период.",
+    "records": "операторов",
+    "loadingTitle": "Загрузка статистики операторов",
+    "loadingDescription": "Получение KPI данных...",
+    "errorTitle": "Не удалось загрузить KPI",
+    "errorDescription": "Нет доступа или сервис недоступен.",
+    "emptyTitle": "Операторы не найдены",
+    "emptyDescription": "Попробуйте изменить диапазон дат.",
+    "filters": {
+      "dateFrom": "Дата с",
+      "dateTo": "Дата по"
+    },
+    "columns": {
+      "operator": "Оператор",
+      "contactedClients": "Клиенты",
+      "messagesSent": "Сообщения",
+      "contractClients": "Договоры",
+      "lostClients": "Потеряно",
+      "actions": "Действия"
+    },
+    "actions": {
+      "view": "Посмотреть KPI"
+    },
+    "detail": {
+      "ariaLabel": "Детали KPI оператора",
+      "eyebrow": "KPI оператора",
+      "close": "Закрыть",
+      "loadingTitle": "Загрузка KPI",
+      "loadingDescription": "Получение статистики оператора.",
+      "errorTitle": "Не удалось загрузить KPI",
+      "errorDescription": "Не удалось получить данные по оператору."
+    },
+    "metrics": {
+      "contactedClients": "Связались с клиентами",
+      "messagesSent": "Отправлено сообщений",
+      "contracts": "Договоры"
+    },
+    "distributions": {
+      "contractStatus": "Статус договоров",
+      "clientStatus": "Статус клиентов",
+      "sources": "Источники"
+    },
+    "recentClients": {
+      "title": "Недавние клиенты",
+      "subtitle": "Последние контакты за выбранный период.",
+      "emptyTitle": "Нет клиентов",
+      "emptyDescription": "Недавние контакты не найдены.",
+      "columns": {
+        "client": "Клиент",
+        "status": "Статус",
+        "source": "Источник",
+        "lastContact": "Последний контакт"
+      }
+    }
+  },
+  "clients": {
+    "importExport": {
+      "importClients": "Импорт",
+      "exportClients": "Экспорт",
+      "importTitle": "Импорт клиентов",
+      "importSubtitle": "Загрузите JSON-файл или вставьте JSON-массив клиентов.",
+      "uploadFile": "Загрузить файл",
+      "downloadTemplate": "Скачать шаблон",
+      "importPlaceholder": "[{\"full_name\":\"Иван Петров\",\"phone\":\"+998901234567\",\"region\":\"Toshkent\"}]",
+      "startImport": "Импортировать",
+      "importing": "Импорт...",
+      "close": "Закрыть",
+      "exportInProgress": "Экспорт...",
+      "importFileReadError": "Не удалось прочитать файл импорта.",
+      "invalidImportJson": "Некорректный JSON. Ожидается массив объектов.",
+      "importNoValidRows": "В данных нет валидных записей (нужно поле full_name).",
+      "exportFailed": "Не удалось экспортировать клиентов.",
+      "importFailed": "Не удалось импортировать клиентов.",
+      "exportSuccess": "Экспорт завершен: {{count}} записей.",
+      "importResult": "Импорт завершен. Успешно: {{success}}, с ошибкой: {{failed}}."
+    },
+    "page": {
+      "eyebrow": "Клиенты",
+      "title": "Клиенты",
+      "subtitle": "Ведите клиентов, отслеживайте статусы и работайте с карточками в едином пространстве.",
+      "newClient": "Новый клиент",
+      "visible": "видно",
+      "detailOpen": "Профиль открыт",
+      "errorTitle": "Клиенты недоступны",
+      "errorDescription": "Не удалось загрузить список клиентов."
+    }
+  },
+  "notifications": {
+    "eyebrow": "Уведомления",
+    "title": "Уведомления",
+    "subtitle": "Следите за важными событиями и обновлениями",
+    "loadingTitle": "Загрузка...",
+    "loadingDescription": "Загружается список уведомлений.",
+    "errorTitle": "Не удалось загрузить уведомления",
+    "errorDescription": "Обновите страницу и попробуйте снова.",
+    "activeFilters": "активных фильтра",
+    "detailOpen": "Панель деталей открыта",
+    "searchPlaceholder": "Поиск уведомления",
+    "listTitle": "Список уведомлений",
+    "listHint": "Непрочитанные выделяются отдельно",
+      "countSuffix": "шт.",
+    "filters": {
+      "allChannels": "Все каналы",
+      "all": "Все",
+      "read": "Прочитано",
+      "unread": "Не прочитано",
+      "channel": "Канал",
+      "status": "Статус",
+      "ordering": "Сортировка"
+    },
+    "ordering": {
+      "createdNewest": "Дата создания (новые)",
+      "createdOldest": "Дата создания (старые)",
+      "updatedNewest": "Дата обновления (новые)",
+      "updatedOldest": "Дата обновления (старые)"
+    },
+    "bulk": {
+      "markAllRead": "Прочитать все",
+      "markingAllRead": "Отмечаем...",
+      "deleteAll": "Удалить все",
+      "deletingAll": "Удаляем...",
+      "deleteAllConfirm": "Удалить все уведомления? Это действие нельзя отменить.",
+      "deleteOne": "Удалить",
+      "deletingOne": "Удаляем...",
+      "deleteOneConfirm": "Удалить это уведомление?"
+    },
+    "detailPanelAria": "Детали уведомления",
+    "itemEyebrow": "Уведомление",
+    "detailPanelTitle": "Детали уведомления",
+    "detailPanelClose": "Закрыть панель деталей",
+    "loadingDetailDescription": "Загружаются детали уведомления.",
+    "detailErrorTitle": "Уведомление не найдено",
+    "detailErrorDescription": "Не удалось загрузить выбранное уведомление.",
+    "detailMessageTitle": "Текст",
+    "detailMessageDescription": "Полный текст уведомления.",
+    "detailInfoTitle": "Детали",
+    "createdAt": "Создано",
+    "updatedAt": "Обновлено",
+    "user": "Пользователь",
+    "additionalInfo": "Дополнительно"
+  },
+  "chatPage": {
+    "title": "Чаты",
+    "countSuffix": "шт.",
+    "closeSessionAria": "Закрыть чат",
+    "ordering": {
+      "latestMessage": "Последнее сообщение (новые)",
+      "oldestMessage": "Последнее сообщение (старые)",
+      "newestCreated": "Добавлено (новые)",
+      "oldestCreated": "Добавлено (старые)"
+    },
+    "errors": {
+      "sessionLoad": "Не удалось загрузить данные чата.",
+      "messagesLoad": "Не удалось загрузить сообщения.",
+      "messageSend": "Сообщение не отправлено.",
+      "aiPause": "Не удалось приостановить AI.",
+      "aiResume": "Не удалось включить AI.",
+      "sessionDelete": "Не удалось удалить чат.",
+        "requestOperator": "Запрос оператора не отправлен."
+    },
+    "confirmations": {
+      "deleteSession": "Удалить этот чат и всю его историю?"
+    },
+    "filters": {
+      "searchPlaceholder": "Поиск по чату, клиенту или внешнему ID",
+      "channel": "Канал",
+      "allChannels": "Все каналы",
+      "allChannelsShort": "Все",
+      "operator": "Оператор",
+      "activeOperator": "Активный оператор",
+      "inactiveOperator": "Неактивный оператор",
+      "sorting": "Сортировка"
+    },
+    "channels": {
+      "web": "Веб",
+      "manual": "Вручную"
+    },
+    "states": {
+      "open": "Открыт",
+      "pending": "В ожидании",
+      "resolved": "Завершен"
+    },
+    "sessionList": {
+      "loadingTitle": "Загрузка чатов",
+      "loadingDescription": "Получаем список сессий чата.",
+      "errorTitle": "Не удалось загрузить чаты",
+      "errorDescription": "Попробуйте обновить список сессий.",
+      "emptyTitle": "Чаты не найдены",
+      "emptyDescription": "Измените поиск или фильтры и попробуйте снова.",
+      "unknownChat": "Неизвестный чат",
+      "noTime": "Нет времени",
+      "noMessage": "Нет сообщений",
+      "operatorRequired": "Нужен оператор"
+    },
+    "workspace": {
+      "selectDate": "Выберите дату",
+      "invalidTime": "Введите корректное время.",
+      "futureTime": "Время должно быть позже текущего.",
+      "resumeAi": "Включить AI",
+      "pauseAiTime": "Выбрать время паузы AI",
+      "deleteSession": "Удалить сессию",
+      "pauseUntil": "До какого времени приостановить AI",
+      "cancel": "Отмена",
+      "minuteShort": "мин",
+      "messageLabel": "Текст сообщения",
+      "attachedImages": "Прикрепленные фото",
+      "attachedImage": "Прикрепленное фото",
+      "close": "Закрыть",
+      "emptyChatTitle": "Чат не выбран",
+      "emptyChatDescription": "Выберите чат из списка слева.",
+      "openProfile": "Открыть профиль клиента",
+      "aiOnAction": "Включить",
+      "aiOffAction": "Остановить",
+      "aiPausedStatus": "AI приостановлен",
+      "saveLoading": "Сохраняется...",
+      "pauseSubmit": "Приостановить AI",
+      "loadingMessagesTitle": "Загрузка сообщений",
+      "loadingMessagesDescription": "Получаем сообщения выбранного чата.",
+      "noMessagesTitle": "Сообщения не найдены",
+      "noMessagesDescription": "Для этой сессии пока нет сообщений.",
+      "messagePlaceholder": "Напишите сообщение...",
+      "sendAria": "Отправить",
+      "unknownCustomer": "Неизвестный клиент",
+      "person": {
+        "client": "Клиент",
+        "lead": "Лид",
+        "contact": "Контакт"
+      },
+      "sender": {
+        "customer": "Клиент",
+        "ai": "AI ассистент",
+        "operator": "Оператор",
+        "system": "Система"
+      },
+      "timeUnavailable": "Недоступно",
+      "requestOperator": "Вызвать оператора",
+      "operatorRequested": "Запрос оператора отправлен"
+    }
+  }
+}
+
+
+
+

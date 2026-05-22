@@ -1,0 +1,2514 @@
+﻿{
+  "common": {
+    "appName": "Renaissance Clinic",
+    "loading": "Yuklanmoqda...",
+    "save": "Saqlash",
+    "clear": "Tozalash",
+    "cancel": "Bekor qilish",
+    "create": "Qo'shish",
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "search": "Qidirish",
+    "all": "Barchasi",
+    "yes": "Ha",
+    "no": "Yo'q",
+    "na": "Mavjud emas",
+    "active": "Faol",
+    "inactive": "Nofaol",
+    "unassigned": "Biriktirilmagan",
+    "notAvailable": "Mavjud emas",
+    "language": "Til",
+    "languages": {
+      "uz": "O'zbekcha",
+      "ru": "Ruscha"
+    }
+  },
+  "routes": {
+    "home": {
+      "title": "Bosh sahifa",
+      "description": "Sessiya holatiga qarab yo'naltirish sahifasi."
+    },
+    "login": {
+      "title": "Kirish",
+      "description": "Tizimga kirish sahifasi."
+    },
+    "access-denied": {
+      "title": "Kirish taqiqlangan",
+      "description": "Ruxsat berilmagan sahifalar uchun xabar."
+    },
+    "not-found": {
+      "title": "Sahifa topilmadi",
+      "description": "Noma'lum yo'nalishlar uchun zaxira sahifa."
+    },
+    "dashboard": {
+      "title": "Boshqaruv paneli",
+      "description": "Asosiy ko'rsatkichlar va umumiy analitika."
+    },
+    "leads": {
+      "title": "Lidlar",
+      "description": "Lidlarni boshqarish va kuzatish."
+    },
+    "customers": {
+      "title": "Mijozlar",
+      "description": "Mijozlar ro'yxati va profillari."
+    },
+    "clients": {
+      "title": "Mijozlar",
+      "description": "Mijozlar ro'yxati va profillari."
+    },
+    "products": {
+      "title": "Mahsulotlar",
+      "description": "Katalog, narx va zaxira boshqaruvi."
+    },
+    "contracts": {
+      "title": "Shartnomalar",
+      "description": "Shartnomalar va hujjatlar holatini boshqarish."
+    },
+    "orders": {
+      "title": "Buyurtmalar",
+      "description": "Buyurtmalarni boshqarish."
+    },
+    "couriers": {
+      "title": "Kuryerlar",
+      "description": "Kuryer profillari va yetkazib berish tayinlovlarini boshqarish."
+    },
+    "agents": {
+      "title": "Agentlar",
+      "description": "Agent profillari va biriktirilgan mahsulotlarni boshqarish."
+    },
+    "payments": {
+      "title": "To'lovlar",
+      "description": "To'lov holati va tranzaksiyalar."
+    },
+    "chat": {
+      "title": "Chat",
+      "description": "Muloqot va xabarlar oynasi."
+    },
+    "notifications": {
+      "title": "Bildirishnomalar",
+      "description": "Muhim hodisalar va ogohlantirishlar."
+    },
+    "profile": {
+      "title": "Profil",
+      "description": "Foydalanuvchi sozlamalari va ma'lumotlari."
+    },
+    "users": {
+      "title": "Foydalanuvchilar",
+      "description": "Jamoa a'zolari va ruxsatlar boshqaruvi."
+    },
+    "operator-kpi": {
+      "title": "Operator KPI",
+      "description": "Operatorlar samaradorligi va ko'rsatkichlari."
+    },
+    "integrations": {
+      "title": "Integratsiyalar",
+      "description": "Tashqi xizmatlar ulanishlari."
+    },
+    "ai-settings": {
+      "title": "AI sozlamalari",
+      "description": "Sun'iy intellekt konfiguratsiyasi."
+    },
+    "logs": {
+      "title": "Jurnallar",
+      "description": "Tizim hodisalari va audit jurnallari."
+    },
+    "audit-requests": {
+      "title": "Audit so'rovlari",
+      "description": "Energiya auditi so'rovlari va xulosa jarayoni."
+    }
+  },
+  "navigation": {
+    "groups": {
+      "main": "Ish joyi",
+      "operations": "Jarayonlar",
+      "communication": "Aloqa",
+      "system": "Boshqaruv"
+    },
+    "captions": {
+      "dashboard": "Umumiy",
+      "profile": "Hisob",
+      "users": "Ruxsatlar",
+      "integrations": "Ulanishlar",
+      "leads": "Lid oqimi",
+      "customers": "Mijozlar",
+      "clients": "Mijozlar",
+      "products": "Katalog",
+      "contracts": "Shartnomalar",
+      "orders": "Buyurtmalar",
+      "couriers": "Yetkazib berish",
+      "agents": "Agentlar",
+      "payments": "Tranzaksiyalar",
+      "chat": "Xabarlar",
+      "notifications": "Ogohlantirishlar",
+      "ai-settings": "Ish joyi",
+      "logs": "Audit",
+      "audit-requests": "Energiya auditi"
+    }
+  },
+  "topbar": {
+    "menuOpen": "Navigatsiyani ochish",
+    "themeToggle": "Mavzuni almashtirish",
+    "refresh": "Sahifani yangilash",
+    "notifications": "Bildirishnomalar",
+    "profileMenu": "Profil menyusini ochish",
+    "profile": "Profil",
+    "logout": "Chiqish",
+    "noRole": "Rol yo'q",
+    "noEmail": "Email yo'q"
+  },
+  "auth": {
+    "login": {
+      "eyebrow": "Renaissance Clinic",
+      "subtitle": "CRM boshqaruv platformasi",
+      "usernameLabel": "Foydalanuvchi nomi",
+      "usernamePlaceholder": "developer",
+      "passwordLabel": "Parol",
+      "usernameError": "Foydalanuvchi nomini kiriting.",
+      "passwordError": "Parol kamida 8 ta belgidan iborat bo'lishi kerak.",
+      "invalidCredentials": "Foydalanuvchi nomi yoki parol noto'g'ri.",
+      "signIn": "Kirish",
+      "signingIn": "Kirilmoqda...",
+      "hidePassword": "Parolni yashirish",
+      "showPassword": "Parolni ko'rsatish",
+      "footerRights": "В© 2026 Renaissance Clinic. Barcha huquqlar himoyalangan.",
+      "footerPowered": "Ishlab chiquvchi"
+    },
+    "accessDenied": {
+      "eyebrow": "Kirish nazorati",
+      "title": "Kirish taqiqlangan",
+      "description": "Siz tizimga kirgansiz, lekin ushbu sahifa uchun ruxsatingiz yo'q.",
+      "currentAccount": "Joriy hisob:",
+      "notSignedIn": "Tizimga kirmagan",
+      "role": "Rol:",
+      "goAllowed": "Ruxsat etilgan sahifaga o'tish",
+      "signOut": "Chiqish",
+      "goLogin": "Kirish sahifasiga o'tish"
+    }
+  },
+  "shared": {
+    "table": {
+      "emptyTitle": "Yozuvlar topilmadi",
+      "emptyDescription": "Ma'lumot mavjud bo'lganda bu yerda ko'rsatiladi.",
+      "loadingTitle": "Jadval yuklanmoqda",
+      "loadingDescription": "Ma'lumotlar tayyor bo'lgach satrlar ko'rsatiladi.",
+      "reorderRow": "Tartibni o'zgartirish"
+    },
+    "searchInput": {
+      "placeholder": "Qidirish"
+    },
+    "pagination": {
+      "page": "Sahifa",
+      "of": "dan",
+      "totalItems": "jami yozuv",
+      "previous": "Oldingi",
+      "next": "Keyingi"
+    },
+    "filterSelect": {
+      "select": "Tanlang"
+    },
+    "emptyState": {
+      "title": "Ma'lumot topilmadi",
+      "description": "Kerakli ma'lumot hozircha mavjud emas."
+    },
+    "loadingState": {
+      "title": "Yuklanmoqda",
+      "description": "Ma'lumotlar olinmoqda."
+    },
+    "placeholder": {
+      "sectionTitle": "Sahifa poydevori",
+      "sectionDescription": "Bu modul uchun umumiy sahifa tuzilmasi namunasi.",
+      "emptyTitle": "Modul interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi vazifalarda bu bo'lim real kontent bilan to'ldiriladi.",
+      "nextStateTitle": "Keyingi holat",
+      "loadingPatternTitle": "Yuklanish holati",
+      "loadingPatternHeading": "Kelajakdagi ma'lumot yuklanishi",
+      "loadingPatternDescription": "Xizmatlar ulanganda bu holat vaqtinchalik yuklanish interfeysi sifatida ishlatiladi.",
+      "publicRoute": "Ommaviy sahifa",
+      "protectedRoute": "Himoyalangan sahifa",
+      "routeId": "Sahifa ID",
+      "navigation": "Navigatsiya",
+      "listed": "Ko'rsatiladi",
+      "hidden": "Yashirin",
+      "access": "Kirish",
+      "allowedRoles": "Ruxsat etilgan rollar",
+      "accessStrategy": "Kirish strategiyasi"
+    }
+  },
+  "dashboard": {
+    "loadingTitle": "Boshqaruv paneli yuklanmoqda",
+    "loadingDescription": "Analitika va taqsimotlar olinmoqda.",
+    "errorTitle": "Boshqaruv paneli mavjud emas",
+    "errorDescription": "Boshqaruv paneli ma'lumotlarini yuklab bo'lmadi.",
+    "title": "Boshqaruv paneli",
+    "welcome": "Xush kelibsiz",
+    "workspaceFallback": "Ish maydoni",
+    "totalLeads": "Jami mijozlar",
+    "sourceDataHint": "Yangi mijozlar qo'shilgandan keyin manba ma'lumotlari ko'rsatiladi.",
+    "metrics": {
+      "leads": "Mijozlar",
+      "customers": "Mijozlar",
+      "orders": "Buyurtmalar",
+      "pendingPayments": "Kutilayotgan to'lovlar",
+      "unreadMessages": "O'qilmagan xabarlar",
+      "revenue": "Daromad",
+      "newLeads": "yangi mijoz",
+      "newCustomers": "yangi mijoz",
+      "completed": "yakunlangan",
+      "pending": "kutilmoqda",
+      "activeSessions": "faol sessiya",
+      "collected": "yig'ilgan",
+      "collectedAmount": "Yig'ilgan summa",
+      "pipelineAmount": "Kutilayotgan summa",
+      "totalClients": "Jami mijozlar",
+      "activeBookings": "Faol tashriflar",
+      "cameCount": "Kelganlar",
+      "noShowCount": "Kelmaganlar"
+    },
+    "sections": {
+      "trend": "Trendlar",
+      "source": "Mijoz manbalari",
+      "leadStatus": "Mijoz holatlari",
+      "contractStatus": "Shartnoma holati",
+      "orderStatus": "Buyurtma holati",
+      "paymentStatus": "To'lov holati",
+      "chatChannels": "Chat kanallari",
+      "performance": "Asosiy ko'rsatkichlar",
+      "topProducts": "Top mahsulotlar",
+      "regionDemand": "Hududlar bo'yicha talab",
+      "managerPerformance": "Menejerlar samaradorligi"
+    },
+    "descriptions": {
+      "trend": "Tanlangan davr bo'yicha mijozlar, chatlar va shartnomalar dinamikasi.",
+      "source": "Telegram va qo'lda kiritilgan manbalar bo'yicha mijozlar taqsimoti.",
+      "leadStatus": "Jarayon bo'ylab holatlar taqsimoti.",
+      "contractStatus": "Shartnomalar holatlari bo'yicha taqsimot.",
+      "topProducts": "Sotuv hajmi bo'yicha eng ko'p sotilgan mahsulotlar ro'yxati.",
+      "regionDemand": "Tanlangan davrda hududlar kesimidagi mijozlar taqsimoti.",
+      "managerPerformance": "Menejerlar kesimida umumiy, yutilgan va yo'qotilgan mijozlar ko'rsatkichlari."
+    },
+    "performance": {
+      "leadConversionRate": "Mijoz konversiya darajasi",
+      "orderCompletionRate": "Buyurtma yakunlanish darajasi",
+      "averageOrderValue": "O'rtacha buyurtma qiymati"
+    },
+    "topProducts": {
+      "hint": "Tafsilotlar uchun mahsulotlar qatorini ko'ring",
+      "empty": "Top mahsulotlar hali mavjud emas.",
+      "columns": {
+        "product": "Mahsulot",
+        "sold": "Sotilgan",
+        "revenue": "Tushum"
+      }
+    },
+    "regionDemand": {
+      "empty": "Hududlar bo'yicha ma'lumot topilmadi.",
+      "emptyDescription": "Tanlangan davrda hududlar bo'yicha ma'lumot mavjud emas.",
+      "columns": {
+        "region": "Hudud",
+        "total": "Mijozlar"
+      }
+    },
+    "managerPerformance": {
+      "empty": "Menejerlar bo'yicha ma'lumot topilmadi.",
+      "emptyDescription": "Tanlangan davrda menejerlar bo'yicha ma'lumot mavjud emas.",
+      "columns": {
+        "manager": "Menejer",
+        "total": "Jami",
+        "won": "Yutilgan",
+        "lost": "Yo'qotilgan"
+      }
+    },
+    "noLeads": "Lidlar yo'q",
+    "filters": {
+      "intervalLabel": "Interval",
+      "dateFrom": "Boshlanish sanasi",
+      "dateTo": "Tugash sanasi",
+      "customRange": "Sana oralig'i",
+      "pickRange": "Sana oralig'ini tanlang",
+      "clearRange": "Tozalash",
+      "presets": {
+        "today": "Bugun",
+        "7d": "7D",
+        "30d": "30D"
+      },
+      "intervals": {
+        "day": "Kunlik",
+        "week": "Haftalik",
+        "month": "Oylik"
+      }
+    },
+    "publicApi": {
+      "title": "Ommaviy API",
+      "subtitle": "Kompaniya ma'lumoti va subsidiya kalkulyatorini tekshirish.",
+      "companyTitle": "Kompaniya ma'lumoti",
+      "companyDescription": "Rekvizitlar, platforma va narxlar matritsasi bo'yicha public endpoint.",
+      "loadCompany": "Kompaniya ma'lumotini yuklash",
+      "loadingCompany": "Yuklanmoqda...",
+      "companyError": "Kompaniya ma'lumotini olib bo'lmadi.",
+      "companyEmpty": "Kompaniya ma'lumotini olish uchun tugmani bosing.",
+      "subsidyTitle": "Subsidiya kalkulyatori",
+      "subsidyDescription": "Panel, invertor va quvvat bo`yicha yakuniy narxni hisoblash.",
+      "panelType": "Panel turi",
+      "inverterType": "Invertor turi",
+      "requestedPower": "So'ralgan quvvat (kW)",
+      "auditPower": "Audit quvvati (kW)",
+      "calculate": "Hisoblash",
+      "calculating": "Hisoblanmoqda...",
+      "subsidyError": "Subsidiya hisobini olib bo'lmadi.",
+      "subsidyEmpty": "Parametrlarni kiriting va 'Hisoblash' tugmasini bosing.",
+      "basePrice": "Bazaviy narx",
+      "subsidyAmount": "Subsidiya summasi",
+      "customerAmount": "Mijoz to`lovi",
+      "referencePower": "Subsidiya tayanch quvvati",
+      "panelTypes": {
+        "jinkoJa": "Jinko / JA Renaissance Clinic",
+        "longiHiMoX10": "Longi HI MO X10"
+      },
+      "inverterTypes": {
+        "deye": "Deye",
+        "solax": "Solax"
+      }
+    }
+  },
+  "leads": {
+    "pipelineEyebrow": "Jarayon",
+    "title": "Lidlar",
+    "lead": "Lid",
+    "newLead": "Yangi lid",
+    "subtitle": "Saralash, aloqa va kuzatuvni bitta navbatda boshqaring.",
+    "visible": "ko'rinmoqda",
+    "filters": "filtr",
+    "allStatuses": "Barcha holatlar",
+    "allChannels": "Barcha kanallar",
+    "allOperators": "Barcha operatorlar",
+    "status": "Holat",
+    "channel": "Kanal",
+    "assignedOperator": "Biriktirilgan operator",
+    "orderBy": "Saralash",
+    "updatedNewest": "Yangilangan (yangi)",
+    "updatedOldest": "Yangilangan (eski)",
+    "createdNewest": "Qo'shilgan (yangi)",
+    "createdOldest": "Qo'shilgan (eski)",
+    "searchPlaceholder": "Lid, telefon yoki username bo'yicha qidirish...",
+    "count": "lid",
+    "unknownHandle": "noma'lum",
+    "detailOpen": "Tafsilot ochiq",
+    "queueTitle": "Lidlar navbati",
+    "queueHint": "Tafsilotlarni ochish uchun satrni bosing",
+    "emptyTitle": "Mos lid topilmadi",
+    "emptyDescription": "Qidiruv yoki filtrlarni o'zgartirib ko'ring.",
+    "errorTitle": "Lidlar mavjud emas",
+    "errorDescription": "Joriy xizmatdan lidlarni yuklab bo'lmadi.",
+    "contact": "Kontakt",
+    "source": "Manba",
+    "owner": "Mas'ul",
+    "lastActivity": "So'nggi faollik",
+    "noPhone": "Telefon yo'q",
+    "noEmail": "Email yo'q",
+    "awaitingOutreach": "Aloqa kutilmoqda",
+    "dmSent": "Xabar yuborilgan",
+    "unassigned": "Biriktirilmagan",
+    "replied": "Javob berilgan",
+    "awaitingReply": "Javob kutilmoqda",
+    "actions": {
+      "column": "Amallar",
+      "edit": "Tahrirlash",
+      "delete": "O'chirish",
+      "statusUpdateError": "Lid holatini yangilab bo'lmadi."
+    },
+    "form": {
+      "eyebrow": "Lid formasi",
+      "createTitle": "Yangi lid qo'shish",
+      "editTitle": "Lidni tahrirlash",
+      "createSubtitle": "Savdo jarayoni uchun yangi lid ma'lumotlarini kiriting.",
+      "editSubtitle": "Lid profilini yangilang va holatini boshqaring.",
+      "close": "Lid formasini yopish",
+      "fullName": "To'liq ism",
+      "fullNamePlaceholder": "Ism familiya",
+      "phone": "Telefon",
+      "email": "Email",
+      "instagram": "Instagram username",
+      "telegram": "Telegram username",
+      "source": "Manba",
+      "status": "Holat",
+      "operator": "Mas'ul operator",
+      "notes": "Izoh",
+      "notesPlaceholder": "Lid bilan bog'liq qisqa izoh yozing",
+      "metadata": "Metadata (JSON)",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "metadataError": "Metadata faqat JSON obyekt ko'rinishida bo'lishi kerak.",
+      "saveError": "Lidni saqlab bo'lmadi.",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "createSubmit": "Lid qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash"
+    },
+    "deleteDialog": {
+      "eyebrow": "Lidni o'chirish",
+      "title": "\"{{name}}\" lidini o'chirish",
+      "description": "Ushbu amal qaytarilmaydi. Lid tarixdan butunlay olib tashlanadi.",
+      "deleting": "O'chirilmoqda...",
+      "confirm": "Ha, o'chirish"
+    },
+    "detail": {
+      "ariaLabel": "Lid tafsilotlari",
+      "profile": "Lid profili",
+      "titleFallback": "Lid tafsilotlari",
+      "close": "Lid tafsilotlarini yopish",
+      "loadingTitle": "Lid tafsilotlari yuklanmoqda",
+      "loadingDescription": "Profil va faollik ma'lumotlari olinmoqda.",
+      "errorTitle": "Lid mavjud emas",
+      "errorDescription": "Tanlangan lidni yuklab bo'lmadi.",
+      "contactTitle": "Kontakt",
+      "contactDescription": "Asosiy profil va biriktirish ma'lumotlari.",
+      "phone": "Telefon",
+      "email": "Email",
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "source": "Manba",
+      "owner": "Mas'ul",
+      "activityTitle": "Faollik",
+      "activityDescription": "Vaqt chizig'i va muloqot signallari.",
+      "created": "Qo'shilgan",
+      "updated": "Yangilangan",
+      "lastContact": "So'nggi aloqa",
+      "lastMessage": "So'nggi xabar",
+      "leadReplied": "Lid javob berdi",
+      "dmSent": "Xabar yuborilgan",
+      "notesTitle": "Izohlar",
+      "notesDescription": "Keyingi aloqa oldidan kontekst.",
+      "noNotes": "Hali izohlar yo'q.",
+      "metadataTitle": "Metadata",
+      "statusControl": "Lid holatini yangilash",
+      "readOnlyHint": "Sizda lidni tahrirlash huquqi mavjud emas."
+    }
+  },
+  "customers": {
+    "eyebrow": "Jarayon",
+    "title": "Mijozlar",
+    "subtitle": "Mijozlar ro'yxati va biriktirilgan operatorlarni kuzating.",
+    "newCustomer": "Yangi mijoz",
+    "searchPlaceholder": "Mijoz, telefon yoki manzil bo'yicha qidirish...",
+    "allOperators": "Barcha operatorlar",
+    "assignedOperator": "Biriktirilgan operator",
+    "orderBy": "Saralash",
+    "updatedNewest": "Yangilangan (yangi)",
+    "updatedOldest": "Yangilangan (eski)",
+    "createdNewest": "Qo'shilgan (yangi)",
+    "createdOldest": "Qo'shilgan (eski)",
+    "records": "yozuv",
+    "activeFilters": "faol filtr",
+    "rowSelected": "Satr tanlangan",
+    "directoryTitle": "Mijozlar katalogi",
+    "directoryHint": "Qidiruv va filtrlar orqali kerakli mijozni toping.",
+    "emptyTitle": "Mos mijoz topilmadi",
+    "emptyDescription": "Qidiruv so'rovi yoki operator filtrini o'zgartiring.",
+    "errorTitle": "Mijozlar mavjud emas",
+    "errorDescription": "Joriy xizmatdan mijozlarni yuklab bo'lmadi.",
+    "loadingTitle": "Mijozlar yuklanmoqda",
+    "loadingDescription": "Mijozlar ro'yxati olinmoqda.",
+    "columns": {
+      "customer": "Mijoz",
+      "phone": "Telefon",
+      "email": "Email",
+      "address": "Manzil",
+      "operator": "Operator",
+      "created": "Qo'shilgan sana",
+      "updated": "Yangilangan sana",
+      "actions": "Amallar"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish"
+    },
+    "noEmail": "Email yo'q",
+    "noPhone": "Telefon yo'q",
+    "noNotes": "Izoh yo'q",
+    "noAddress": "Manzil yo'q",
+    "defaultCountry": "O'zbekiston",
+    "noLeadLink": "Lid bog'lanmagan",
+    "leadPrefix": "Lid",
+    "detail": {
+      "ariaLabel": "Mijoz tafsilotlari",
+      "profile": "Mijoz profili",
+      "titleFallback": "Mijoz tafsilotlari",
+      "close": "Mijoz tafsilotlarini yopish",
+      "loadingTitle": "Mijoz tafsilotlari yuklanmoqda",
+      "loadingDescription": "Mijoz ma'lumotlari olinmoqda.",
+      "errorTitle": "Mijoz mavjud emas",
+      "errorDescription": "Tanlangan mijozni yuklab bo'lmadi.",
+      "contactTitle": "Kontakt",
+      "contactDescription": "Asosiy ma'lumotlar va bog'lanishlar.",
+      "phone": "Telefon",
+      "email": "Email",
+      "address": "Manzil",
+      "operator": "Mas'ul operator",
+      "linkedLead": "Bog'langan lid",
+      "notes": "Izoh",
+      "metadata": "Metadata",
+      "created": "Qo'shilgan",
+      "updated": "Yangilangan",
+      "readOnlyHint": "Sizda mijozni tahrirlash huquqi mavjud emas."
+    },
+    "form": {
+      "eyebrow": "Mijoz formasi",
+      "createTitle": "Yangi mijoz qo'shish",
+      "editTitle": "Mijozni tahrirlash",
+      "createSubtitle": "CRM uchun yangi mijoz ma'lumotlarini kiriting.",
+      "editSubtitle": "Mijoz profilini yangilang.",
+      "close": "Mijoz formasini yopish",
+      "fullName": "To'liq ism",
+      "fullNamePlaceholder": "Ism familiya",
+      "phone": "Telefon",
+      "email": "Email",
+      "address": "Manzil",
+      "addressPlaceholder": "Ko'cha va uy manzili",
+      "lead": "Bog'langan lid",
+      "operator": "Mas'ul operator",
+      "notes": "Izoh",
+      "notesPlaceholder": "Mijoz bo'yicha qisqa izoh yozing",
+      "metadata": "Metadata (JSON)",
+      "noLead": "Lidsiz",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "metadataError": "Metadata faqat JSON obyekt bo'lishi kerak.",
+      "saveError": "Mijozni saqlab bo'lmadi.",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "createSubmit": "Mijoz qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash"
+    },
+    "deleteDialog": {
+      "eyebrow": "Mijozni o'chirish",
+      "title": "\"{{name}}\" mijozini o'chirish",
+      "description": "Ushbu amal qaytarilmaydi. Mijoz yozuvi butunlay o'chiriladi.",
+      "deleting": "O'chirilmoqda...",
+      "confirm": "Ha, o'chirish"
+    }
+  },
+  "users": {
+    "eyebrow": "Boshqaruv",
+    "title": "Foydalanuvchilar",
+    "subtitle": "Jamoa hisoblari va ruxsatlarini boshqaring.",
+    "newUser": "Yangi foydalanuvchi",
+    "records": "foydalanuvchi",
+    "activeFilters": "faol filtr",
+    "searchPlaceholder": "Email, ism yoki telefon bo'yicha qidirish...",
+    "loadingTitle": "Foydalanuvchilar yuklanmoqda",
+    "loadingDescription": "Hisoblar ro'yxati olinmoqda.",
+    "errorTitle": "Foydalanuvchilar mavjud emas",
+    "errorDescription": "Joriy xizmatdan foydalanuvchilarni yuklab bo'lmadi.",
+    "emptyTitle": "Mos foydalanuvchi topilmadi",
+    "emptyDescription": "Qidiruv yoki filtr parametrlarini o'zgartirib ko'ring.",
+    "listTitle": "Jamoa foydalanuvchilari",
+    "listHint": "Tafsilotlarni ko'rish uchun satrni bosing",
+    "fullAccessShort": "To'liq kirish",
+    "permissionsCount": "{{count}} ta ruxsat",
+    "columns": {
+      "user": "Foydalanuvchi",
+      "role": "Rol",
+      "phone": "Telefon",
+      "status": "Holat",
+      "permissions": "Ruxsatlar",
+      "created": "Qo'shilgan",
+      "updated": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "filters": {
+      "allRoles": "Barcha rollar",
+      "allStatuses": "Barcha holatlar",
+      "role": "Rol",
+      "status": "Holat"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish",
+      "activate": "Faollashtirish",
+      "deactivate": "Nofaollashtirish",
+      "toggling": "Yangilanmoqda...",
+      "toggleError": "Foydalanuvchi holatini yangilab bo'lmadi."
+    },
+    "detail": {
+      "ariaLabel": "Foydalanuvchi tafsilotlari",
+      "profile": "Foydalanuvchi profili",
+      "titleFallback": "Foydalanuvchi tafsilotlari",
+      "close": "Tafsilot panelini yopish",
+      "loadingTitle": "Foydalanuvchi tafsilotlari yuklanmoqda",
+      "loadingDescription": "Hisob va ruxsat ma'lumotlari olinmoqda.",
+      "errorTitle": "Foydalanuvchi topilmadi",
+      "errorDescription": "Tanlangan foydalanuvchini yuklab bo'lmadi.",
+      "accountTitle": "Hisob ma'lumotlari",
+      "accountDescription": "Asosiy profil va kirish holati.",
+      "phone": "Telefon",
+      "role": "Rol",
+      "createdBy": "Yaratgan",
+      "status": "Holat",
+      "permissions": "Maxsus ruxsatlar",
+      "developerPermissionsHint": "Developer roli barcha ruxsatlarga avtomatik ega.",
+      "noPermissions": "Maxsus ruxsatlar biriktirilmagan.",
+      "createdAt": "Qo'shilgan",
+      "updatedAt": "Yangilangan",
+      "readOnlyHint": "Sizda foydalanuvchini boshqarish huquqi mavjud emas."
+    },
+    "form": {
+      "eyebrow": "Foydalanuvchi formasi",
+      "createTitle": "Foydalanuvchi qo'shish",
+      "editTitle": "Foydalanuvchini tahrirlash",
+      "createSubtitle": "Yangi hisob va rol sozlamalarini kiriting.",
+      "editSubtitle": "Foydalanuvchi hisobi va ruxsatlarini yangilang.",
+      "close": "Formani yopish",
+      "fullName": "To'liq ism",
+      "fullNamePlaceholder": "Ism familiya",
+      "email": "Email",
+      "phone": "Telefon",
+      "password": "Parol",
+      "passwordRequired": "Kamida 8 ta belgi",
+      "passwordOptional": "Parolni o'zgartirmaslik uchun bo'sh qoldiring",
+      "role": "Rol",
+      "activeUser": "Faol foydalanuvchi",
+      "activeHint": "Nofaol foydalanuvchi tizimga kira olmaydi.",
+      "permissionsTitle": "Operator ruxsatlari",
+      "permissionsDescription": "Operator uchun kerakli ruxsat kodlarini tanlang.",
+      "permissionsLoadError": "Ruxsatlar katalogini yuklab bo'lmadi. Keyinroq qayta urinib ko'ring.",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "emailError": "To'g'ri email manzilini kiriting.",
+      "passwordError": "Parol kamida 8 ta belgidan iborat bo'lishi kerak.",
+      "saveError": "Foydalanuvchini saqlab bo'lmadi.",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "createSubmit": "Foydalanuvchi qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "applyRoleDefaults": "Rol huquqlarini qo'llash ({{count}})",
+      "permissionGroups": {
+        "viewing": "Ko'rish huquqlari",
+        "managing": "Boshqaruv huquqlari",
+        "updating": "Yangilash huquqlari",
+        "communication": "Aloqa huquqlari",
+        "other": "Boshqa huquqlar"
+      }
+    },
+    "deleteDialog": {
+      "eyebrow": "Foydalanuvchini o'chirish",
+      "title": "\"{{name}}\" foydalanuvchisini o'chirish",
+      "description": "Ushbu amal qaytarilmaydi. Foydalanuvchi butunlay o'chiriladi.",
+      "deleting": "O'chirilmoqda...",
+      "confirm": "Ha, o'chirish"
+    }
+  },
+  "products": {
+    "title": "Mahsulotlar",
+    "subtitle": "Narxlar, zaxira va faol holatni bitta katalogdan boshqaring.",
+    "newProduct": "Yangi mahsulot",
+    "newCategory": "Yangi kategoriya",
+    "allCurrencies": "Barcha valyutalar",
+    "allStatuses": "Barcha holatlar",
+    "allReviewsModes": "Sharhlar: barchasi",
+    "reviewsEnabled": "Sharhlar yoqilgan",
+    "reviewsDisabled": "Sharhlar o'chirilgan",
+    "reviewsFilterLabel": "Sharhlar",
+    "status": "Holat",
+    "currency": "Valyuta",
+    "orderBy": "Saralash",
+    "updatedNewest": "Yangilangan (yangi)",
+    "updatedOldest": "Yangilangan (eski)",
+    "createdNewest": "Qo'shilgan (yangi)",
+    "createdOldest": "Qo'shilgan (eski)",
+    "nameAz": "Nomi (A-Z)",
+    "nameZa": "Nomi (Z-A)",
+    "priceHighLow": "Narx (yuqori-past)",
+    "priceLowHigh": "Narx (past-yuqori)",
+    "searchPlaceholder": "Mahsulot nomi, SKU yoki tavsif bo'yicha qidirish...",
+    "categorySearchPlaceholder": "Kategoriya nomi yoki kodi bo'yicha qidirish...",
+    "records": "yozuv",
+    "categoriesRecords": "kategoriya",
+    "categoriesCountLabel": "kategoriyalar",
+    "activeFilters": "faol",
+    "catalogTitle": "Mahsulotlar katalogi",
+    "catalogHint": "Tafsilotlarni ko'rish uchun satrni bosing",
+    "categoriesCatalogTitle": "Categoriyalar katalogi",
+    "categoriesCatalogHint": "Kategoriyani tahrirlash uchun amallarni tanlang",
+    "loadingTitle": "Mahsulotlar yuklanmoqda",
+    "loadingDescription": "Katalog ma'lumotlari olinmoqda.",
+    "errorTitle": "Mahsulotlar mavjud emas",
+    "errorDescription": "Joriy xizmatdan mahsulotlarni yuklab bo'lmadi.",
+    "emptyTitle": "Mos mahsulot topilmadi",
+    "emptyDescription": "Qidiruv yoki filtr kombinatsiyasini o'zgartiring.",
+    "categoriesEmptyTitle": "Mos kategoriya topilmadi",
+    "categoriesEmptyDescription": "Qidiruv yoki filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "categoriesErrorTitle": "Kategoriyalar mavjud emas",
+    "categoriesErrorDescription": "Joriy xizmatdan kategoriyalarni yuklab bo'lmadi.",
+    "categoryReorderError": "Kategoriyalar tartibini saqlab bo'lmadi.",
+    "categoryNoDescription": "Tavsif yo'q",
+    "columns": {
+      "product": "Mahsulot",
+      "sku": "SKU",
+      "price": "Narx",
+      "priceAfterSubsidy": "Subsidiya bilan narx",
+      "subsidyAmount": "Subsidiya",
+      "currency": "Valyuta",
+      "stock": "Zaxira soni",
+      "status": "Holat",
+      "updated": "Yangilangan sana",
+      "actions": "Amallar"
+    },
+    "stockStatus": {
+      "in_stock": "Mavjud",
+      "low_stock": "Kam qoldi",
+      "out_of_stock": "Tugagan"
+    },
+    "categoryColumns": {
+      "name": "Kategoriya",
+      "code": "Kod",
+      "sortOrder": "Tartib",
+      "status": "Holat",
+      "updated": "Yangilangan sana",
+      "actions": "Amallar"
+    },
+    "noDescription": "Tavsif yo'q",
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish"
+    },
+    "categoryActions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish"
+    },
+    "categoryForm": {
+      "ariaLabel": "Kategoriya qo'shish formasi",
+      "eyebrow": "Kategoriya formasi",
+      "createTitle": "Yangi Categoriya",
+      "editTitle": "Kategoriyani tahrirlash",
+      "createSubtitle": "Mahsulotlar uchun yangi kategoriya qo'shing.",
+      "editSubtitle": "Kategoriya ma'lumotlarini yangilang.",
+      "name": "Kategoriya nomi",
+      "namePlaceholder": "Masalan: quyosh panellari",
+      "code": "Kod",
+      "sortOrder": "Tartib raqami",
+      "sortOrderHint": "Kichik raqam yuqoriroq chiqadi. 1 eng yuqori.",
+      "description": "Tavsif",
+      "descriptionPlaceholder": "Kategoriya bo'yicha qisqa tavsif",
+      "active": "Faol kategoriya",
+      "activeHint": "Kategoriyani faol yoki nofaol holatga o'tkazing.",
+      "create": "Kategoriya qo'shish",
+      "save": "O'zgarishlarni saqlash",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "requiredError": "Kategoriya nomini kiriting.",
+      "sortOrderError": "Tartib raqamini to'g'ri kiriting.",
+      "saveError": "Kategoriyani saqlab bo'lmadi."
+    },
+    "categoryDeleteDialog": {
+      "ariaLabel": "Kategoriyani o'chirish oynasi",
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "\"{{name}}\" kategoriyasini o'chirasizmi?",
+      "description": "Bu amal kategoriyani ro'yxatdan o'chiradi va ortga qaytarib bo'lmaydi.",
+      "confirm": "Kategoriyani o'chirish",
+      "deleting": "O'chirilmoqda..."
+    },
+    "detail": {
+      "eyebrow": "Mahsulot profili",
+      "titleFallback": "Mahsulot tafsilotlari",
+      "skuPrefix": "SKU",
+      "close": "Mahsulot tafsilotlarini yopish",
+      "loadingTitle": "Mahsulot tafsilotlari yuklanmoqda",
+      "loadingDescription": "Mahsulot profili va metadata olinmoqda.",
+      "errorTitle": "Mahsulot mavjud emas",
+      "errorDescription": "Tanlangan mahsulotni yuklab bo'lmadi.",
+      "images": "Mahsulot rasmlari",
+      "imagesDesc": "Katalog uchun biriktirilgan rasmlar.",
+      "noImages": "Mahsulot uchun rasm yuklanmagan.",
+      "deleteImage": "Rasmni o'chirish",
+      "sectionDetails": "Mahsulot ma'lumotlari",
+      "sectionDetailsDesc": "Katalog profili va mavjudligi.",
+      "sectionLifecycle": "Tarix",
+      "sectionLifecycleDesc": "Yaratilish va yangilanish tarixi.",
+      "sectionMetadata": "Metadata",
+      "price": "Narx",
+      "subsidyEnabled": "Subsidiya",
+      "subsidyAmount": "Subsidiya summasi",
+      "priceAfterSubsidy": "Subsidiya bilan narx",
+      "stockQuantity": "Mahsulotlar soni",
+      "description": "Tavsif",
+      "created": "Qo'shilgan",
+      "updated": "Yangilangan",
+      "reviewsEnabled": "Sharhlar",
+      "noDescription": "Tavsif yo'q.",
+      "editProduct": "Mahsulotni tahrirlash",
+      "deleteProduct": "Mahsulotni o'chirish"
+    },
+    "form": {
+      "eyebrow": "Mahsulot formasi",
+      "createTitle": "Mahsulot qo'shish",
+      "editTitle": "Mahsulotni tahrirlash",
+      "createSubtitle": "Katalogga yangi mahsulot qo'shing.",
+      "editSubtitle": "Tanlangan mahsulot ma'lumotlarini yangilang.",
+      "close": "Mahsulot formasini yopish",
+      "name": "Mahsulot nomi",
+      "sku": "SKU",
+      "skuAutoHint": "SKU kategoriya bo'yicha avtomatik yaratiladi.",
+      "description": "Tavsif",
+      "category": "Kategoriya",
+      "categoryPlaceholder": "Masalan: care",
+      "price": "Narx",
+      "stockQuantity": "Mahsulotlar soni",
+      "currency": "Valyuta",
+        "activeProduct": "Faol mahsulot",
+        "activeProductHint": "Mahsulot operatsiyalarda ko'rinishini yoqing yoki o'chiring.",
+        "recommendedProduct": "Tavsiya etilgan mahsulot",
+        "recommendedProductHint": "Mahsulotni tavsiya qilingan sifatida belgilang.",
+        "subsidyEnabled": "Subsidiya yoqilgan",
+        "subsidyEnabledHint": "Ushbu mahsulot uchun subsidiyani yoqing yoki o'chiring.",
+        "reviewsEnabled": "Sharhlarni qabul qilish",
+        "reviewsEnabledHint": "Ushbu mahsulot uchun sharhlarni yoqing yoki o'chiring.",
+      "currentImages": "Joriy rasmlar",
+      "images": "Rasmlar",
+      "primaryImage": "Asosiy rasm",
+      "otherImages": "Oddiy rasmlar",
+      "selectedImages": "ta rasm tanlandi",
+      "ordinaryImageOne": "Oddiy rasm 1",
+      "ordinaryImageTwo": "Oddiy rasm 2",
+      "removeImage": "Rasmni olib tashlash",
+      "imageDeleteError": "Rasmni o'chirib bo'lmadi.",
+      "noImages": "Rasmlar topilmadi.",
+      "metadata": "Metadata (JSON)",
+      "imagesMinError": "Mahsulot qo'shishda kamida 1 ta rasm tanlang.",
+      "imagesMaxError": "Mahsulot qo'shishda ko'pi bilan 3 ta rasm tanlash mumkin.",
+      "createSubmit": "Mahsulot qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "metadataError": "Metadata faqat JSON obyekt ko'rinishida bo'lishi kerak.",
+      "priceError": "Narx musbat yoki nol son bo'lishi kerak.",
+      "stockError": "Soni musbat yoki nol butun son bo'lishi kerak.",
+      "saveError": "Mahsulotni saqlab bo'lmadi."
+    },
+    "deleteDialog": {
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "{{name}} mahsulotini o'chirasizmi?",
+      "description": "Bu amal mahsulotni katalogdan o'chiradi. Amalni bekor qilib bo'lmaydi.",
+      "confirm": "Mahsulotni o'chirish",
+      "deleting": "O'chirilmoqda...",
+      "orderCheckInProgress": "Buyurtmalar bilan bog'liqlik tekshirilmoqda. Iltimos, biroz kuting.",
+      "linkedOrderError": "Bu mahsulot buyurtmalarda ishlatilgan. O'chirib bo'lmaydi, mahsulotni nofaol holatga o'tkazing.",
+      "deleteError": "Mahsulotni o'chirishda xatolik yuz berdi."
+    }
+  },
+  "orders": {
+    "title": "Buyurtmalar",
+    "subtitle": "Buyurtmalar oqimini bitta panelda boshqaring va nazorat qiling.",
+    "newOrder": "Yangi buyurtma",
+    "allStatuses": "Barcha holatlar",
+    "allSources": "Barcha manbalar",
+    "allFulfillmentMethods": "Barcha bajarish usullari",
+    "status": "Holat",
+    "source": "Manba",
+    "fulfillmentMethod": "Bajarish usuli",
+    "fulfillmentDelivery": "Yetkazib berish",
+    "fulfillmentPickup": "Olib ketish",
+    "aiGenerated": "AI qo'shilgan",
+    "aiAll": "Barchasi",
+    "aiYes": "AI",
+    "aiNo": "Qo'lda",
+    "orderBy": "Saralash",
+    "updatedNewest": "Yangilangan (yangi)",
+    "updatedOldest": "Yangilangan (eski)",
+    "createdNewest": "Qo'shilgan (yangi)",
+    "createdOldest": "Qo'shilgan (eski)",
+    "totalHighLow": "Jami (yuqori-past)",
+    "totalLowHigh": "Jami (past-yuqori)",
+    "searchPlaceholder": "Kontakt, telefon, manzil yoki ID bo'yicha qidiring...",
+    "records": "yozuv",
+    "views": {
+      "orders": "Buyurtmalar",
+      "reviews": "Sharhlar"
+    },
+    "reviews": {
+      "boardTitle": "Sharhlar ro'yxati",
+      "emptyTitle": "Sharhlar topilmadi",
+      "emptyDescription": "Hali hech qanday sharh qoldirilmagan.",
+      "submittedNewest": "Yuborilgan (yangi)",
+      "submittedOldest": "Yuborilgan (eski)",
+      "searchPlaceholder": "Sharh yoki mijoz bo'yicha qidiring...",
+      "records": "yozuv",
+      "columns": {
+        "reviewer": "Sharhlovchi",
+        "comment": "Sharh",
+        "source": "Manba",
+        "submittedAt": "Yuborilgan sana",
+        "actions": "Amallar"
+      },
+      "actions": {
+        "delete": "Sharhni o'chirish"
+      },
+      "deleteDialog": {
+        "eyebrow": "Sharhni o'chirish",
+        "title": "\"{{id}}\" uchun sharhni o'chirish",
+        "description": "Ushbu amalni qaytarib bo'lmaydi. Sharh butunlay o'chiriladi.",
+        "deleting": "O'chirilmoqda...",
+        "confirm": "Sharhni o'chirish"
+      }
+    },
+    "activeFilters": "faol filtr",
+    "detailOpen": "Tafsilot ochiq",
+    "itemsSuffix": "pozitsiya",
+    "boardTitle": "Buyurtmalar ro'yxati",
+    "boardHint": "Tafsilotlarni ochish uchun satrni bosing",
+    "loadingTitle": "Buyurtmalar yuklanmoqda",
+    "loadingDescription": "Buyurtmalar ro'yxati va filtrlar tayyorlanmoqda.",
+    "errorTitle": "Buyurtmalar mavjud emas",
+    "errorDescription": "Joriy xizmatdan buyurtmalarni yuklab bo'lmadi.",
+    "emptyTitle": "Mos buyurtma topilmadi",
+    "emptyDescription": "Qidiruv yoki filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "columns": {
+      "order": "Buyurtma",
+      "customerContact": "Mijoz / Kontakt",
+      "source": "Manba",
+      "status": "Holat",
+      "totalAmount": "Jami summa",
+      "aiGenerated": "AI",
+      "updated": "Yangilangan sana",
+      "actions": "Amallar"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish",
+      "recalculate": "Qayta hisoblash",
+      "recalculating": "Hisoblanmoqda..."
+    },
+    "detail": {
+      "ariaLabel": "Buyurtma tafsilotlari",
+      "eyebrow": "Buyurtma profili",
+      "titleFallback": "Buyurtma tafsilotlari",
+      "close": "Buyurtma tafsilotlarini yopish",
+      "aiYes": "AI qo'shilgan",
+      "aiNo": "Qo'lda qo'shilgan",
+      "loadingTitle": "Buyurtma tafsilotlari yuklanmoqda",
+      "loadingDescription": "Buyurtma profili va elementlari olinmoqda.",
+      "errorTitle": "Buyurtma mavjud emas",
+      "errorDescription": "Tanlangan buyurtmani yuklab bo'lmadi.",
+      "sectionContact": "Kontakt va bog'lanish",
+      "sectionContactDescription": "Mijoz, lid va yetkazib berish ma'lumotlari.",
+      "contactPhone": "Kontakt telefoni",
+      "shippingAddress": "Yetkazib berish manzili",
+      "fulfillmentMethod": "Bajarish usuli",
+      "customer": "Mijoz",
+      "lead": "Lid",
+      "noCustomer": "Mijoz biriktirilmagan",
+      "noLead": "Lid bog'lanmagan",
+      "sectionItems": "Buyurtma elementlari",
+      "sectionItemsDescription": "Mahsulotlar soni va narxlari bo'yicha kesim.",
+      "itemProduct": "Mahsulot",
+      "itemQty": "Soni",
+      "itemUnitPrice": "Birlik narx",
+      "itemLineTotal": "Qator jami",
+      "sectionLifecycle": "To'lov tarixi",
+      "createdAt": "Qo'shilgan",
+      "updatedAt": "Yangilangan",
+      "paidAmount": "To'langan summa",
+      "notes": "Izohlar",
+      "noNotes": "Izoh qoldirilmagan.",
+      "recalculateError": "Buyurtmani qayta hisoblab bo'lmadi."
+    },
+    "form": {
+      "eyebrow": "Buyurtma formasi",
+      "createTitle": "Buyurtma qo'shish",
+      "editTitle": "Buyurtmani tahrirlash",
+      "createSubtitle": "Yangi buyurtmani tezda qo'shing.",
+      "editSubtitle": "Buyurtma ma'lumotlarini yangilang.",
+      "close": "Buyurtma formasini yopish",
+      "customer": "Mijoz",
+      "lead": "Lid",
+      "noneCustomer": "Mijozsiz",
+      "noneLead": "Lidsiz",
+      "status": "Holat",
+      "source": "Manba",
+      "fulfillmentMethod": "Bajarish usuli",
+      "contactName": "Kontakt ismi",
+      "contactPhone": "Kontakt telefoni",
+      "shippingAddress": "Yetkazib berish manzili",
+      "notes": "Izoh",
+      "notesPlaceholder": "Ichki izohlar va yetkazib berish eslatmalari...",
+      "aiGenerated": "AI qo'shilgan buyurtma",
+      "aiGeneratedHint": "Buyurtma AI tomonidan qo'shilgan bo'lsa yoqing.",
+      "itemsTitle": "Buyurtma elementlari",
+      "addItem": "Element qo'shish",
+      "removeItem": "Elementni olib tashlash",
+      "noProducts": "Mahsulotlar mavjud emas. Avval mahsulot yarating.",
+      "product": "Mahsulot",
+      "quantity": "Soni",
+      "unitPrice": "Birlik narx",
+      "totalAmount": "Jami summa",
+      "createSubmit": "Buyurtma qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "itemsRequired": "Kamida bitta element qo'shing.",
+      "productRequired": "Har bir element uchun mahsulot tanlang.",
+      "saveError": "Buyurtmani saqlab bo'lmadi."
+    },
+    "deleteDialog": {
+      "ariaLabel": "Buyurtmani o'chirish oynasi",
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "{{id}} buyurtmasini o'chirasizmi?",
+      "description": "Bu amal buyurtmani ro'yxatdan o'chiradi va ortga qaytarib bo'lmaydi.",
+      "confirm": "Buyurtmani o'chirish",
+      "deleting": "O'chirilmoqda..."
+    }
+  },
+  "couriers": {
+    "title": "Kuryerlar",
+    "subtitle": "Kuryer profillari va yetkazib berish tayinlovlarini bitta oynada boshqaring.",
+    "tabs": {
+      "couriers": "Kuryerlar",
+      "orders": "Kuryer buyurtmalari"
+    },
+    "newCourier": "Yangi kuryer",
+    "records": "yozuv",
+    "activeFilters": "faol filtr",
+    "courierDetailOpen": "Kuryer tafsiloti ochiq",
+    "orderDetailOpen": "Buyurtma tafsiloti ochiq",
+    "searchCourierPlaceholder": "Kuryer nomi, username, telefon yoki telegram ID bo'yicha qidiring...",
+    "searchOrderPlaceholder": "Buyurtma, kuryer, holat yoki izoh bo'yicha qidiring...",
+    "filters": {
+      "status": "Holat",
+      "courier": "Kuryer",
+      "orderBy": "Saralash"
+    },
+    "status": {
+      "all": "Barchasi",
+      "active": "Faol",
+      "inactive": "Nofaol"
+    },
+    "orderStatus": {
+      "all": "Barcha holatlar",
+      "pending": "Kutilmoqda",
+      "assigned": "Biriktirilgan",
+      "in_transit": "Yo'lda",
+      "delivered": "Yetkazilgan"
+    },
+    "ordering": {
+      "updatedNewest": "Yangilangan (yangi)",
+      "updatedOldest": "Yangilangan (eski)",
+      "createdNewest": "Qo'shilgan (yangi)",
+      "createdOldest": "Qo'shilgan (eski)",
+      "nameAsc": "Nomi (A-Z)",
+      "nameDesc": "Nomi (Z-A)",
+      "statusAsc": "Holat (A-Z)",
+      "statusDesc": "Holat (Z-A)"
+    },
+    "courierListTitle": "Kuryerlar katalogi",
+    "courierListHint": "Profilni ko'rish uchun satrni bosing.",
+    "courierLoadingTitle": "Kuryerlar yuklanmoqda",
+    "courierLoadingDescription": "Kuryer ro'yxati va holatlari olinmoqda.",
+    "courierErrorTitle": "Kuryerlar mavjud emas",
+    "courierErrorDescription": "Joriy xizmatdan kuryerlarni yuklab bo'lmadi.",
+    "courierEmptyTitle": "Mos kuryer topilmadi",
+    "courierEmptyDescription": "Qidiruv yoki filtrlarni o'zgartirib ko'ring.",
+    "orderListTitle": "Kuryer buyurtmalari",
+    "orderListHint": "Yangilash uchun satrni oching.",
+    "orderLoadingTitle": "Kuryer buyurtmalari yuklanmoqda",
+    "orderLoadingDescription": "Yetkazib berish tayinlovlari va holatlar olinmoqda.",
+    "orderErrorTitle": "Kuryer buyurtmalari mavjud emas",
+    "orderErrorDescription": "Joriy xizmatdan kuryer buyurtmalarini yuklab bo'lmadi.",
+    "orderEmptyTitle": "Mos kuryer buyurtmasi topilmadi",
+    "orderEmptyDescription": "Qidiruv yoki filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "columns": {
+      "courier": "Kuryer",
+      "phone": "Telefon",
+      "telegramId": "Telegram ID",
+      "status": "Holat",
+      "updated": "Yangilangan",
+      "actions": "Amallar",
+      "order": "Buyurtma",
+      "cancelReason": "Bekor qilish sababi"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish",
+      "open": "Ochish",
+      "setActive": "Faollashtirish",
+      "setInactive": "Nofaollashtirish",
+      "savePatch": "Saqlash",
+      "replacePut": "Almashtirish",
+      "repostOffer": "Taklifni qayta yuborish"
+    },
+    "form": {
+      "eyebrow": "Kuryer formasi",
+      "titleCreate": "Kuryer qo'shish",
+      "titleEdit": "Kuryerni tahrirlash",
+      "close": "Kuryer formasini yopish",
+      "firstName": "Ism",
+      "telegramUserId": "Telegram foydalanuvchi ID",
+      "username": "Username",
+      "phone": "Telefon",
+      "isActive": "Faol kuryer",
+      "isActiveHint": "Nofaol kuryerlar tayinlovlardan chiqariladi.",
+      "metadata": "Metadata (JSON)",
+      "firstNameRequired": "Ism majburiy.",
+      "metadataObjectError": "Metadata JSON object bo'lishi kerak.",
+      "metadataJsonError": "Metadata to'g'ri JSON bo'lishi kerak.",
+      "createSubmit": "Kuryer qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "saveError": "Kuryerni saqlab bo'lmadi."
+    },
+    "deleteDialog": {
+      "eyebrow": "Kuryerni o'chirish",
+      "title": "{{name}} kuryerini o'chirish",
+      "description": "Bu amal qaytarilmaydi. Kuryer yozuvi o'chiriladi.",
+      "confirm": "Ha, o'chirish",
+      "deleting": "O'chirilmoqda..."
+    },
+    "detail": {
+      "ariaLabel": "Kuryer tafsilotlari",
+      "title": "Kuryer profili",
+      "close": "Kuryer tafsilotlarini yopish",
+      "loadingTitle": "Kuryer tafsilotlari yuklanmoqda",
+      "loadingDescription": "Tanlangan kuryer profili olinmoqda.",
+      "errorTitle": "Kuryer mavjud emas",
+      "errorDescription": "Tanlangan kuryerni yuklab bo'lmadi.",
+      "contact": "Kontakt",
+      "metadata": "Metadata",
+      "created": "Qo'shilgan",
+      "updated": "Yangilangan",
+      "noMetadata": "Metadata mavjud emas.",
+      "readOnlyHint": "Faqat ko'rish rejimi. Tahrirlash amallari uchun kuryerlarni boshqarish ruxsati kerak."
+    },
+    "orderDetail": {
+      "ariaLabel": "Kuryer buyurtmasi tafsilotlari",
+      "title": "Kuryer buyurtmasi",
+      "close": "Kuryer buyurtmasi tafsilotlarini yopish",
+      "loadingTitle": "Kuryer buyurtmasi yuklanmoqda",
+      "loadingDescription": "Buyurtma tayinlovi tafsilotlari olinmoqda.",
+      "errorTitle": "Kuryer buyurtmasi mavjud emas",
+      "errorDescription": "Tanlangan kuryer buyurtmasini yuklab bo'lmadi.",
+      "orderSummaryTitle": "Buyurtma tafsilotlari",
+      "orderSummaryDescription": "Kontakt, manzil va buyurtma tarkibi.",
+      "orderId": "Buyurtma ID",
+      "status": "Holat",
+      "awaitingCancelReason": "Bekor qilish sababi kutilmoqda",
+      "cancelReason": "Bekor qilish sababi",
+      "contactName": "Kontakt ismi",
+      "contactPhone": "Kontakt telefoni",
+      "shippingAddress": "Yetkazib berish manzili",
+      "totalAmount": "Jami summa",
+      "items": "Buyurtma mahsulotlari",
+      "itemColumns": {
+        "product": "Mahsulot",
+        "quantity": "Soni",
+        "unitPrice": "Birlik narx",
+        "lineTotal": "Qator jami"
+      },
+      "noItems": "Buyurtma mahsulotlari mavjud emas.",
+      "metadata": "Metadata (JSON)",
+      "acceptedAt": "Qabul qilingan vaqt",
+      "inTransitAt": "Yo'lda",
+      "deliveredAt": "Yetkazilgan vaqt",
+      "updated": "Yangilangan",
+      "replacing": "Almashtirilmoqda...",
+      "reposting": "Qayta yuborilmoqda...",
+      "orderIdRequired": "PUT uchun buyurtma ID majburiy.",
+      "saveError": "Kuryer buyurtmasini yangilab bo'lmadi.",
+      "repostError": "Taklifni qayta yuborib bo'lmadi.",
+      "readOnlyHint": "Faqat ko'rish rejimi. Yangilash amallari uchun kuryerlarni boshqarish ruxsati kerak."
+    }
+  },
+  "agents": {
+    "eyebrow": "Agentlar markazi",
+    "title": "Agentlar",
+    "subtitle": "Agent profillari, faol holati va mahsulot biriktirishlarini yagona oynada boshqaring.",
+    "newAgent": "Yangi agent",
+    "records": "yozuv",
+    "activeFilters": "faol filtr",
+    "detailOpen": "Agent tafsiloti ochiq",
+    "searchPlaceholder": "Agent ismi, telefoni, telegram chat ID yoki username bo'yicha qidiring...",
+    "boardTitle": "Agentlar ro'yxati",
+    "boardHint": "Tafsilotlarni ko'rish uchun satrni bosing.",
+    "emptyTitle": "Mos agent topilmadi",
+    "emptyDescription": "Qidiruv yoki filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "errorTitle": "Agentlar mavjud emas",
+    "errorDescription": "Joriy xizmatdan agentlarni yuklab bo'lmadi.",
+    "loadingTitle": "Agentlar yuklanmoqda",
+    "loadingDescription": "Agent yozuvlari va biriktirilgan mahsulotlar olinmoqda.",
+    "productsCount": "{{count}} ta mahsulot",
+    "noProducts": "Mahsulot biriktirilmagan",
+    "filters": {
+      "status": "Holat",
+      "products": "Mahsulot",
+      "allProducts": "Barcha mahsulotlar",
+      "selectedProducts": "{{count}} ta tanlangan",
+      "orderBy": "Saralash"
+    },
+    "status": {
+      "all": "Barchasi",
+      "active": "Faol",
+      "inactive": "Nofaol"
+    },
+    "ordering": {
+      "updatedNewest": "Yangilangan (yangi)",
+      "updatedOldest": "Yangilangan (eski)",
+      "createdNewest": "Qo'shilgan (yangi)",
+      "createdOldest": "Qo'shilgan (eski)",
+      "nameAsc": "Ism (A-Z)",
+      "nameDesc": "Ism (Z-A)"
+    },
+    "columns": {
+      "agent": "Agent",
+      "phone": "Telefon",
+      "telegramChatId": "Telegram chat ID",
+      "telegramUsername": "Telegram username",
+      "products": "Mahsulotlar",
+      "status": "Holat",
+      "updated": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish",
+      "setActive": "Faollashtirish",
+      "setInactive": "Nofaollashtirish"
+    },
+    "form": {
+      "eyebrow": "Agent formasi",
+      "titleCreate": "Agent qo'shish",
+      "titleEdit": "Agentni tahrirlash",
+      "close": "Agent formasini yopish",
+      "fullName": "To'liq ism",
+      "phone": "Telefon",
+      "telegramChatId": "Telegram chat ID",
+      "telegramUsername": "Telegram username",
+      "isActive": "Faol agent",
+      "isActiveHint": "Nofaol agentlar yangi biriktirishlarda ishlatilmaydi.",
+      "products": "Biriktirilgan mahsulotlar",
+      "productsHint": "Agent bilan ishlaydigan mahsulotlarni tanlang.",
+      "noProducts": "Faol mahsulotlar topilmadi. Avval mahsulot qo'shing.",
+      "fullNameRequired": "To'liq ism majburiy.",
+      "createSubmit": "Agent qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "saveError": "Agentni saqlab bo'lmadi."
+    },
+    "detail": {
+      "ariaLabel": "Agent tafsilotlari",
+      "title": "Agent profili",
+      "close": "Agent tafsilotlarini yopish",
+      "loadingTitle": "Agent tafsilotlari yuklanmoqda",
+      "loadingDescription": "Tanlangan agent profili olinmoqda.",
+      "errorTitle": "Agent mavjud emas",
+      "errorDescription": "Tanlangan agentni yuklab bo'lmadi.",
+      "products": "Biriktirilgan mahsulotlar",
+      "noProducts": "Biriktirilgan mahsulotlar mavjud emas.",
+      "metadata": "Metadata",
+      "noMetadata": "Metadata mavjud emas.",
+      "created": "Qo'shilgan",
+      "updated": "Yangilangan",
+      "readOnlyHint": "Faqat ko'rish rejimi. Tahrirlash amallari uchun agentlarni boshqarish ruxsati kerak."
+    },
+    "deleteDialog": {
+      "eyebrow": "Agentni o'chirish",
+      "title": "{{name}} agentini o'chirish",
+      "description": "Bu amal qaytarilmaydi. Agent yozuvi o'chiriladi.",
+      "confirm": "Ha, o'chirish",
+      "deleting": "O'chirilmoqda..."
+    }
+  },
+  "payments": {
+    "title": "To'lovlar",
+    "subtitle": "Yuborilgan tranzaksiyalarni kuzating, kutilayotganlarini tekshiring va holatini yakunlang.",
+    "newPayment": "Yangi to'lov",
+    "all": "Barchasi",
+    "cancel": "Bekor qilish",
+    "notAvailable": "Mavjud emas",
+    "records": "yozuv",
+    "activeFilters": "faol filtr",
+    "detailOpen": "Tafsilot ochiq",
+    "searchPlaceholder": "Yuboruvchi, karta oxirgi 4 raqami yoki tekshiruv raqami bo'yicha qidiring...",
+    "status": "Holat",
+    "method": "Usul",
+    "order": "Buyurtma",
+    "orderPlaceholder": "order-001",
+    "orderBy": "Saralash",
+    "boardTitle": "To'lovlar ro'yxati",
+    "boardHint": "Tafsilotlarni ko'rish uchun satrni bosing",
+    "emptyTitle": "Mos to'lov topilmadi",
+    "emptyDescription": "Qidiruv yoki filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "errorTitle": "To'lovlar mavjud emas",
+    "errorDescription": "Joriy xizmatdan to'lovlarni yuklab bo'lmadi.",
+    "loadingTitle": "To'lovlar yuklanmoqda",
+    "loadingDescription": "Tranzaksiya yozuvlari va tekshiruv holatlari olinmoqda.",
+    "noReference": "Tekshiruv raqami yo'q",
+    "columns": {
+      "payment": "To'lov",
+      "amount": "Summa",
+      "method": "Usul",
+      "status": "Holat",
+      "submittedBy": "Yuboruvchi",
+      "lastFourDigits": "Oxirgi 4 raqam",
+      "order": "Buyurtma",
+      "updated": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "ordering": {
+      "updatedNewest": "Yangilangan (yangi)",
+      "updatedOldest": "Yangilangan (eski)",
+      "createdNewest": "Qo'shilgan (yangi)",
+      "createdOldest": "Qo'shilgan (eski)",
+      "amountHighLow": "Summa (yuqori-past)",
+      "amountLowHigh": "Summa (past-yuqori)"
+    },
+    "actions": {
+      "approve": "Tasdiqlash",
+      "reject": "Rad etish",
+      "verify": "Tekshirish",
+      "approving": "Tasdiqlanmoqda...",
+      "rejecting": "Rad etilmoqda...",
+      "verifying": "Tekshirilmoqda...",
+      "delete": "O'chirish",
+      "deleteWithId": "{{id}} to'lovini o'chirish",
+      "updateError": "To'lov holatini hozir yangilab bo'lmadi.",
+      "notFoundError": "To'lov topilmadi."
+    },
+    "detail": {
+      "ariaLabel": "To'lov tafsilotlari",
+      "titleFallback": "To'lov tafsilotlari",
+      "close": "To'lov tafsilotlarini yopish",
+      "orderBadge": "Buyurtma: {{order}}",
+      "loadingTitle": "To'lov tafsilotlari yuklanmoqda",
+      "loadingDescription": "Tranzaksiya vaqt chizig'i va tekshiruv ma'lumotlari olinmoqda.",
+      "errorTitle": "To'lov mavjud emas",
+      "errorDescription": "Tanlangan to'lovni yuklab bo'lmadi.",
+      "sectionOverview": "Umumiy ma'lumot",
+      "sectionOverviewDescription": "Asosiy to'lov, hisob va buyurtma bog'lanishlari.",
+      "submittedBy": "Yuboruvchi",
+      "lastFourDigits": "Oxirgi 4 raqam",
+      "verificationReference": "Tekshiruv raqami",
+      "reviewedBy": "Ko'rib chiqqan",
+      "sectionScreenshot": "Chek surati",
+      "screenshotMissing": "Chek surati biriktirilmagan.",
+      "sectionLifecycle": "Tarix",
+      "createdAt": "Qo'shilgan",
+      "updatedAt": "Yangilangan",
+      "reviewedAt": "Ko'rib chiqilgan",
+      "sectionMetadata": "Metadata",
+      "readOnlyHint": "Faqat o'qish rejimi. To'lovni ko'rib chiqish amallari faqat to'lov operatorlari uchun mavjud.",
+      "screenshotAlt": "{{id}} to'lovi uchun chek surati"
+    },
+    "form": {
+      "ariaLabel": "To'lov qo'shish formasi",
+      "createTitle": "To'lov qo'shish",
+      "createSubtitle": "Holati \"kutilmoqda\" bo'lgan yangi to'lov yozuvini qo'shing.",
+      "close": "To'lov qo'shish formasini yopish",
+      "amount": "Summa",
+      "method": "Usul",
+      "submittedBy": "Yuboruvchi",
+      "submittedByPlaceholder": "Operator ismi",
+      "order": "Buyurtma",
+      "orderPlaceholder": "order-001",
+      "lastFourDigits": "Oxirgi 4 raqam",
+      "verificationReference": "Tekshiruv raqami",
+      "verificationPlaceholder": "VRF-2026-10001",
+      "screenshot": "Chek URL",
+      "screenshotPlaceholder": "https://...",
+      "metadata": "Metadata (JSON)",
+      "metadataPlaceholder": "{\"source\":\"manual\",\"risk_score\":22}",
+      "createSubmit": "To'lov qo'shish",
+      "creating": "Qo'shilmoqda...",
+      "saveError": "To'lovni saqlab bo'lmadi.",
+      "amountError": "Summa 0 dan katta bo'lishi kerak.",
+      "submittedByRequired": "Yuboruvchi nomi majburiy.",
+      "orderRequired": "Buyurtma ID majburiy.",
+      "noEligibleOrders": "Mos buyurtmalar yo'q. To'lov qo'shish uchun holati bekor qilingan, yakunlangan yoki to'langan bo'lmagan buyurtma kerak.",
+      "metadataObjectError": "Metadata JSON object bo'lishi kerak.",
+      "metadataValueError": "Metadata qiymatlari faqat string/number/boolean/null bo'lishi mumkin.",
+      "metadataInvalid": "Metadata noto'g'ri formatda."
+    },
+    "deleteDialog": {
+      "ariaLabel": "To'lovni o'chirish oynasi",
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "{{id}} to'lovini o'chirasizmi?",
+      "description": "Bu amal to'lovni tizimdan butunlay o'chiradi.",
+      "confirm": "To'lovni o'chirish",
+      "deleting": "O'chirilmoqda..."
+    }
+  },
+  "aiSettings": {
+    "eyebrow": "AI sozlamalari",
+    "title": "AI sozlamalari",
+    "subtitle": "AI agent xulq-atvori, prompt va avtomatlashtirish parametrlarini boshqaring.",
+    "newSetting": "Yangi konfiguratsiya",
+    "records": "konfiguratsiya",
+    "activeFilters": "faol filtr",
+    "searchPlaceholder": "Nom, model yoki system prompt bo'yicha qidirish",
+    "listTitle": "Konfiguratsiyalar ro'yxati",
+    "listHint": "Faol konfiguratsiya bir vaqtning o'zida faqat bittasi bo'ladi",
+    "emptyTitle": "Konfiguratsiya topilmadi",
+    "emptyDescription": "Filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "loadingTitle": "AI sozlamalari yuklanmoqda",
+    "loadingDescription": "Konfiguratsiyalar va faol profil ma'lumotlari olinmoqda.",
+    "errorTitle": "AI sozlamalarini yuklab bo'lmadi",
+    "errorDescription": "Xizmatdan ma'lumot olishda xatolik yuz berdi.",
+    "autoOrderOn": "Avto buyurtma yoqilgan",
+    "autoOrderOff": "Avto buyurtma o'chirilgan",
+    "followUpOn": "Follow-up yoqilgan",
+    "followUpOff": "Follow-up o'chirilgan",
+    "filters": {
+      "allStatuses": "Barcha holatlar",
+      "status": "Holat",
+      "ordering": "Saralash"
+    },
+    "ordering": {
+      "updatedNewest": "Yangilangan (yangi)",
+      "updatedOldest": "Yangilangan (eski)",
+      "createdNewest": "Qo'shilgan (yangi)",
+      "createdOldest": "Qo'shilgan (eski)",
+      "nameAsc": "Nom (A-Z)",
+      "nameDesc": "Nom (Z-A)",
+      "temperatureHighLow": "Temperatura (yuqori-past)",
+      "temperatureLowHigh": "Temperatura (past-yuqori)"
+    },
+    "columns": {
+      "name": "Nomi",
+      "model": "Model",
+      "temperature": "Temperatura",
+      "autoOrder": "Avto buyurtma",
+      "followUp": "Follow-up",
+      "active": "Faol",
+      "updatedAt": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "setActive": "Faollashtirish",
+      "activating": "Faollashtirilmoqda...",
+      "activateError": "Konfiguratsiyani faollashtirib bo'lmadi.",
+      "delete": "O'chirish"
+    },
+    "form": {
+      "eyebrow": "Konfiguratsiya formasi",
+      "createTitle": "AI konfiguratsiya qo'shish",
+      "editTitle": "AI konfiguratsiyani tahrirlash",
+      "createSubtitle": "Yangi AI profil qo'shing va kerak bo'lsa darhol faollashtiring.",
+      "editSubtitle": "Tanlangan AI profil parametrlarini yangilang.",
+      "close": "Konfiguratsiya formasini yopish",
+      "name": "Nomi",
+      "namePlaceholder": "Masalan: Savdo yordamchisi v4",
+      "modelName": "Model nomi",
+      "systemPrompt": "System prompt",
+      "systemPromptPlaceholder": "AI agent harakat qoidalari va uslubini kiriting...",
+      "systemPromptHint": "Aniq, qisqa va biznesga mos qoidalarni yozing. Bu matn agentning asosiy xulq-atvorini belgilaydi.",
+      "temperature": "Temperatura (0-1)",
+      "orderConfidenceThreshold": "Buyurtma ishonch chegarasi (0-1)",
+      "followUpMinutes": "Follow-up kechikishi (daqiqada)",
+      "followUpEnabled": "Follow-up yoqish",
+      "followUpHint": "Yoqilgan bo'lsa, AI belgilangan daqiqadan so'ng qayta aloqani boshlaydi.",
+      "followUpMessage": "Follow-up xabari",
+      "followUpMessagePlaceholder": "Masalan: Yana yordam kerakmi?",
+      "followUpMessageHint": "Follow-up yoqilganda mijozga yuboriladigan xabar matni.",
+      "resumeAfterOperatorMinutes": "Operator pauzasidan keyin davom etish (daqiqada)",
+      "autoOrderEnabled": "Avto buyurtma",
+      "autoOrderHint": "AI yetarli ishonchga ega bo'lsa buyurtmani avtomatik tayyorlaydi.",
+      "isActive": "Faol konfiguratsiya",
+      "isActiveHint": "Yoqilsa, boshqa faol konfiguratsiyalar avtomatik o'chiriladi.",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "temperatureError": "Temperatura 0 va 1 oralig'ida bo'lishi kerak.",
+      "confidenceError": "Ishonch chegarasi 0 va 1 oralig'ida bo'lishi kerak.",
+      "followUpError": "Follow-up yoqilganida daqiqa qiymati 1 dan katta bo'lishi kerak.",
+      "followUpMessageError": "Follow-up yoqilganida xabar matnini kiriting.",
+      "resumeError": "Daqiqa qiymati 1 dan katta bo'lishi kerak.",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "createSubmit": "Konfiguratsiya qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "saveError": "Konfiguratsiyani saqlab bo'lmadi."
+    },
+    "detail": {
+      "ariaLabel": "AI konfiguratsiya tafsilotlari",
+      "eyebrow": "AI konfiguratsiyasi",
+      "titleFallback": "Konfiguratsiya tafsilotlari",
+      "close": "Tafsilot panelini yopish",
+      "loadingTitle": "Konfiguratsiya yuklanmoqda",
+      "loadingDescription": "AI profil tafsilotlari olinmoqda.",
+      "errorTitle": "Konfiguratsiya topilmadi",
+      "errorDescription": "Tanlangan profilni yuklab bo'lmadi.",
+      "behaviorTitle": "Xulq-atvor parametrlari",
+      "behaviorDescription": "Model, threshold va avtomatlashtirish sozlamalari.",
+      "updatedBy": "Yangilagan foydalanuvchi",
+      "createdAt": "Qo'shilgan",
+      "updatedAt": "Yangilangan",
+      "readOnlyHint": "Faqat o'qish rejimi. O'zgartirish huquqi mavjud emas."
+    },
+    "deleteDialog": {
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "\"{{name}}\" konfiguratsiyasini o'chirasizmi?",
+      "description": "Bu amal konfiguratsiyani ro'yxatdan o'chiradi. Faol konfiguratsiyani o'chirishga ruxsat berilmaydi.",
+      "confirm": "Konfiguratsiyani o'chirish",
+      "deleting": "O'chirilmoqda..."
+    }
+  },
+  "integrations": {
+    "eyebrow": "Integratsiyalar",
+    "title": "Integratsiyalar",
+    "subtitle": "Telegram va Instagram ulanishlarini boshqaring, event oqimini nazorat qiling.",
+    "newConfig": "Yangi konfiguratsiya",
+    "configRecords": "konfiguratsiya",
+    "eventRecords": "hodisa",
+    "loadingTitle": "Integratsiyalar yuklanmoqda",
+    "loadingDescription": "Konfiguratsiyalar va eventlar ma'lumotlari olinmoqda.",
+    "errorTitle": "Integratsiya ma'lumotlarini yuklab bo'lmadi",
+    "errorDescription": "Xizmatga ulanishda xatolik yuz berdi.",
+    "secret": "Maxfiy",
+    "public": "Ochiq",
+    "processed": "Qayta ishlangan",
+    "pending": "Kutilmoqda",
+    "revealValue": "Ko'rsatish",
+    "hideValue": "Yashirish",
+    "views": {
+      "configs": "Konfiguratsiyalar",
+      "events": "Hodisalar"
+    },
+    "providers": {
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "openai": "OpenAI"
+    },
+    "platforms": {
+      "telegram": "Telegram",
+      "instagram": "Instagram",
+      "userbot": "Userbot",
+      "payment": "To'lov"
+    },
+    "filters": {
+      "allProviders": "Barcha providerlar",
+      "allStatuses": "Barcha holatlar",
+      "allTypes": "Barcha turlar",
+      "allPlatforms": "Barcha platformalar",
+      "allProcessed": "Barchasi",
+      "provider": "Provider",
+      "status": "Holat",
+      "visibility": "Ko'rinish",
+      "ordering": "Saralash",
+      "platform": "Platforma",
+      "processed": "Qayta ishlash holati"
+    },
+    "ordering": {
+      "updatedNewest": "Yangilangan (yangi)",
+      "updatedOldest": "Yangilangan (eski)",
+      "createdNewest": "Qo'shilgan (yangi)",
+      "createdOldest": "Qo'shilgan (eski)",
+      "providerAsc": "Provider (A-Z)",
+      "providerDesc": "Provider (Z-A)",
+      "keyAsc": "Key (A-Z)",
+      "keyDesc": "Key (Z-A)",
+      "attemptsHighLow": "Urinishlar (yuqori-past)",
+      "attemptsLowHigh": "Urinishlar (past-yuqori)"
+    },
+    "actions": {
+      "edit": "Tahrirlash",
+      "delete": "O'chirish"
+    },
+    "configColumns": {
+      "provider": "Provider",
+      "key": "Key / Label",
+      "value": "Qiymat",
+      "visibility": "Maxfiylik",
+      "active": "Faol",
+      "updatedAt": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "eventColumns": {
+      "platform": "Platforma",
+      "eventType": "Hodisa turi",
+      "externalId": "External ID",
+      "processed": "Qayta ishlangan",
+      "attempts": "Urinishlar",
+      "createdAt": "Qo'shilgan"
+    },
+    "configSearchPlaceholder": "Provider, key yoki label bo'yicha qidirish",
+    "eventSearchPlaceholder": "event_type yoki external_id bo'yicha qidirish",
+    "configEmptyTitle": "Konfiguratsiya topilmadi",
+    "configEmptyDescription": "Filtrlarni o'zgartirib qayta urinib ko'ring.",
+    "eventEmptyTitle": "Hodisalar topilmadi",
+    "eventEmptyDescription": "Qidiruv va filtrlarni tekshirib qayta urinib ko'ring.",
+    "configFields": {
+      "provider": "Provider",
+      "key": "Key",
+      "label": "Label",
+      "value": "Qiymat",
+      "isSecret": "Maxfiy qiymat",
+      "isActive": "Faol",
+      "updatedBy": "Yangilagan foydalanuvchi",
+      "createdAt": "Qo'shilgan",
+      "updatedAt": "Yangilangan"
+    },
+    "eventFields": {
+      "platform": "Platforma",
+      "eventType": "Hodisa turi",
+      "externalId": "External ID",
+      "eventKey": "Event key",
+      "processed": "Holat",
+      "attempts": "Urinishlar",
+      "errorMessage": "Xatolik",
+      "payload": "Payload",
+      "createdAt": "Qo'shilgan",
+      "updatedAt": "Yangilangan"
+    },
+    "configForm": {
+      "eyebrow": "Konfiguratsiya formasi",
+      "createTitle": "Integratsiya konfiguratsiya qo'shish",
+      "editTitle": "Integratsiya konfiguratsiyani tahrirlash",
+      "createSubtitle": "Telegram, Instagram yoki OpenAI uchun yangi konfiguratsiya qo'shing.",
+      "editSubtitle": "Tanlangan konfiguratsiya qiymatlarini yangilang.",
+      "close": "Konfiguratsiya formasini yopish",
+      "requiredError": "Majburiy maydonlarni to'ldiring.",
+      "saveError": "Konfiguratsiyani saqlab bo'lmadi.",
+      "creating": "Qo'shilmoqda...",
+      "saving": "Saqlanmoqda...",
+      "createSubmit": "Konfiguratsiya qo'shish",
+      "editSubmit": "O'zgarishlarni saqlash",
+      "keyPlaceholder": "Masalan: webhook_secret",
+      "labelPlaceholder": "Masalan: Telegram Webhook Secret",
+      "valuePlaceholder": "Qiymatni kiriting",
+      "secretHint": "Yoqilgan bo'lsa ro'yxatda qiymat maskalanadi.",
+      "activeHint": "Faol bo'lsa integratsiya oqimida ishlatiladi."
+    },
+    "configDetail": {
+      "ariaLabel": "Integratsiya konfiguratsiya tafsilotlari",
+      "eyebrow": "Konfiguratsiya tafsiloti",
+      "titleFallback": "Konfiguratsiya",
+      "close": "Tafsilot panelini yopish",
+      "loadingTitle": "Konfiguratsiya yuklanmoqda",
+      "loadingDescription": "Tanlangan konfiguratsiya ma'lumotlari olinmoqda.",
+      "errorTitle": "Konfiguratsiya topilmadi",
+      "errorDescription": "Tanlangan yozuvni yuklab bo'lmadi.",
+      "configTitle": "Konfiguratsiya ma'lumotlari",
+      "configDescription": "Provider ulanishi va xavfsizlik parametrlarini tekshiring.",
+      "readOnlyHint": "Faqat o'qish rejimi. O'zgartirish huquqi mavjud emas."
+    },
+    "eventDetail": {
+      "ariaLabel": "Integratsiya hodisasi tafsilotlari",
+      "eyebrow": "Event tafsiloti",
+      "titleFallback": "Event tafsiloti",
+      "close": "Tafsilot panelini yopish",
+      "loadingTitle": "Event yuklanmoqda",
+      "loadingDescription": "Tanlangan hodisa tafsilotlari olinmoqda.",
+      "errorTitle": "Event topilmadi",
+      "errorDescription": "Tanlangan eventni yuklab bo'lmadi.",
+      "eventInfo": "Hodisa ma'lumotlari"
+    },
+    "deleteDialog": {
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "\"{{label}}\" konfiguratsiyasini o'chirasizmi?",
+      "description": "Bu amal konfiguratsiyani ro'yxatdan o'chiradi va ortga qaytarib bo'lmaydi.",
+      "confirm": "Konfiguratsiyani o'chirish",
+      "deleting": "O'chirilmoqda..."
+    }
+  },
+  "logs": {
+    "columns": {
+      "type": "Turi",
+      "message": "Xabar",
+      "createdAt": "Qo'shilgan"
+    },
+    "detail": {
+      "ariaLabel": "Log tafsilotlari",
+      "eyebrow": "Log yozuvi",
+      "titleFallback": "Log tafsiloti",
+      "close": "Tafsilotni yopish",
+      "loadingTitle": "Log yuklanmoqda",
+      "loadingDescription": "Tanlangan log ma'lumotlari olinmoqda.",
+      "errorTitle": "Log topilmadi",
+      "errorDescription": "Tanlangan log yozuvini yuklab bo'lmadi.",
+      "metadataTitle": "Metadata"
+    }
+  },
+  "profile": {
+    "eyebrow": "Hisob",
+    "title": "Profil",
+    "subtitle": "Hisobingiz va shaxsiy sozlamalaringizni boshqaring.",
+    "editProfile": "Profilni tahrirlash",
+    "loadingTitle": "Profil yuklanmoqda",
+    "loadingDescription": "Hisob ma'lumotlari olinmoqda.",
+    "errorTitle": "Profil mavjud emas",
+    "errorDescription": "Hisob ma'lumotlarini yuklab bo'lmadi.",
+    "notSet": "Kiritilmagan",
+    "sections": {
+      "editProfile": "Profilni tahrirlash",
+      "contactInformation": "Kontakt ma'lumotlari",
+      "accountDetails": "Hisob tafsilotlari",
+      "permissions": "Ruxsatlar",
+      "security": "Xavfsizlik"
+    },
+    "fields": {
+      "fullName": "To'liq ism",
+      "email": "Email",
+      "phone": "Telefon",
+      "role": "Rol",
+      "status": "Holat",
+      "userId": "Foydalanuvchi ID",
+      "joined": "Qo'shilgan sana",
+      "lastActive": "So'nggi faollik"
+    },
+    "placeholders": {
+      "fullName": "To'liq ismingizni kiriting",
+      "email": "user@example.com",
+      "phone": "+998 90 000 0000",
+      "password": "Kamida 8 ta belgi",
+      "confirmPassword": "Parolni qayta kiriting"
+    },
+    "accountStatus": {
+      "title": "Hisob holati",
+      "activeHint": "Hisobingiz faol va tizimda ko'rinadi.",
+      "inactiveHint": "Hisobingiz vaqtincha o'chirilgan."
+    },
+    "actions": {
+      "changePassword": "Parolni o'zgartirish",
+      "saveChanges": "O'zgarishlarni saqlash",
+      "saving": "Saqlanmoqda..."
+    },
+    "password": {
+      "newPasswordTitle": "Yangi parol",
+      "password": "Parol",
+      "confirmPassword": "Parolni tasdiqlash",
+      "mismatch": "Parollar mos kelmadi.",
+      "editModeHint": "Parolni yangilash uchun tahrirlash formasidagi bo'limdan foydalaning."
+    },
+    "permissions": {
+      "fullAccess": "To'liq kirish mavjud, alohida ruxsat kodlari talab qilinmaydi.",
+      "noneAssigned": "Maxsus ruxsatlar biriktirilmagan."
+    },
+    "security": {
+      "description": "Parol va xavfsizlik sozlamalaringizni boshqaring."
+    }
+  },
+  "labels": {
+    "roles": {
+      "developer": "Dasturchi",
+      "admin": "Administrator",
+      "operator": "Operator"
+    },
+    "userStatus": {
+      "active": "Faol",
+      "inactive": "Nofaol",
+      "invited": "Taklif qilingan"
+    },
+    "leadStatus": {
+      "new": "Yangi",
+      "contacted": "Bog'langan",
+      "qualified": "Malakali",
+      "negotiating": "Muzokara",
+      "converted": "Konvertatsiya",
+      "lost": "Yo'qotilgan",
+      "archived": "Arxiv"
+    },
+    "orderStatus": {
+      "all": "Barcha buyurtmalar",
+      "contract": "Buyurtma",
+      "contracts": "Buyurtmalar",
+      "draft": "Qoralama",
+      "waiting_payment": "To'lov kutilmoqda",
+      "pending": "Kutilmoqda",
+      "confirmed": "Tasdiqlangan",
+      "paid": "To'langan",
+      "completed": "Yakunlangan",
+      "cancelled": "Bekor qilingan"
+    },
+    "paymentStatus": {
+      "unpaid": "To'lanmagan",
+      "pending": "Kutilmoqda",
+      "paid": "To'langan",
+      "approved": "Tasdiqlangan",
+      "rejected": "Rad etilgan",
+      "verified": "Tekshirilgan",
+      "failed": "Muvaffaqiyatsiz",
+      "refunded": "Qaytarilgan",
+      "partially_refunded": "Qisman qaytarilgan"
+    },
+    "paymentMethod": {
+      "manual": "Qo'lda",
+      "payme": "Payme",
+      "click": "Click"
+    },
+    "channels": {
+      "instagram": "Instagram",
+      "telegram": "Telegram",
+      "whatsapp": "WhatsApp",
+      "facebook": "Facebook",
+      "website": "Veb-sayt",
+      "marketplace": "Marketpleys",
+      "webchat": "Veb chat",
+      "web": "Veb",
+      "referral": "Tavsiya",
+      "manual": "Qo'lda",
+      "other": "Boshqa"
+    },
+    "permissions": {
+      "can_access_chats": "Chatlarga kirish",
+      "can_view_dashboard": "Dashboardni ko'rish",
+      "can_view_agents": "Agentlarni ko'rish",
+      "can_manage_agents": "Agentlarni boshqarish",
+      "can_view_couriers": "Kuryerlarni ko'rish",
+      "can_manage_couriers": "Kuryerlarni boshqarish",
+      "can_view_leads": "Lidlarni ko'rish",
+      "can_manage_leads": "Lidlarni boshqarish",
+      "can_view_customers": "Mijozlarni ko'rish",
+      "can_manage_customers": "Mijozlarni boshqarish",
+      "can_view_products": "Mahsulotlarni ko'rish",
+      "can_manage_products": "Mahsulotlarni boshqarish",
+      "can_view_orders": "Buyurtmalarni ko'rish",
+      "can_update_orders": "Buyurtmalarni yangilash",
+      "can_view_payments": "To'lovlarni ko'rish",
+      "can_manage_payments": "To'lovlarni boshqarish",
+      "can_chat": "Chatdan foydalanish",
+      "can_view_notifications": "Bildirishnomalarni ko'rish",
+      "can_view_conversations": "Suhbatlarni ko'rish",
+      "can_manage_conversations": "Suhbatlarni boshqarish",
+      "can_manage_users": "Foydalanuvchilarni boshqarish",
+      "can_view_users": "Foydalanuvchilarni ko'rish",
+      "can_view_clients": "Mijozlarni ko'rish",
+      "can_manage_clients": "Mijozlarni boshqarish",
+      "can_view_bookings": "Bronlarni ko'rish",
+      "can_manage_bookings": "Bronlarni boshqarish",
+      "can_view_statuses": "Statuslarni ko'rish",
+      "can_manage_statuses": "Statuslarni boshqarish",
+      "can_view_settings": "Sozlamalarni ko'rish",
+      "can_manage_settings": "Sozlamalarni boshqarish",
+      "can_view_contracts": "Shartnomalarni ko'rish",
+      "can_manage_contracts": "Shartnomalarni boshqarish",
+      "can_manage_integrations": "Integratsiyalarni boshqarish",
+      "can_manage_ai_settings": "AI sozlamalarini boshqarish",
+      "can_view_logs": "Jurnallarni ko'rish",
+      "can_view_audit_logs": "Audit jurnallarini ko'rish",
+      "dashboard": {
+        "view": "Boshqaruv paneli"
+      },
+      "leads": {
+        "view": "Lidlarni ko'rish",
+        "manage": "Lidlarni boshqarish"
+      },
+      "clients": {
+        "view": "Mijozlarni ko'rish",
+        "manage": "Mijozlarni boshqarish"
+      },
+      "products": {
+        "view": "Mahsulotlarni ko'rish",
+        "manage": "Mahsulotlarni boshqarish"
+      },
+      "chats": {
+        "view": "Chatlarni ko'rish",
+        "manage": "Chatlarni boshqarish"
+      },
+      "contracts": {
+        "view": "Shartnomalarni ko'rish",
+        "manage": "Shartnomalarni boshqarish"
+      },
+      "notifications": {
+        "view": "Bildirishnomalarni ko'rish",
+        "manage": "Bildirishnomalarni boshqarish"
+      },
+      "integrations": {
+        "view": "Integratsiyalarni ko'rish",
+        "manage": "Integratsiyalarni boshqarish"
+      },
+      "ai": {
+        "view": "AI sozlamalarini ko'rish",
+        "manage": "AI sozlamalarini boshqarish"
+      },
+      "logs": {
+        "view": "Jurnallarni ko'rish"
+      },
+      "audit_logs": {
+        "view": "Audit jurnallarini ko'rish"
+      },
+      "bookings": {
+        "view": "Bronlarni ko'rish",
+        "manage": "Bronlarni boshqarish"
+      },
+      "conversations": {
+        "view": "Suhbatlarni ko'rish",
+        "manage": "Suhbatlarni boshqarish"
+      },
+      "settings": {
+        "view": "Sozlamalarni ko'rish",
+        "manage": "Sozlamalarni boshqarish"
+      },
+      "statuses": {
+        "view": "Statuslarni ko'rish",
+        "manage": "Statuslarni boshqarish"
+      },
+      "users": {
+        "view": "Foydalanuvchilarni ko'rish",
+        "manage": "Foydalanuvchilarni boshqarish"
+      }
+    },
+    "permissionDescriptions": {
+      "can_access_chats": "Chatlar va suhbatlar bo'limiga kirishga ruxsat beradi.",
+      "can_view_dashboard": "Dashboard statistikalarini ko'rishga ruxsat beradi.",
+      "can_view_agents": "Agentlar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_manage_agents": "Agentlarni qo'shish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_couriers": "Kuryerlar va kuryer buyurtmalarini ko'rishga ruxsat beradi.",
+      "can_manage_couriers": "Kuryerlar va kuryer buyurtmalarini boshqarishga ruxsat beradi.",
+      "can_view_leads": "Lidlar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_manage_leads": "Lidlarni qo'shish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_customers": "Mijozlar ma'lumotlarini ko'rishga ruxsat beradi.",
+      "can_manage_customers": "Mijozlarni qo'shish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_products": "Mahsulot katalogini ko'rishga ruxsat beradi.",
+      "can_manage_products": "Mahsulotlarni qo'shish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_orders": "Buyurtmalar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_update_orders": "Buyurtma holati va tafsilotlarini yangilashga ruxsat beradi.",
+      "can_view_payments": "To'lovlar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_manage_payments": "To'lovlarni tasdiqlash, rad etish va boshqarishga ruxsat beradi.",
+      "can_chat": "Chat orqali yozishmalarni yuritishga ruxsat beradi.",
+      "can_view_notifications": "Tizim bildirishnomalarini ko'rishga ruxsat beradi.",
+      "can_view_conversations": "Suhbatlar va xabarlarni ko'rishga ruxsat beradi.",
+      "can_manage_conversations": "Suhbatlarga javob berish va boshqarishga ruxsat beradi.",
+      "can_manage_users": "Foydalanuvchilarni qo'shish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_users": "Foydalanuvchilar ro'yxati va profilini ko'rishga ruxsat beradi.",
+      "can_view_clients": "Mijozlar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_manage_clients": "Mijozlarni qo'shish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_bookings": "Bronlar ro'yxati va bron tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_manage_bookings": "Bronlarni yaratish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_view_statuses": "Statuslar ro'yxatini ko'rishga ruxsat beradi.",
+      "can_manage_statuses": "Statuslarni yaratish va boshqarishga ruxsat beradi.",
+      "can_view_settings": "Sozlamalar bo'limini ko'rishga ruxsat beradi.",
+      "can_manage_settings": "Sozlamalar bo'limini boshqarishga ruxsat beradi.",
+      "can_view_contracts": "Shartnomalar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
+      "can_manage_contracts": "Shartnomalarni yaratish, tahrirlash va o'chirishga ruxsat beradi.",
+      "can_manage_integrations": "Integratsiya sozlamalarini boshqarishga ruxsat beradi.",
+      "can_manage_ai_settings": "AI sozlamalarini qo'shish va tahrirlashga ruxsat beradi.",
+      "can_view_logs": "Tizim jurnallarini ko'rishga ruxsat beradi.",
+      "can_view_audit_logs": "Audit jurnallari va tarixini ko'rishga ruxsat beradi.",
+      "dashboard": {
+        "view": "Boshqaruv paneli va KPI sahifalari"
+      },
+      "leads": {
+        "view": "Lidlar ro'yxati va lid tafsilotini ko'rish",
+        "manage": "Lidlarni yaratish, yangilash va boshqarish"
+      },
+      "clients": {
+        "view": "Mijozlar ro'yxati va tafsilotlarini ko'rish",
+        "manage": "Mijozlarni yaratish, yangilash va boshqarish"
+      },
+      "products": {
+        "view": "Mahsulotlar va katalog ma'lumotlarini ko'rish",
+        "manage": "Mahsulotlarni yaratish, yangilash va o'chirish"
+      },
+      "chats": {
+        "view": "Chat seanslari va xabarlarni ko'rish",
+        "manage": "Javob berish, AI ni pauza qilish va chatlarni boshqarish"
+      },
+      "contracts": {
+        "view": "Shartnomalar va audit so'rovlarini ko'rish",
+        "manage": "Shartnomalar va auditlarni yaratish, yangilash va o'chirish"
+      },
+      "notifications": {
+        "view": "Bildirishnomalar ro'yxatini ko'rish",
+        "manage": "Bildirishnomalarni o'qilgan deb belgilash va o'chirish"
+      },
+      "integrations": {
+        "view": "Integratsiya sozlamalarini ko'rish",
+        "manage": "Integratsiya sozlamalarini yangilash"
+      },
+      "ai": {
+        "view": "AI sozlamalari va faol AI konfiguratsiyalarini ko'rish",
+        "manage": "AI sozlamalarini yaratish, yangilash va o'chirish"
+      },
+      "logs": {
+        "view": "API va AI jurnallarini ko'rish"
+      },
+      "audit_logs": {
+        "view": "Audit jurnallari va audit tarixini ko'rish"
+      },
+      "bookings": {
+        "view": "Bronlar ro'yxati va bron tafsilotini ko'rish",
+        "manage": "Bronlarni yaratish, yangilash va o'chirish"
+      },
+      "conversations": {
+        "view": "Suhbatlar va xabarlarni ko'rish",
+        "manage": "Suhbatlarga javob berish va boshqarish"
+      },
+      "settings": {
+        "view": "Tizim sozlamalarini ko'rish",
+        "manage": "Tizim sozlamalarini yangilash va boshqarish"
+      },
+      "statuses": {
+        "view": "Statuslar ro'yxatini ko'rish",
+        "manage": "Statuslarni yaratish, yangilash va boshqarish"
+      },
+      "users": {
+        "view": "Foydalanuvchilar ro'yxati va rollar ma'lumotini ko'rish",
+        "manage": "Foydalanuvchilarni yaratish, yangilash va o'chirish"
+      }
+    }
+  },
+  "placeholders": {
+    "orders": {
+      "summary": "Buyurtmalar bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "Buyurtmalar moduli",
+      "sectionDescription": "Bu bo'lim buyurtmalar ro'yxati va holat boshqaruvi uchun tayyor.",
+      "emptyTitle": "Buyurtmalar interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda buyurtmalar bo'yicha real interfeys qo'shiladi."
+    },
+    "payments": {
+      "summary": "To'lovlar bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "To'lovlar moduli",
+      "sectionDescription": "Bu bo'lim tranzaksiya va to'lov holatlarini boshqarish uchun tayyor.",
+      "emptyTitle": "To'lovlar interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda to'lovlar bo'yicha real interfeys qo'shiladi."
+    },
+    "chat": {
+      "summary": "Chat bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "Chat moduli",
+      "sectionDescription": "Bu bo'lim xabarlar oqimi va operator muloqoti uchun tayyor.",
+      "emptyTitle": "Chat interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda chat bo'yicha real interfeys qo'shiladi."
+    },
+    "notifications": {
+      "summary": "Bildirishnomalar bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "Bildirishnomalar moduli",
+      "sectionDescription": "Bu bo'lim tizim ogohlantirishlari uchun tayyor.",
+      "emptyTitle": "Bildirishnomalar interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda bildirishnomalar bo'yicha real interfeys qo'shiladi."
+    },
+    "users": {
+      "summary": "Foydalanuvchilar bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "Foydalanuvchilar moduli",
+      "sectionDescription": "Bu bo'lim jamoa va rollarni boshqarish uchun tayyor.",
+      "emptyTitle": "Foydalanuvchilar interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda foydalanuvchilar bo'yicha real interfeys qo'shiladi."
+    },
+    "integrations": {
+      "summary": "Integratsiyalar bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "Integratsiyalar moduli",
+      "sectionDescription": "Bu bo'lim tashqi xizmat ulanishlari uchun tayyor.",
+      "emptyTitle": "Integratsiyalar interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda integratsiyalar bo'yicha real interfeys qo'shiladi."
+    },
+    "aiSettings": {
+      "summary": "AI sozlamalari bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "AI sozlamalari moduli",
+      "sectionDescription": "Bu bo'lim model va prompt sozlamalari uchun tayyor.",
+      "emptyTitle": "AI sozlamalari interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda AI sozlamalari bo'yicha real interfeys qo'shiladi."
+    },
+    "logs": {
+      "summary": "Jurnallar bo'limi keyingi vazifalarda to'liq funksional holatga o'tkaziladi.",
+      "sectionTitle": "Jurnallar moduli",
+      "sectionDescription": "Bu bo'lim audit va texnik yozuvlar uchun tayyor.",
+      "emptyTitle": "Jurnallar interfeysi hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda jurnallar bo'yicha real interfeys qo'shiladi."
+    },
+    "notFound": {
+      "summary": "Noma'lum yo'nalishlar uchun zaxira sahifa.",
+      "sectionTitle": "Sahifa topilmadi",
+      "sectionDescription": "Bu ommaviy sahifa xato yo'nalishlarda foydalanuvchini yo'naltirish uchun ishlatiladi.",
+      "emptyTitle": "404 interfeys hali tayyor emas",
+      "emptyDescription": "Keyingi bosqichda foydalanuvchini qayta yo'naltirish imkoniyatlari qo'shiladi."
+    }
+  },
+  "auditRequests": {
+    "eyebrow": "Energiya auditi",
+    "title": "Audit so'rovlari",
+    "subtitle": "Audit so'rovlarini kuzating, xulosani boshqaring va holatlarni bir joyda yangilang.",
+    "newAuditRequest": "Yangi so'rov",
+    "visible": "ko'rinmoqda",
+    "detailOpen": "Profil ochiq",
+    "listTitle": "Audit so'rovlari navbati",
+    "listHint": "Profilni ochish uchun satrni bosing.",
+    "searchPlaceholder": "Mijoz, shartnoma yoki telefon bo'yicha qidiring...",
+    "emptyTitle": "Audit so'rovlari topilmadi",
+    "emptyDescription": "Qidiruv yoki filtr parametrlarini o'zgartiring.",
+    "errorTitle": "Audit so'rovlari mavjud emas",
+    "errorDescription": "Audit so'rovlari ro'yxatini yuklab bo'lmadi.",
+    "filters": {
+      "status": "Holat",
+      "client": "Mijoz",
+      "requestedPower": "Quvvat (kW)",
+      "ordering": "Saralash",
+      "allStatuses": "Barcha holatlar",
+      "allClients": "Barcha mijozlar",
+        "clientPlaceholder": "Mijoz nomi bo'yicha filtrlang"
+    },
+    "ordering": {
+      "updatedNewest": "Yangilangan (yangi)",
+      "updatedOldest": "Yangilangan (eski)",
+      "createdNewest": "Yaratilgan (yangi)",
+      "createdOldest": "Yaratilgan (eski)",
+      "powerHighLow": "Quvvat (yuqori-past)",
+      "powerLowHigh": "Quvvat (past-yuqori)"
+    },
+    "statuses": {
+      "new": "Yangi",
+      "moderation": "Moderatsiya",
+      "published": "E'lon qilingan",
+      "paid": "To'langan",
+      "conclusion_given": "Xulosa berilgan"
+    },
+    "columns": {
+      "request": "So'rov",
+      "requestedPower": "So'ralgan quvvat",
+      "contactPhone": "Aloqa telefoni",
+      "status": "Holat",
+      "updated": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "fields": {
+      "client": "Mijoz",
+      "contract": "Shartnoma",
+      "requestedPower": "So'ralgan quvvat (kW)",
+      "status": "Holat",
+      "contactPhone": "Aloqa telefoni",
+      "siteAddress": "Obyekt manzili",
+      "notes": "Izoh",
+      "conclusion": "Xulosa",
+      "created": "Yaratilgan",
+      "updated": "Yangilangan"
+    },
+    "form": {
+      "eyebrow": "Audit so'rovi formasi",
+      "createTitle": "Yangi audit so'rovi",
+      "editTitle": "Audit so'rovini tahrirlash",
+      "close": "Formani yopish",
+      "requiredError": "Majburiy maydonlarni to'ldiring: mijoz, shartnoma va quvvat.",
+      "saveError": "Audit so'rovini saqlab bo'lmadi.",
+      "saving": "Saqlanmoqda...",
+      "createSubmit": "So'rov yaratish",
+      "editSubmit": "O'zgarishlarni saqlash",
+        "clientPlaceholder": "Mijozni tanlang",
+        "contractPlaceholder": "Shartnomani tanlang"
+    },
+    "detail": {
+      "eyebrow": "Audit so'rovi profili",
+      "close": "Tafsilot panelini yopish",
+      "loadingTitle": "Audit so'rovi yuklanmoqda",
+      "loadingDescription": "Audit so'rovi tafsilotlari olinmoqda.",
+      "errorTitle": "Audit so'rovi topilmadi",
+      "errorDescription": "Tanlangan audit so'rovi mavjud emas yoki o'chirilgan."
+    },
+    "deleteDialog": {
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "\"{{client}}\" so'rovini o'chirasizmi?",
+      "description": "Bu amal ortga qaytarilmaydi.",
+      "deleting": "O'chirilmoqda...",
+      "confirm": "So'rovni o'chirish"
+    }
+  },
+  "contractsPage": {
+    "eyebrow": "Shartnoma",
+    "title": "Shartnomalar",
+    "subtitle": "Shartnomalar holatini, panel va yetkazishni bitta oynada boshqaring.",
+    "newContract": "Yangi shartnoma",
+    "visible": "ko'rinmoqda",
+    "detailOpen": "Profil ochiq",
+    "searchPlaceholder": "Shartnoma, mijoz yoki telefon bo'yicha qidiring...",
+    "statusLabel": "Holat",
+    "panelLabel": "Panel",
+    "inverterLabel": "Invertor",
+    "powerLabel": "Quvvat (kW)",
+    "allStatuses": "Barcha holatlar",
+    "allPanels": "Barcha panellar",
+    "allInverters": "Barcha invertorlar",
+    "listTitle": "Shartnomalar katalogi",
+    "listHint": "Profilni ko'rish uchun satrni bosing.",
+    "errorTitle": "Shartnomalar mavjud emas",
+    "errorDescription": "Shartnomalar ro'yxatini yuklab bo'lmadi.",
+    "columns": {
+      "title": "Shartnoma",
+      "amount": "Summa",
+      "panel": "Panel",
+      "inverter": "Invertor",
+      "power": "Quvvat",
+      "status": "Holat",
+      "updated": "Yangilangan",
+      "actions": "Amallar"
+    },
+    "statuses": {
+      "draft": "Qoralama",
+      "audit_pending": "Audit kutilmoqda",
+      "audit_paid": "Audit to'langan",
+      "moderation": "Moderatsiya",
+      "contract_ready": "Shartnoma tayyor",
+      "payment_pending": "To'lov kutilmoqda",
+      "paid": "To'langan",
+      "delivered": "Yetkazilgan",
+      "sent": "Yuborilgan",
+      "signed": "Imzolangan",
+      "canceled": "Bekor qilingan"
+    },
+    "edit": "Tahrirlash",
+    "delete": "O'chirish",
+    "pricing": {
+      "button": "Narxlar jadvali",
+      "title": "Narxlar jadvali",
+      "loadingTitle": "Yuklanmoqda...",
+      "loadingDescription": "Matritsa ma'lumotlari olinmoqda.",
+      "emptyTitle": "Matritsa bo'sh",
+      "emptyDescription": "Ko'rsatish uchun ma'lumot yo'q.",
+      "subsidy": "Subsidiya",
+      "auditPowers": "Qo'llab-quvvatlanadigan audit (kW)",
+      "configurations": "konfiguratsiya",
+      "power": "Quvvat",
+      "view": "Ko'rish",
+      "basePrice": "Bazaviy narx",
+      "customerPrice": "Mijoz narxi",
+      "audit": "Audit",
+      "currency": "so'm"
+    },
+    "form": {
+      "newClient": "Yangi mijoz",
+      "newClientName": "Mijoz ismi",
+      "newClientNamePlaceholder": "Masalan: Ali Valiyev",
+      "newClientPhone": "Mijoz telefoni",
+      "newClientPhonePlaceholder": "Masalan: +998901234567",
+      "newClientRequiredError": "Yangi mijoz uchun ism, telefon va shartnoma nomini to'ldiring.",
+      "subsidyRequiredError": "Subsidiya (%) maydonini to'ldiring."
+    }
+  },
+  "operatorKpi": {
+    "eyebrow": "Samaradorlik",
+    "title": "Operator KPI",
+    "subtitle": "Tanlangan sana oralig'i uchun operator ko'rsatkichlari.",
+    "records": "operator",
+    "loadingTitle": "Operator statistikasi yuklanmoqda",
+    "loadingDescription": "KPI ma'lumotlari olinmoqda...",
+    "errorTitle": "KPI yuklanmadi",
+    "errorDescription": "Xizmat mavjud emas yoki ruxsat yo'q.",
+    "emptyTitle": "Operatorlar topilmadi",
+    "emptyDescription": "Sana oralig'ini o'zgartirib ko'ring.",
+    "filters": {
+      "dateFrom": "Boshlanish sanasi",
+      "dateTo": "Tugash sanasi"
+    },
+    "columns": {
+      "operator": "Operator",
+      "contactedClients": "Mijozlar",
+      "messagesSent": "Xabarlar",
+      "contractClients": "Shartnomalar",
+      "lostClients": "Yo'qotilgan",
+      "actions": "Amallar"
+    },
+    "actions": {
+      "view": "KPI ko'rish"
+    },
+    "detail": {
+      "ariaLabel": "Operator KPI tafsilotlari",
+      "eyebrow": "Operator KPI",
+      "close": "Yopish",
+      "loadingTitle": "KPI yuklanmoqda",
+      "loadingDescription": "Operator statistikasi olinmoqda.",
+      "errorTitle": "KPI yuklanmadi",
+      "errorDescription": "Operator ma'lumotlarini yuklab bo'lmadi."
+    },
+    "metrics": {
+      "contactedClients": "Aloqaga chiqqan mijozlar",
+      "messagesSent": "Yuborilgan xabarlar",
+      "contracts": "Shartnomalar"
+    },
+    "distributions": {
+      "contractStatus": "Shartnoma holati",
+      "clientStatus": "Mijoz holati",
+      "sources": "Manbalar"
+    },
+    "recentClients": {
+      "title": "So'nggi mijozlar",
+      "subtitle": "Tanlangan sana oralig'ida oxirgi aloqa qilingan mijozlar.",
+      "emptyTitle": "Mijozlar yo'q",
+      "emptyDescription": "So'nggi aloqalar topilmadi.",
+      "columns": {
+        "client": "Mijoz",
+        "status": "Holat",
+        "source": "Manba",
+        "lastContact": "So'nggi aloqa"
+      }
+    }
+  },
+  "clients": {
+    "importExport": {
+      "importClients": "Import",
+      "exportClients": "Eksport",
+      "importTitle": "Mijozlarni import qilish",
+      "importSubtitle": "JSON fayl yuklang yoki mijozlar JSON massivini joylang.",
+      "uploadFile": "Fayl yuklash",
+      "downloadTemplate": "Shablonni yuklash",
+      "importPlaceholder": "[{\"full_name\":\"Ali Valiyev\",\"phone\":\"+998901234567\",\"region\":\"Toshkent\"}]",
+      "startImport": "Import qilish",
+      "importing": "Import qilinmoqda...",
+      "close": "Yopish",
+      "exportInProgress": "Eksport qilinmoqda...",
+      "importFileReadError": "Import faylini o`qib bo`lmadi.",
+      "invalidImportJson": "JSON noto`g`ri. Obyektlar massivi bo`lishi kerak.",
+      "importNoValidRows": "Yaroqli yozuv topilmadi (full_name maydoni majburiy).",
+      "exportFailed": "Mijozlarni eksport qilib bo`lmadi.",
+      "importFailed": "Mijozlarni import qilib bo`lmadi.",
+      "exportSuccess": "Eksport yakunlandi: {{count}} ta yozuv.",
+      "importResult": "Import yakunlandi. Muvaffaqiyatli: {{success}}, xatolik: {{failed}}."
+    },
+    "page": {
+      "eyebrow": "Mijoz",
+      "title": "Mijozlar",
+      "subtitle": "Mijozlarni boshqaring, holatlarni kuzating va kartochkalar bilan yagona oynada ishlang.",
+      "newClient": "Yangi mijoz",
+      "visible": "ko'rinmoqda",
+      "detailOpen": "Profil ochiq",
+      "errorTitle": "Mijozlar mavjud emas",
+      "errorDescription": "Mijozlar ro`yxatini yuklab bo`lmadi."
+    }
+  },
+  "notifications": {
+    "eyebrow": "Bildirishnomalar",
+    "title": "Bildirishnomalar",
+    "subtitle": "Muhim voqealar va yangilanishlarni kuzating",
+    "loadingTitle": "Yuklanmoqda...",
+    "loadingDescription": "Bildirishnomalar ro'yxati yuklanmoqda.",
+    "errorTitle": "Bildirishnomani yuklab bo'lmadi",
+    "errorDescription": "Sahifani yangilab qayta urinib ko'ring.",
+    "activeFilters": "faol filtr",
+    "detailOpen": "Tafsilot paneli ochiq",
+    "searchPlaceholder": "Bildirishnoma qidirish",
+    "listTitle": "Bildirishnomalar ro'yxati",
+    "listHint": "O'qilmaganlar alohida ajratib ko'rsatiladi",
+    "countSuffix": "ta",
+    "filters": {
+      "allChannels": "Barcha kanallar",
+      "all": "Barchasi",
+      "read": "O'qilgan",
+      "unread": "O'qilmagan",
+      "channel": "Kanal",
+      "status": "Holat",
+      "ordering": "Saralash"
+    },
+    "ordering": {
+      "createdNewest": "Qo'shilgan sana (yangi)",
+      "createdOldest": "Qo'shilgan sana (eski)",
+      "updatedNewest": "Yangilangan sana (yangi)",
+      "updatedOldest": "Yangilangan sana (eski)"
+    },
+    "bulk": {
+      "markAllRead": "Barchasini o'qilgan qilish",
+      "markingAllRead": "Belgilanmoqda...",
+      "deleteAll": "Barchasini o'chirish",
+      "deletingAll": "O'chirilmoqda...",
+      "deleteAllConfirm": "Barcha bildirishnomalar o'chirilsinmi? Bu amalni ortga qaytarib bo'lmaydi.",
+      "deleteOne": "O'chirish",
+      "deletingOne": "O'chirilmoqda...",
+      "deleteOneConfirm": "Ushbu bildirishnoma o'chirilsinmi?"
+    },
+    "detailPanelAria": "Bildirishnoma tafsilotlari",
+    "itemEyebrow": "Bildirishnoma",
+    "detailPanelTitle": "Bildirishnoma tafsilotlari",
+    "detailPanelClose": "Tafsilot panelini yopish",
+    "loadingDetailDescription": "Bildirishnoma tafsilotlari olinmoqda.",
+    "detailErrorTitle": "Bildirishnoma topilmadi",
+    "detailErrorDescription": "Tanlangan bildirishnoma ma'lumotlarini yuklab bo'lmadi.",
+    "detailMessageTitle": "Matn",
+    "detailMessageDescription": "To'liq bildirishnoma xabari.",
+    "detailInfoTitle": "Tafsilotlar",
+    "createdAt": "Qo'shilgan",
+    "updatedAt": "Yangilangan",
+    "user": "Foydalanuvchi",
+    "additionalInfo": "Qo'shimcha ma'lumot"
+  },
+  "chatPage": {
+    "title": "Suhbatlar",
+    "countSuffix": "ta",
+    "closeSessionAria": "Suhbatni yopish",
+    "ordering": {
+      "latestMessage": "Oxirgi xabar (yangi)",
+      "oldestMessage": "Oxirgi xabar (eski)",
+      "newestCreated": "Qo'shilgan (yangi)",
+      "oldestCreated": "Qo'shilgan (eski)"
+    },
+    "errors": {
+      "sessionLoad": "Suhbat tafsilotlarini yuklab bo'lmadi.",
+      "messagesLoad": "Xabarlarni yuklab bo'lmadi.",
+      "messageSend": "Xabar yuborilmadi.",
+      "aiPause": "AI ni to'xtatib bo'lmadi.",
+      "aiResume": "AI ni yoqib bo'lmadi.",
+      "sessionDelete": "Suhbatni o'chirib bo'lmadi.",
+      "requestOperator": "Operator so'rovi yuborilmadi."
+    },
+    "confirmations": {
+      "deleteSession": "Ushbu suhbat va uning barcha tarixini o'chirasizmi?"
+    },
+    "filters": {
+      "searchPlaceholder": "Suhbat, mijoz yoki tashqi ID bo'yicha qidirish",
+      "channel": "Kanal",
+      "allChannels": "Barcha kanallar",
+      "allChannelsShort": "Barcha",
+      "operator": "Operator",
+      "activeOperator": "Faol operator",
+      "inactiveOperator": "Nofaol operator",
+      "sorting": "Saralash"
+    },
+    "channels": {
+      "web": "Veb",
+      "manual": "Qo'lda"
+    },
+    "states": {
+      "open": "Ochiq",
+      "pending": "Kutilmoqda",
+      "resolved": "Yakunlangan"
+    },
+    "sessionList": {
+      "loadingTitle": "Suhbatlar yuklanmoqda",
+      "loadingDescription": "Suhbat sessiyalari ro'yxati olinmoqda.",
+      "errorTitle": "Suhbatlarni yuklab bo'lmadi",
+      "errorDescription": "Chat sessiyalarini qayta yuklab urinib ko'ring.",
+      "emptyTitle": "Suhbat topilmadi",
+      "emptyDescription": "Qidiruv yoki filtrlarni o'zgartirib qayta urinib ko'ring.",
+      "unknownChat": "Noma'lum chat",
+      "noTime": "Vaqt yo'q",
+      "noMessage": "Xabar yo'q",
+      "operatorRequired": "Operator kerak"
+    },
+    "workspace": {
+      "selectDate": "Sana tanlang",
+      "invalidTime": "To'g'ri vaqt kiriting.",
+      "futureTime": "Vaqt hozirgi vaqtdan keyin bo'lishi kerak.",
+      "resumeAi": "AI ni yoqish",
+      "pauseAiTime": "AI ni to'xtatish vaqtini tanlash",
+      "deleteSession": "Sessiyani o'chirish",
+      "pauseUntil": "AI ni qachongacha to'xtatish",
+      "cancel": "Bekor qilish",
+      "minuteShort": "daq",
+      "messageLabel": "Xabar matni",
+      "attachedImages": "Biriktirilgan rasmlar",
+      "attachedImage": "Biriktirilgan rasm",
+      "close": "Yopish",
+      "emptyChatTitle": "Suhbat tanlanmagan",
+      "emptyChatDescription": "Chap ro'yxatdan suhbat tanlang.",
+      "openProfile": "Mijoz profilini ochish",
+      "aiOnAction": "Yoqish",
+      "aiOffAction": "To'xtatish",
+      "aiPausedStatus": "AI to'xtatilgan",
+      "saveLoading": "Saqlanmoqda...",
+      "pauseSubmit": "AI ni to'xtatish",
+      "loadingMessagesTitle": "Xabarlar yuklanmoqda",
+      "loadingMessagesDescription": "Tanlangan suhbat bo'yicha xabarlar olinmoqda.",
+      "noMessagesTitle": "Xabarlar topilmadi",
+      "noMessagesDescription": "Bu sessiya uchun hozircha xabarlar mavjud emas.",
+      "messagePlaceholder": "Xabar yozing...",
+      "sendAria": "Yuborish",
+      "unknownCustomer": "Noma'lum mijoz",
+      "person": {
+        "client": "Mijoz",
+        "lead": "Lid",
+        "contact": "Kontakt"
+      },
+      "sender": {
+        "customer": "Mijoz",
+        "ai": "AI yordamchi",
+        "operator": "Operator",
+        "system": "Tizim"
+      },
+      "timeUnavailable": "Mavjud emas",
+      "requestOperator": "Operator chaqirish",
+      "operatorRequested": "Operator so'rovi yuborilgan"
+    }
+  }
+}
+
+
+
