@@ -2350,10 +2350,94 @@
       "title": "Клиенты",
       "subtitle": "Ведите клиентов, отслеживайте статусы и работайте с карточками в едином пространстве.",
       "newClient": "Новый клиент",
+      "newStatus": "Новый статус",
       "visible": "видно",
+      "statusesVisible": "статусов",
+      "statusesVisibleWithCount": "{{count}} статусов",
       "detailOpen": "Профиль открыт",
       "errorTitle": "Клиенты недоступны",
       "errorDescription": "Не удалось загрузить список клиентов."
+    },
+    "statusForm": {
+      "eyebrow": "Статус",
+      "titleCreate": "Создать статус",
+      "titleEdit": "Редактировать статус",
+      "name": "Название",
+      "color": "Цвет",
+      "position": "Позиция",
+      "active": "Активный статус"
+    },
+    "statusDelete": {
+      "eyebrow": "Удаление статуса",
+      "title": "Удаление статуса",
+      "titleWithName": "Удалить статус \"{{name}}\"?",
+      "description": "Это действие нельзя отменить.",
+      "ariaLabel": "Удалить статус"
+    },
+    "statusMessages": {
+      "positionMustBeNumber": "Позиция должна быть числом",
+      "saveFailed": "Не удалось сохранить статус",
+      "deleteFailed": "Не удалось удалить статус"
+    },
+    "statusColors": {
+      "neutral": "Серый",
+      "success": "Зелёный",
+      "warning": "Жёлтый",
+      "danger": "Красный"
+    },
+    "list": {
+      "searchPlaceholder": "Поиск по имени, телефону или заметкам...",
+      "title": "Список клиентов",
+      "hint": "Нажмите на строку, чтобы открыть профиль.",
+      "statusesTitle": "Статусы клиентов",
+      "statusesHint": "Справочник статусов из API.",
+      "tabs": {
+        "clients": "Клиенты",
+        "statuses": "Статусы"
+      },
+      "columns": {
+        "name": "Клиент",
+        "phone": "Телефон",
+        "source": "Источник",
+        "status": "Статус",
+        "actions": "Действия"
+      },
+      "actions": {
+        "edit": "Редактировать",
+        "delete": "Удалить"
+      },
+      "filters": {
+        "allStatuses": "Все статусы",
+        "allSources": "Все источники",
+        "statusLabel": "Статус",
+        "sourceLabel": "Источник",
+        "orderLabel": "Сортировка"
+      },
+      "ordering": {
+        "updatedNewest": "Обновлено (новые)",
+        "updatedOldest": "Обновлено (старые)",
+        "createdNewest": "Создано (новые)",
+        "createdOldest": "Создано (старые)"
+      },
+      "sources": {
+        "manual": "Вручную"
+      },
+      "empty": {
+        "title": "Клиенты не найдены",
+        "description": "Измените параметры поиска или фильтры."
+      },
+      "statusesEmpty": {
+        "title": "Статусы не найдены",
+        "description": "API не вернул статусы."
+      },
+      "statusesColumns": {
+        "status": "Статус",
+        "color": "Цвет",
+        "position": "Позиция",
+        "state": "Состояние",
+        "active": "Активный",
+        "inactive": "Неактивный"
+      }
     }
   },
   "notifications": {

@@ -21,7 +21,7 @@ const STATUS_COLOR_OPTIONS = [
 ] as const;
 
 function ClientsPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
@@ -29,17 +29,33 @@ function ClientsPage() {
   const canManageStatuses = hasPermission('can_manage_statuses');
   const canViewBookings = hasPermission('can_view_bookings');
   const canManageBookings = hasPermission('can_manage_bookings');
-  const isRu = i18n.language === 'ru';
-
   const tx = {
     eyebrow: t('clients.page.eyebrow'),
     title: t('clients.page.title'),
     subtitle: t('clients.page.subtitle'),
     newClient: t('clients.page.newClient'),
+    newStatus: t('clients.page.newStatus'),
     visible: t('clients.page.visible'),
     detailOpen: t('clients.page.detailOpen'),
     errorTitle: t('clients.page.errorTitle'),
     errorDescription: t('clients.page.errorDescription'),
+    statusFormEyebrow: t('clients.statusForm.eyebrow'),
+    statusFormTitleCreate: t('clients.statusForm.titleCreate'),
+    statusFormTitleEdit: t('clients.statusForm.titleEdit'),
+    statusFormName: t('clients.statusForm.name'),
+    statusFormColor: t('clients.statusForm.color'),
+    statusFormPosition: t('clients.statusForm.position'),
+    statusFormActive: t('clients.statusForm.active'),
+    statusDeleteEyebrow: t('clients.statusDelete.eyebrow'),
+    statusDeleteDescription: t('clients.statusDelete.description'),
+    statusDeleteAria: t('clients.statusDelete.ariaLabel'),
+    statusPositionMustBeNumber: t('clients.statusMessages.positionMustBeNumber'),
+    statusSaveFailed: t('clients.statusMessages.saveFailed'),
+    statusDeleteFailed: t('clients.statusMessages.deleteFailed'),
+    statusColorNeutral: t('clients.statusColors.neutral'),
+    statusColorSuccess: t('clients.statusColors.success'),
+    statusColorWarning: t('clients.statusColors.warning'),
+    statusColorDanger: t('clients.statusColors.danger'),
   };
 
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
@@ -259,7 +275,7 @@ function ClientsPage() {
         payload.position !== undefined &&
         (!Number.isFinite(payload.position) || payload.position < 0)
       ) {
-        throw new Error(isRu ? 'РџРѕР·РёС†РёСЏ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ С‡РёСЃР»РѕРј' : 'Pozitsiya raqam boвЂlishi kerak');
+        throw new Error(tx.statusPositionMustBeNumber);
       }
 
       if (statusFormMode === 'create') {
@@ -277,9 +293,7 @@ function ClientsPage() {
         text:
           error instanceof Error
             ? error.message
-            : isRu
-              ? 'РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ СЃС‚Р°С‚СѓСЃ'
-              : 'Statusni saqlab boвЂlmadi',
+            : tx.statusSaveFailed,
       });
     } finally {
       setIsSavingStatus(false);
@@ -299,7 +313,7 @@ function ClientsPage() {
     } catch {
       setActionMessage({
         type: 'error',
-        text: isRu ? 'РќРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ СЃС‚Р°С‚СѓСЃ' : 'Statusni oвЂchirib boвЂlmadi',
+        text: tx.statusDeleteFailed,
       });
     } finally {
       setIsDeletingStatus(false);
@@ -328,20 +342,12 @@ function ClientsPage() {
     value: entry.value,
     label:
       entry.key === 'neutral'
-        ? isRu
-          ? 'Серый'
-          : 'Kulrang'
+        ? tx.statusColorNeutral
         : entry.key === 'success'
-          ? isRu
-            ? 'Зелёный'
-            : 'Yashil'
+          ? tx.statusColorSuccess
           : entry.key === 'warning'
-            ? isRu
-              ? 'Жёлтый'
-              : 'Sariq'
-            : isRu
-              ? 'Красный'
-              : 'Qizil',
+            ? tx.statusColorWarning
+            : tx.statusColorDanger,
   }));
 
   const header = (
@@ -360,9 +366,7 @@ function ClientsPage() {
               <AppIcon name="plus" className="h-4 w-4" aria-hidden="true" />
               {tableMode === 'clients'
                 ? tx.newClient
-                : isRu
-                  ? 'РќРѕРІС‹Р№ СЃС‚Р°С‚СѓСЃ'
-                  : 'Yangi status'}
+                : tx.newStatus}
             </button>
           ) : tableMode === 'statuses' && canManageStatuses ? (
             <button
@@ -371,16 +375,14 @@ function ClientsPage() {
               onClick={openCreateStatusForm}
             >
               <AppIcon name="plus" className="h-4 w-4" aria-hidden="true" />
-              {isRu ? 'РќРѕРІС‹Р№ СЃС‚Р°С‚СѓСЃ' : 'Yangi status'}
+              {tx.newStatus}
             </button>
           ) : null}
           <span className="inline-flex min-h-8 items-center gap-2 rounded-pill bg-success-bg px-3 text-[12px] font-semibold text-success">
             <AppIcon name="clients" className="h-3.5 w-3.5" aria-hidden="true" />
             {tableMode === 'clients'
               ? `${stats.visible} ${tx.visible}`
-              : isRu
-                ? `${statusesCount} СЃС‚Р°С‚СѓСЃРѕРІ`
-                : `${statusesCount} status`}
+              : t('clients.page.statusesVisibleWithCount', { count: statusesCount })}
           </span>
           {selectedClientId ? (
             <span className="inline-flex min-h-8 items-center gap-2 rounded-pill bg-primary/12 px-3 text-[12px] font-semibold text-text-accent">
@@ -537,16 +539,10 @@ function ClientsPage() {
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
-                    {isRu ? 'РЎС‚Р°С‚СѓСЃ' : 'Status'}
+                    {tx.statusFormEyebrow}
                   </p>
                   <h2 className="mt-1 font-display text-[1.45rem] font-extrabold leading-[1.05] tracking-[-0.03em] text-text-primary">
-                    {statusFormMode === 'create'
-                      ? isRu
-                        ? 'РЎРѕР·РґР°С‚СЊ СЃС‚Р°С‚СѓСЃ'
-                        : 'Status yaratish'
-                      : isRu
-                        ? 'Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ СЃС‚Р°С‚СѓСЃ'
-                        : 'Statusni tahrirlash'}
+                    {statusFormMode === 'create' ? tx.statusFormTitleCreate : tx.statusFormTitleEdit}
                   </h2>
                 </div>
                 <button
@@ -569,7 +565,7 @@ function ClientsPage() {
             <div className="grid gap-3">
               <label className="grid gap-1.5">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-                  {isRu ? 'РќР°Р·РІР°РЅРёРµ' : 'Nomi'}
+                  {tx.statusFormName}
                 </span>
                 <input
                   type="text"
@@ -585,7 +581,7 @@ function ClientsPage() {
               <div className="grid gap-3 sm:grid-cols-2">
                 <label className="grid gap-1.5">
                   <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-                    {isRu ? 'Цвет' : 'Rang'}
+                    {tx.statusFormColor}
                   </span>
                   <FilterSelect
                     value={statusForm.color}
@@ -599,7 +595,7 @@ function ClientsPage() {
 
                 <label className="grid gap-1.5">
                   <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted">
-                    {isRu ? 'Позиция' : 'Pozitsiya'}
+                    {tx.statusFormPosition}
                   </span>
                   <input
                     type="number"
@@ -615,7 +611,7 @@ function ClientsPage() {
 
               <div className="inline-flex items-center justify-between gap-4 rounded-lg bg-surface-card px-3.5 py-2.5 ring-1 ring-border-soft/35">
                 <span className="text-sm font-medium text-text-primary">
-                  {isRu ? 'Активный статус' : 'Faol status'}
+                  {tx.statusFormActive}
                 </span>
                 <Switch
                   checked={statusForm.is_active}
@@ -660,9 +656,9 @@ function ClientsPage() {
 
       {statusToDelete ? (
         <ConfirmDialog
-          eyebrow={isRu ? 'РЈРґР°Р»РµРЅРёРµ СЃС‚Р°С‚СѓСЃР°' : 'Statusni oвЂchirish'}
-          title={isRu ? `РЈРґР°Р»РёС‚СЊ СЃС‚Р°С‚СѓСЃ "${statusToDelete.name}"?` : `"${statusToDelete.name}" statusini oвЂchirasizmi?`}
-          description={isRu ? 'Р­С‚Рѕ РґРµР№СЃС‚РІРёРµ РЅРµР»СЊР·СЏ РѕС‚РјРµРЅРёС‚СЊ.' : 'Bu amalni ortga qaytarib boвЂlmaydi.'}
+          eyebrow={tx.statusDeleteEyebrow}
+          title={t('clients.statusDelete.titleWithName', { name: statusToDelete.name })}
+          description={tx.statusDeleteDescription}
           cancelLabel={t('common.cancel')}
           confirmLabel={t('common.delete')}
           confirmTone="danger"
@@ -675,7 +671,7 @@ function ClientsPage() {
           onConfirm={() => {
             void handleConfirmDeleteStatus();
           }}
-          ariaLabel={isRu ? 'РЈРґР°Р»РёС‚СЊ СЃС‚Р°С‚СѓСЃ' : 'Statusni oвЂchirish'}
+          ariaLabel={tx.statusDeleteAria}
         />
       ) : null}
     </>

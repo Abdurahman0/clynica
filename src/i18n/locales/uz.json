@@ -2350,10 +2350,94 @@
       "title": "Mijozlar",
       "subtitle": "Mijozlarni boshqaring, holatlarni kuzating va kartochkalar bilan yagona oynada ishlang.",
       "newClient": "Yangi mijoz",
+      "newStatus": "Yangi status",
       "visible": "ko'rinmoqda",
+      "statusesVisible": "status",
+      "statusesVisibleWithCount": "{{count}} status",
       "detailOpen": "Profil ochiq",
       "errorTitle": "Mijozlar mavjud emas",
       "errorDescription": "Mijozlar ro`yxatini yuklab bo`lmadi."
+    },
+    "statusForm": {
+      "eyebrow": "Status",
+      "titleCreate": "Status yaratish",
+      "titleEdit": "Statusni tahrirlash",
+      "name": "Nomi",
+      "color": "Rang",
+      "position": "Pozitsiya",
+      "active": "Faol status"
+    },
+    "statusDelete": {
+      "eyebrow": "Statusni o'chirish",
+      "title": "Statusni o'chirish",
+      "titleWithName": "\"{{name}}\" statusini o'chirasizmi?",
+      "description": "Bu amalni ortga qaytarib bo'lmaydi.",
+      "ariaLabel": "Statusni o'chirish"
+    },
+    "statusMessages": {
+      "positionMustBeNumber": "Pozitsiya raqam bo'lishi kerak",
+      "saveFailed": "Statusni saqlab bo'lmadi",
+      "deleteFailed": "Statusni o'chirib bo'lmadi"
+    },
+    "statusColors": {
+      "neutral": "Kulrang",
+      "success": "Yashil",
+      "warning": "Sariq",
+      "danger": "Qizil"
+    },
+    "list": {
+      "searchPlaceholder": "Ism, telefon yoki izoh bo'yicha qidiring...",
+      "title": "Mijozlar ro'yxati",
+      "hint": "Profilni ko'rish uchun satrni bosing.",
+      "statusesTitle": "Mijoz statuslari",
+      "statusesHint": "API dan statuslar ro'yxati.",
+      "tabs": {
+        "clients": "Mijozlar",
+        "statuses": "Statuslar"
+      },
+      "columns": {
+        "name": "Mijoz",
+        "phone": "Telefon",
+        "source": "Manba",
+        "status": "Holat",
+        "actions": "Amallar"
+      },
+      "actions": {
+        "edit": "Tahrirlash",
+        "delete": "O'chirish"
+      },
+      "filters": {
+        "allStatuses": "Barcha holatlar",
+        "allSources": "Barcha manbalar",
+        "statusLabel": "Holat",
+        "sourceLabel": "Manba",
+        "orderLabel": "Saralash"
+      },
+      "ordering": {
+        "updatedNewest": "Yangilangan (yangi)",
+        "updatedOldest": "Yangilangan (eski)",
+        "createdNewest": "Yaratilgan (yangi)",
+        "createdOldest": "Yaratilgan (eski)"
+      },
+      "sources": {
+        "manual": "Qo'lda"
+      },
+      "empty": {
+        "title": "Mijozlar topilmadi",
+        "description": "Qidiruv yoki filtrlarni o'zgartiring."
+      },
+      "statusesEmpty": {
+        "title": "Statuslar topilmadi",
+        "description": "API statuslar qaytarmadi."
+      },
+      "statusesColumns": {
+        "status": "Holat",
+        "color": "Rang",
+        "position": "Pozitsiya",
+        "state": "Holati",
+        "active": "Faol",
+        "inactive": "Nofaol"
+      }
     }
   },
   "notifications": {

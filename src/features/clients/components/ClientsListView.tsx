@@ -139,70 +139,46 @@ export function ClientsListView({
   onStatsChange,
   onStatusesCountChange,
 }: ClientsListViewProps) {
-  const { i18n } = useTranslation();
-  const isRu = i18n.language === 'ru';
+  const { t } = useTranslation();
 
-  const tx = isRu
-    ? {
-        searchPlaceholder: 'Поиск по имени, телефону или заметкам...',
-        allStatuses: 'Все статусы',
-        allSources: 'Все источники',
-        updatedNewest: 'Обновлено (новые)',
-        updatedOldest: 'Обновлено (старые)',
-        createdNewest: 'Создано (новые)',
-        createdOldest: 'Создано (старые)',
-        statusLabel: 'Статус',
-        sourceLabel: 'Источник',
-        orderLabel: 'Сортировка',
-        clientsTab: 'Клиенты',
-        statusesTab: 'Статусы',
-        listTitle: 'Список клиентов',
-        listHint: 'Нажмите на строку, чтобы открыть профиль.',
-        statusesListTitle: 'Статусы клиентов',
-        statusesListHint: 'Справочник статусов из API.',
-        columns: {
-          name: 'Клиент',
-          phone: 'Телефон',
-          source: 'Источник',
-          status: 'Статус',
-          actions: 'Действия',
-        },
-        edit: 'Редактировать',
-        delete: 'Удалить',
-        empty: 'Клиенты не найдены',
-        statusesEmpty: 'Статусы не найдены',
-        statusesEmptyDescription: 'API не вернул статусы.',
-      }
-    : {
-        searchPlaceholder: 'Ism, telefon yoki izoh bo\'yicha qidiring...',
-        allStatuses: 'Barcha holatlar',
-        allSources: 'Barcha manbalar',
-        updatedNewest: 'Yangilangan (yangi)',
-        updatedOldest: 'Yangilangan (eski)',
-        createdNewest: 'Yaratilgan (yangi)',
-        createdOldest: 'Yaratilgan (eski)',
-        statusLabel: 'Holat',
-        sourceLabel: 'Manba',
-        orderLabel: 'Saralash',
-        clientsTab: 'Mijozlar',
-        statusesTab: 'Statuslar',
-        listTitle: 'Mijozlar ro\'yxati',
-        listHint: 'Profilni ko\'rish uchun satrni bosing.',
-        statusesListTitle: 'Mijoz statuslari',
-        statusesListHint: 'API dan statuslar ro\'yxati.',
-        columns: {
-          name: 'Mijoz',
-          phone: 'Telefon',
-          source: 'Manba',
-          status: 'Holat',
-          actions: 'Amallar',
-        },
-        edit: 'Tahrirlash',
-        delete: 'O\'chirish',
-        empty: 'Mijozlar topilmadi',
-        statusesEmpty: 'Statuslar topilmadi',
-        statusesEmptyDescription: 'API statuslar qaytarmadi.',
-      };
+  const tx = {
+    searchPlaceholder: t('clients.list.searchPlaceholder'),
+    allStatuses: t('clients.list.filters.allStatuses'),
+    allSources: t('clients.list.filters.allSources'),
+    updatedNewest: t('clients.list.ordering.updatedNewest'),
+    updatedOldest: t('clients.list.ordering.updatedOldest'),
+    createdNewest: t('clients.list.ordering.createdNewest'),
+    createdOldest: t('clients.list.ordering.createdOldest'),
+    statusLabel: t('clients.list.filters.statusLabel'),
+    sourceLabel: t('clients.list.filters.sourceLabel'),
+    orderLabel: t('clients.list.filters.orderLabel'),
+    clientsTab: t('clients.list.tabs.clients'),
+    statusesTab: t('clients.list.tabs.statuses'),
+    listTitle: t('clients.list.title'),
+    listHint: t('clients.list.hint'),
+    statusesListTitle: t('clients.list.statusesTitle'),
+    statusesListHint: t('clients.list.statusesHint'),
+    columns: {
+      name: t('clients.list.columns.name'),
+      phone: t('clients.list.columns.phone'),
+      source: t('clients.list.columns.source'),
+      status: t('clients.list.columns.status'),
+      actions: t('clients.list.columns.actions'),
+    },
+    edit: t('clients.list.actions.edit'),
+    delete: t('clients.list.actions.delete'),
+    empty: t('clients.list.empty.title'),
+    emptyDescription: t('clients.list.empty.description'),
+    statusesEmpty: t('clients.list.statusesEmpty.title'),
+    statusesEmptyDescription: t('clients.list.statusesEmpty.description'),
+    sourceManual: t('clients.list.sources.manual'),
+    statusColumnLabel: t('clients.list.statusesColumns.status'),
+    colorColumnLabel: t('clients.list.statusesColumns.color'),
+    positionColumnLabel: t('clients.list.statusesColumns.position'),
+    stateColumnLabel: t('clients.list.statusesColumns.state'),
+    activeLabel: t('clients.list.statusesColumns.active'),
+    inactiveLabel: t('clients.list.statusesColumns.inactive'),
+  };
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -285,11 +261,11 @@ export function ClientsListView({
   const sourceOptions = useMemo<SelectOption[]>(
     () => [
       { value: 'all', label: tx.allSources },
-      { value: 'manual', label: isRu ? 'Вручную' : 'Qo\'lda' },
+      { value: 'manual', label: tx.sourceManual },
       { value: 'telegram', label: 'Telegram' },
       { value: 'instagram', label: 'Instagram' },
     ],
-    [isRu, tx.allSources],
+    [tx.allSources, tx.sourceManual],
   );
 
   const orderingOptions = useMemo<SelectOption[]>(
@@ -352,7 +328,7 @@ export function ClientsListView({
         render: (client) => (
           <span className={tablePrimaryTextClassName}>
             {client.source_platform === 'manual'
-              ? (isRu ? 'Вручную' : 'Qo\'lda')
+              ? tx.sourceManual
               : client.source_platform === 'telegram'
               ? 'Telegram'
               : client.source_platform === 'instagram'
@@ -428,14 +404,14 @@ export function ClientsListView({
           ]
         : []),
     ],
-    [canManageClients, isRu, onDeleteClient, onEditClient, statusColorByValue, statusLabelByValue, tx],
+    [canManageClients, onDeleteClient, onEditClient, statusColorByValue, statusLabelByValue, tx],
   );
 
   const statusColumns = useMemo<DataTableColumn<CRMStatusItem>[]>(
     () => [
       {
         key: 'name',
-        label: isRu ? 'Статус' : 'Holat',
+        label: tx.statusColumnLabel,
         render: (status) => (
           <div className="flex items-center gap-2">
             <span
@@ -448,7 +424,7 @@ export function ClientsListView({
       },
       {
         key: 'color',
-        label: isRu ? 'Цвет' : 'Rang',
+        label: tx.colorColumnLabel,
         render: (status) => (
           <span className={tableSecondaryTextClassName}>
             {status.color || '-'}
@@ -457,7 +433,7 @@ export function ClientsListView({
       },
       {
         key: 'position',
-        label: isRu ? 'Позиция' : 'Pozitsiya',
+        label: tx.positionColumnLabel,
         render: (status) => (
           <span className={tablePrimaryTextClassName}>
             {typeof status.position === 'number' ? status.position : '-'}
@@ -466,11 +442,11 @@ export function ClientsListView({
       },
       {
         key: 'is_active',
-        label: isRu ? 'Состояние' : 'Holati',
+        label: tx.stateColumnLabel,
         render: (status) => (
           <StatusBadge
             status={status.is_active ? 'active' : 'inactive'}
-            label={status.is_active ? (isRu ? 'Активный' : 'Faol') : (isRu ? 'Неактивный' : 'Nofaol')}
+            label={status.is_active ? tx.activeLabel : tx.inactiveLabel}
             tone={status.is_active ? 'success' : 'neutral'}
           />
         ),
@@ -505,7 +481,7 @@ export function ClientsListView({
           ]
         : []),
     ],
-    [canManageStatuses, isRu, onDeleteStatus, onEditStatus, tx.columns.actions, tx.delete, tx.edit],
+    [canManageStatuses, onDeleteStatus, onEditStatus, tx],
   );
 
   const handleSearch = (value: string) => {
@@ -635,7 +611,7 @@ export function ClientsListView({
               loading={state.isLoading}
               onRowClick={onRowClick}
               emptyTitle={tx.empty}
-              emptyDescription={isRu ? 'Измените параметры поиска или фильтры.' : 'Qidiruv yoki filtrlarni o\'zgartiring.'}
+              emptyDescription={tx.emptyDescription}
             />
           ) : (
             <DataTable
