@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Renaissance Clinic",
     "loading": "Yuklanmoqda...",
@@ -170,7 +170,7 @@
       "signingIn": "Kirilmoqda...",
       "hidePassword": "Parolni yashirish",
       "showPassword": "Parolni ko'rsatish",
-      "footerRights": "В© 2026 Renaissance Clinic. Barcha huquqlar himoyalangan.",
+      "footerRights": "© 2026 Renaissance Clinic. Barcha huquqlar himoyalangan.",
       "footerPowered": "Ishlab chiquvchi"
     },
     "accessDenied": {
@@ -2509,6 +2509,3 @@
     }
   }
 }
-
-
-
