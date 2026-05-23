@@ -180,6 +180,7 @@ export function ClientsListView({
     stateColumnLabel: t('clients.list.statusesColumns.state'),
     activeLabel: t('clients.list.statusesColumns.active'),
     inactiveLabel: t('clients.list.statusesColumns.inactive'),
+    noStatus: t('common.na'),
   };
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -355,11 +356,23 @@ export function ClientsListView({
         key: 'status',
         label: tx.columns.status,
         render: (client) => {
+          const normalizedStatus = String(client.status ?? '').trim().toLowerCase();
+          const hasStatusValue =
+            normalizedStatus.length > 0 &&
+            normalizedStatus !== 'unknown' &&
+            normalizedStatus !== 'none' &&
+            normalizedStatus !== 'null' &&
+            normalizedStatus !== 'undefined' &&
+            normalizedStatus !== '-';
+
           const resolvedLabel =
             client.status_label ||
-            (client.status ? statusLabelByValue.get(String(client.status)) : undefined) ||
-            String(client.status || '-');
-          const statusColor = client.status ? statusColorByValue.get(String(client.status)) : undefined;
+            (hasStatusValue ? statusLabelByValue.get(String(client.status)) : undefined) ||
+            (hasStatusValue ? String(client.status) : tx.noStatus);
+          const statusColor =
+            hasStatusValue && client.status
+              ? statusColorByValue.get(String(client.status))
+              : undefined;
 
           if (statusColor) {
             const normalizedColor =
@@ -379,7 +392,13 @@ export function ClientsListView({
             );
           }
 
-          return <StatusBadge status={String(client.status || 'unknown')} label={resolvedLabel} tone={getStatusTone(client.status, resolvedLabel)} />;
+          return (
+            <StatusBadge
+              status={hasStatusValue ? String(client.status) : 'neutral'}
+              label={resolvedLabel}
+              tone={hasStatusValue ? getStatusTone(client.status, resolvedLabel) : 'neutral'}
+            />
+          );
         },
       },
       ...(canManageClients

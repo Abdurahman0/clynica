@@ -224,7 +224,15 @@ export function ClientsDetailPanel({
       ? 'Instagram'
       : (client.source_platform_label || client.source_platform || '-');
 
-  const statusLabel = client.status_label || String(client.status || '-');
+  const normalizedStatus = String(client.status ?? '').trim().toLowerCase();
+  const hasStatusValue =
+    normalizedStatus.length > 0 &&
+    normalizedStatus !== 'unknown' &&
+    normalizedStatus !== 'none' &&
+    normalizedStatus !== 'null' &&
+    normalizedStatus !== 'undefined' &&
+    normalizedStatus !== '-';
+  const statusLabel = client.status_label || (hasStatusValue ? String(client.status) : '-');
   const bookingStatusOptions = [
     { value: 'pending', label: isRu ? 'Ожидает' : 'Kutilmoqda' },
     { value: 'confirmed', label: isRu ? 'Подтверждено' : 'Tasdiqlangan' },
@@ -332,8 +340,8 @@ export function ClientsDetailPanel({
 
         <div className="mt-3">
           <StatusBadge
-            tone={getStatusTone(client.status)}
-            status={String(client.status || 'unknown')}
+            tone={hasStatusValue ? getStatusTone(client.status) : 'neutral'}
+            status={hasStatusValue ? String(client.status) : 'neutral'}
             label={statusLabel}
           />
         </div>
