@@ -65,6 +65,9 @@ function mapConversation(value: unknown): ChatSession {
   const record = asRecord(value) ?? {}
   const channelRaw = asString(record.channel).toLowerCase()
   const channel = channelRaw === 'telegram' || channelRaw === 'instagram' ? channelRaw : 'manual'
+  const displayName = asString(record.display_name).trim()
+  const externalChatId = asString(record.external_chat_id).trim()
+  const externalUserId = asString(record.external_user_id).trim()
   const operatorActive =
     typeof record.is_operator_active === 'boolean'
       ? record.is_operator_active
@@ -73,14 +76,15 @@ function mapConversation(value: unknown): ChatSession {
   return {
     id: asString(record.id),
     channel: channel as any,
-    external_id: asString(record.external_chat_id) || null,
+    external_id: externalChatId || externalUserId || null,
+    title: displayName || null,
     lead: null,
     client: record.client
       ? {
           id: asString(record.client),
           fullName:
+            displayName ||
             asString(record.client_name) ||
-            asString(record.display_name) ||
             asString(record.phone),
           phone: asString(record.phone) || null,
         }
