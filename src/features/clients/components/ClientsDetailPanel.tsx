@@ -142,6 +142,7 @@ export function ClientsDetailPanel({
           source: 'Источник',
           manager: 'Менеджер',
           chatSession: 'Перейти в чат',
+          aiSummary: 'AI резюме',
           notes: 'Заметки',
           created: 'Создан',
           updated: 'Обновлен',
@@ -173,6 +174,7 @@ export function ClientsDetailPanel({
           source: 'Manba',
           manager: 'Menejer',
           chatSession: 'Chatga o\'tish',
+          aiSummary: 'AI xulosa',
           notes: 'Izohlar',
           created: 'Yaratilgan',
           updated: 'Yangilangan',
@@ -385,6 +387,13 @@ export function ClientsDetailPanel({
               {client.chat_session_id ? tx.fields.chatSession : '-'}
             </p>
           </button>
+
+          <div className="rounded-lg bg-surface-subtle/80 p-3 sm:col-span-2">
+            <p className={labelClassName}>{tx.fields.aiSummary}</p>
+            <p className="mt-1 text-sm leading-6 text-text-secondary [overflow-wrap:anywhere] whitespace-pre-wrap">
+              {client.ai_summary || '-'}
+            </p>
+          </div>
 
           <div className="rounded-lg bg-surface-subtle/80 p-3 sm:col-span-2">
             <p className={labelClassName}>{tx.fields.notes}</p>

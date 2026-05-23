@@ -164,6 +164,36 @@ function parseIsoDate(value: string | undefined): Date | undefined {
 	return new Date(year, month - 1, day)
 }
 
+function toDateKey(value: string | undefined): string | null {
+	const parsed = parseIsoDate(value)
+	return parsed ? toIsoDate(parsed) : null
+}
+
+function buildDateKeysInRange(
+	dateFromIso: string | undefined,
+	dateToIso: string | undefined,
+): string[] {
+	const fromDate = parseIsoDate(dateFromIso)
+	const toDate = parseIsoDate(dateToIso)
+	if (!fromDate || !toDate) {
+		return []
+	}
+
+	const start = fromDate <= toDate ? fromDate : toDate
+	const end = fromDate <= toDate ? toDate : fromDate
+	const keys: string[] = []
+
+	const cursor = new Date(start)
+	let guard = 0
+	while (cursor <= end && guard < 500) {
+		keys.push(toIsoDate(cursor))
+		cursor.setDate(cursor.getDate() + 1)
+		guard += 1
+	}
+
+	return keys
+}
+
 function buildDashboardQuery(
 	filters: DashboardFilters,
 ): DashboardOverviewParams {
@@ -487,14 +517,40 @@ function DashboardPage() {
 		)
 	}
 
-	const localizedTimeSeries = overview.time_series.map(point => ({
-		...point,
-		localizedLabel: formatSeriesLabel(
-			point.bucket_start,
-			locale,
-			i18n.language,
-		),
-	}))
+	const hasSingleDateSelection =
+		isIsoDate(filters.customDateFrom) &&
+		isIsoDate(filters.customDateTo) &&
+		filters.customDateFrom === filters.customDateTo
+	const selectedDateKey = hasSingleDateSelection
+		? toDateKey(filters.customDateFrom)
+		: null
+	const trendDateKeys = buildDateKeysInRange(
+		query.date_from,
+		query.date_to,
+	)
+	const timeSeriesByDay = overview.time_series.reduce<
+		Map<string, (typeof overview.time_series)[number]>
+	>((map, point) => {
+		const key = toDateKey(point.bucket_start)
+		if (key) {
+			map.set(key, point)
+		}
+		return map
+	}, new Map())
+	const localizedTimeSeries = trendDateKeys.map((dateKey) => {
+		const point = timeSeriesByDay.get(dateKey)
+		return {
+			bucket_start: dateKey,
+			localizedLabel: formatSeriesLabel(
+				dateKey,
+				locale,
+				i18n.language,
+			),
+			clients: point?.clients ?? 0,
+			chats: point?.chats ?? 0,
+			isSelectedDate: selectedDateKey === dateKey,
+		}
+	})
 	const sourceTotal = overview.breakdowns.leads_by_source.reduce(
 		(sum, item) => sum + item.count,
 		0,
@@ -756,6 +812,32 @@ function DashboardPage() {
 										minTickGap={22}
 										interval='preserveStartEnd'
 										className='text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted'
+										tick={(props: any) => {
+											const payload = props?.payload as
+												| { value?: string; payload?: { isSelectedDate?: boolean } }
+												| undefined
+											const isSelected = Boolean(
+												hasSingleDateSelection && payload?.payload?.isSelectedDate,
+											)
+											return (
+												<g transform={`translate(${props.x},${props.y})`}>
+													<text
+														x={0}
+														y={0}
+														dy={16}
+														textAnchor='middle'
+														fill={
+															isSelected
+																? '#D4B25F'
+																: 'rgb(var(--color-text-muted))'
+														}
+														className='text-[11px] font-semibold uppercase tracking-[0.08em]'
+													>
+														{payload?.value ?? ''}
+													</text>
+												</g>
+											)
+										}}
 									/>
 									<YAxis
 										axisLine={false}
@@ -771,14 +853,48 @@ function DashboardPage() {
 										dataKey='clients'
 										stroke='rgb(var(--color-primary))'
 										strokeWidth={2.4}
-										dot={false}
+										dot={(props: any) => {
+											const isSelected = Boolean(
+												hasSingleDateSelection && props?.payload?.isSelectedDate,
+											)
+											if (!isSelected) {
+												return null
+											}
+											return (
+												<circle
+													cx={props.cx}
+													cy={props.cy}
+													r={4}
+													fill='#D4B25F'
+													stroke='rgb(var(--color-surface-card))'
+													strokeWidth={1.5}
+												/>
+											)
+										}}
 									/>
 									<Line
 										type='monotone'
 										dataKey='chats'
 										stroke={SOURCE_COLORS.telegram}
 										strokeWidth={2.2}
-										dot={false}
+										dot={(props: any) => {
+											const isSelected = Boolean(
+												hasSingleDateSelection && props?.payload?.isSelectedDate,
+											)
+											if (!isSelected) {
+												return null
+											}
+											return (
+												<circle
+													cx={props.cx}
+													cy={props.cy}
+													r={4}
+													fill='#D4B25F'
+													stroke='rgb(var(--color-surface-card))'
+													strokeWidth={1.5}
+												/>
+											)
+										}}
 									/>
 								</LineChart>
 							</ChartContainer>
