@@ -110,6 +110,19 @@ function isDeveloperOnlyPermission(code: string): boolean {
   );
 }
 
+function isUsersPermission(code: string): boolean {
+  const normalized = code.trim().toLowerCase();
+  return normalized.startsWith('users.') || normalized.startsWith('can_') && normalized.includes('_users');
+}
+
+function isPermissionAllowedForRole(role: UserRole, code: string): boolean {
+  if (role === 'operator' && isUsersPermission(code)) {
+    return false;
+  }
+
+  return true;
+}
+
 function UserFormPanel({
   mode,
   user,
@@ -177,9 +190,17 @@ function UserFormPanel({
     [canManageDeveloperRole, permissions],
   );
 
+  const roleScopedPermissions = useMemo(
+    () =>
+      visiblePermissions.filter((permission) =>
+        isPermissionAllowedForRole(form.role, permission.code),
+      ),
+    [form.role, visiblePermissions],
+  );
+
   const visiblePermissionCodes = useMemo(
-    () => new Set(visiblePermissions.map((permission) => permission.code)),
-    [visiblePermissions],
+    () => new Set(roleScopedPermissions.map((permission) => permission.code)),
+    [roleScopedPermissions],
   );
 
   const permissionCodeById = useMemo(() => {
@@ -196,17 +217,18 @@ function UserFormPanel({
       const resolvedCodes = role.default_permissions
         .map((permissionCode) => permissionCodeById.get(permissionCode) ?? permissionCode)
         .filter((permissionCode) => permissionCode.length > 0)
-        .filter((permissionCode) => visiblePermissionCodes.has(permissionCode));
+        .filter((permissionCode) => visiblePermissions.some((permission) => permission.code === permissionCode))
+        .filter((permissionCode) => isPermissionAllowedForRole(role.key, permissionCode));
       mapped.set(role.key, resolvedCodes);
     });
     return mapped;
-  }, [permissionCodeById, roleCatalog, visiblePermissionCodes]);
+  }, [permissionCodeById, roleCatalog, visiblePermissions]);
 
   const selectedRoleDefaultCount = roleDefaults.get(form.role)?.length ?? 0;
 
   const groupedPermissions = useMemo(() => {
     const groups = new Map<'viewing' | 'managing', UserPermission[]>();
-    visiblePermissions.forEach((permission) => {
+    roleScopedPermissions.forEach((permission) => {
       const groupTitle = resolvePermissionGroupTitle(permission.code);
       const current = groups.get(groupTitle) ?? [];
       current.push(permission);
@@ -221,7 +243,23 @@ function UserFormPanel({
         title,
         items: [...items].sort((left, right) => left.name.localeCompare(right.name)),
       }));
-  }, [visiblePermissions]);
+  }, [roleScopedPermissions]);
+
+  useEffect(() => {
+    setForm((current) => {
+      const sanitizedCodes = current.customPermissionCodes.filter((code) =>
+        visiblePermissionCodes.has(code),
+      );
+      if (sanitizedCodes.length === current.customPermissionCodes.length) {
+        return current;
+      }
+
+      return {
+        ...current,
+        customPermissionCodes: sanitizedCodes,
+      };
+    });
+  }, [visiblePermissionCodes]);
 
   const canSubmit = useMemo(() => {
     const isPasswordValid = mode === 'edit' || form.password.trim().length >= 8;
