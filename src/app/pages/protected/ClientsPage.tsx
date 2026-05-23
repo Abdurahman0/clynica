@@ -214,10 +214,12 @@ function ClientsPage() {
     setIsStatusFormOpen(true);
   }
 
-  function handleClientSaved(client: Client) {
-    setIsFormOpen(false);
-    setEditingClient(null);
-    setSelectedClientId(client.id);
+  function handleClientSaved(client: Client, options?: { close?: boolean }) {
+    if (options?.close !== false) {
+      setIsFormOpen(false);
+      setEditingClient(null);
+      setSelectedClientId(client.id);
+    }
     setListRefreshKey((current) => current + 1);
   }
 
@@ -505,6 +507,8 @@ function ClientsPage() {
           >
             <ClientsFormPanel
               client={editingClient ?? undefined}
+              canViewBookings={canViewBookings}
+              canManageBookings={canManageBookings}
               onClose={() => {
                 setIsFormOpen(false);
                 setEditingClient(null);
