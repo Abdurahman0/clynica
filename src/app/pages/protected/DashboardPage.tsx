@@ -441,7 +441,6 @@ function DashboardPage() {
 					return
 				}
 				setHasError(true)
-				setOverview(null)
 			} finally {
 				if (active) {
 					setLoading(false)
@@ -487,7 +486,7 @@ function DashboardPage() {
 		[],
 	)
 
-	if (loading) {
+	if (loading && !overview) {
 		return (
 			<PageLayout>
 				<section className='rounded-xl bg-surface-card p-7 shadow-sm ring-1 ring-border-soft/40'>
@@ -502,7 +501,7 @@ function DashboardPage() {
 		)
 	}
 
-	if (hasError || !overview) {
+	if ((hasError && !overview) || !overview) {
 		return (
 			<PageLayout>
 				<section className='rounded-xl bg-surface-card p-7 shadow-sm ring-1 ring-border-soft/40'>
@@ -654,7 +653,18 @@ function DashboardPage() {
 					<p className='m-0 max-w-full break-words rounded-pill bg-surface-subtle/80 px-3 py-1.5 text-sm text-text-secondary ring-1 ring-border-soft/45'>
 						{rangeLabel} ({overview.date_range.timezone})
 					</p>
+					{loading ? (
+						<span className='inline-flex min-h-8 items-center gap-2 rounded-pill bg-primary/12 px-3 text-[12px] font-semibold text-text-accent'>
+							<AppIcon name='activity' className='h-3.5 w-3.5' aria-hidden='true' />
+							{t('common.loading')}
+						</span>
+					) : null}
 				</header>
+				{hasError ? (
+					<p className='m-0 rounded-lg bg-warning-bg px-3 py-2 text-sm font-medium text-warning'>
+						{t('dashboard.errorDescription')}
+					</p>
+				) : null}
 
 				<section className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
 					{metricCards.map(card => (
