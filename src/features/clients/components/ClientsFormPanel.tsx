@@ -60,6 +60,20 @@ function formatDate(value: string | undefined, language: string, locale: string)
   });
 }
 
+function formatDateOnly(value: string | undefined, language: string, locale: string): string {
+  if (!value) {
+    return '-';
+  }
+
+  return formatLocalizedDate(value, language, {
+    locale,
+    withYear: true,
+    withTime: false,
+    shortMonth: true,
+    fallback: value,
+  });
+}
+
 function toDateTimeFieldValue(value: string | undefined): string {
   if (!value) {
     return '';
@@ -583,7 +597,7 @@ export function ClientsFormPanel({
                         </div>
                       </div>
                       <p className="mt-1 text-[12px] text-text-muted">
-                        {tx.booking.bookingRequestedDate}: {booking.requested_date || '-'}
+                        {tx.booking.bookingRequestedDate}: {formatDateOnly(booking.requested_date || undefined, i18n.language, locale)}
                       </p>
                     </div>
                   ))}

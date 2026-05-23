@@ -79,6 +79,20 @@ function formatDate(value: string | undefined, language: string, locale: string)
   });
 }
 
+function formatDateOnly(value: string | undefined, language: string, locale: string): string {
+  if (!value) {
+    return '-';
+  }
+
+  return formatLocalizedDate(value, language, {
+    locale,
+    withYear: true,
+    withTime: false,
+    shortMonth: true,
+    fallback: value,
+  });
+}
+
 function getBookingStatusLabel(status: string | undefined, isRu: boolean): string {
   const normalized = String(status || 'pending').toLowerCase();
   if (normalized === 'confirmed') return isRu ? 'Подтверждено' : 'Tasdiqlangan';
@@ -294,7 +308,7 @@ export function ClientsDetailPanel({
                       />
                     </div>
                     <p className="mt-1 text-[12px] text-text-muted">
-                      {tx.fields.bookingRequestedDate}: {booking.requested_date || '-'}
+                      {tx.fields.bookingRequestedDate}: {formatDateOnly(booking.requested_date || undefined, i18n.language, locale)}
                     </p>
                   </div>
                 ))}
