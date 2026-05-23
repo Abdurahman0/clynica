@@ -54,6 +54,20 @@ function getStatusTone(status: string | undefined): 'success' | 'warning' | 'dan
   return 'warning';
 }
 
+function isPlaceholderStatusText(value: string | undefined | null): boolean {
+  const normalized = String(value ?? '').trim().toLowerCase();
+  return (
+    normalized.length === 0 ||
+    normalized === 'unknown' ||
+    normalized === 'noma\'lum' ||
+    normalized === 'неизвестно' ||
+    normalized === 'none' ||
+    normalized === 'null' ||
+    normalized === 'undefined' ||
+    normalized === '-'
+  );
+}
+
 function formatDate(value: string | undefined, language: string, locale: string): string {
   if (!value) {
     return '-';
@@ -234,7 +248,10 @@ export function ClientsDetailPanel({
     normalizedStatus !== 'null' &&
     normalizedStatus !== 'undefined' &&
     normalizedStatus !== '-';
-  const statusLabel = client.status_label || (hasStatusValue ? String(client.status) : '-');
+  const hasStatusLabel = !isPlaceholderStatusText(client.status_label);
+  const statusLabel =
+    (hasStatusLabel ? client.status_label : undefined) ||
+    (hasStatusValue ? String(client.status) : '-');
   const bookingStatusOptions = [
     { value: 'pending', label: isRu ? 'Ожидает' : 'Kutilmoqda' },
     { value: 'confirmed', label: isRu ? 'Подтверждено' : 'Tasdiqlangan' },

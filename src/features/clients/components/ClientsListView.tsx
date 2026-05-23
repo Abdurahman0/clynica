@@ -67,6 +67,20 @@ function getStatusTone(status: string | undefined, label: string | undefined): '
   return 'warning';
 }
 
+function isPlaceholderStatusText(value: string | undefined | null): boolean {
+  const normalized = String(value ?? '').trim().toLowerCase();
+  return (
+    normalized.length === 0 ||
+    normalized === 'unknown' ||
+    normalized === 'noma\'lum' ||
+    normalized === 'неизвестно' ||
+    normalized === 'none' ||
+    normalized === 'null' ||
+    normalized === 'undefined' ||
+    normalized === '-'
+  );
+}
+
 function parseHexColor(hexColor: string): [number, number, number] | null {
   const normalized = hexColor.replace('#', '').trim();
   if (!/^[0-9a-fA-F]{6}$/.test(normalized)) {
@@ -364,9 +378,10 @@ export function ClientsListView({
             normalizedStatus !== 'null' &&
             normalizedStatus !== 'undefined' &&
             normalizedStatus !== '-';
+          const hasStatusLabel = !isPlaceholderStatusText(client.status_label);
 
           const resolvedLabel =
-            client.status_label ||
+            (hasStatusLabel ? client.status_label : undefined) ||
             (hasStatusValue ? statusLabelByValue.get(String(client.status)) : undefined) ||
             (hasStatusValue ? String(client.status) : tx.noStatus);
           const statusColor =
