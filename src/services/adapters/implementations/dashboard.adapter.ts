@@ -35,6 +35,11 @@ function resolveDateValue(value: unknown, fallback: string): string {
 	return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : fallback
 }
 
+function normalizeIsoDate(value: unknown): string | null {
+	const text = asString(value)
+	return /^\d{4}-\d{2}-\d{2}$/.test(text) ? text : null
+}
+
 export class DashboardAdapter {
 	private requestor: ApiRequestor
 
@@ -44,14 +49,18 @@ export class DashboardAdapter {
 
 	async getDashboardOverview(params?: Record<string, unknown>): Promise<any> {
 		const defaultDate = nowDate()
-		const dateFrom = resolveDateValue(params?.date_from, defaultDate)
-		const dateTo = resolveDateValue(params?.date_to, defaultDate)
+		const requestedDateFrom = resolveDateValue(params?.date_from, defaultDate)
+		const requestedDateTo = resolveDateValue(params?.date_to, defaultDate)
 		const response = await this.requestor.get<unknown>('/api/crm/clients/dashboard/', {
-			date_from: dateFrom,
-			date_to: dateTo,
+			date_from: requestedDateFrom,
+			date_to: requestedDateTo,
 			interval: asString(params?.interval) || 'day',
 		})
 		const record = asRecord(response) ?? {}
+		const responseDateFrom = normalizeIsoDate(record.date_from)
+		const responseDateTo = normalizeIsoDate(record.date_to)
+		const dateFrom = responseDateFrom ?? requestedDateFrom
+		const dateTo = responseDateTo ?? requestedDateTo
 		const clients = asNumber(record.total_clients)
 		const chats = asNumber(record.total_chats)
 		const activeBookings = asNumber(record.active_bookings)
@@ -59,6 +68,24 @@ export class DashboardAdapter {
 		const noShowCount = asNumber(record.no_show_count)
 		const bySource = Array.isArray(record.by_source) ? record.by_source : []
 		const byStatus = Array.isArray(record.by_status) ? record.by_status : []
+		const dailyStats = Array.isArray(record.daily_stats) ? record.daily_stats : []
+		const dailyTimeSeries = dailyStats
+			.map(item => asRecord(item))
+			.filter((item): item is UnknownRecord => Boolean(item))
+			.map(item => {
+				const date = normalizeIsoDate(item.date) ?? dateFrom
+				return {
+					bucket_start: date,
+					bucket_end: date,
+					label: date,
+					leads: 0,
+					chats: asNumber(item.total_chats),
+					clients: asNumber(item.total_clients),
+					contracts: asNumber(item.active_bookings),
+					revenue: '0',
+					collected_amount: '0',
+				}
+			})
 
 		return {
 			leads: 0,
@@ -95,7 +122,7 @@ export class DashboardAdapter {
 			breakdowns: {
 				leads_by_status: byStatus.map(item => {
 					const bucket = asRecord(item) ?? {}
-					const label = asString(bucket.status__name) || 'Unknown'
+					const label = asString(bucket.status__name) || '-'
 					return {
 						key: label.toLowerCase().replace(/\s+/g, '_'),
 						label,
@@ -113,7 +140,7 @@ export class DashboardAdapter {
 				}),
 				contracts_by_status: byStatus.map(item => {
 					const bucket = asRecord(item) ?? {}
-					const label = asString(bucket.status__name) || 'Unknown'
+					const label = asString(bucket.status__name) || '-'
 					return {
 						key: label.toLowerCase().replace(/\s+/g, '_'),
 						label,
@@ -124,19 +151,22 @@ export class DashboardAdapter {
 				chats_by_channel: [],
 				top_products: [],
 			},
-			time_series: [
-				{
-					bucket_start: dateFrom,
-					bucket_end: dateTo,
-					label: dateFrom,
-					leads: 0,
-					chats,
-					clients,
-					contracts: activeBookings,
-					revenue: '0',
-					collected_amount: '0',
-				},
-			],
+			time_series:
+				dailyTimeSeries.length > 0
+					? dailyTimeSeries
+					: [
+							{
+								bucket_start: dateFrom,
+								bucket_end: dateTo,
+								label: dateFrom,
+								leads: 0,
+								chats,
+								clients,
+								contracts: activeBookings,
+								revenue: '0',
+								collected_amount: '0',
+							},
+						],
 			region_demand: [],
 			manager_performance: [],
 			crm_metrics: {
