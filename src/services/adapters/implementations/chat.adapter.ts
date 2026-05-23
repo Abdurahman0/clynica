@@ -362,7 +362,42 @@ export class ChatAdapter implements IChatService {
   }
 
   async deleteSession(_sessionId: string): Promise<void> {
-    // Conversation delete endpoint is not available in backend schema.
+    const sessionId = asString(_sessionId)
+    if (!sessionId) {
+      return
+    }
+
+    const candidates = [
+      `/api/conversations/${sessionId}/`,
+      `/api/conversations/${sessionId}/delete/`,
+      `/api/chat/sessions/${sessionId}/`,
+    ] as const
+
+    let lastError: unknown = null
+
+    for (const endpoint of candidates) {
+      try {
+        await this.requestor.delete<void>(endpoint)
+        return
+      } catch (error) {
+        const statusCode =
+          typeof (error as { statusCode?: unknown })?.statusCode === 'number'
+            ? (error as { statusCode: number }).statusCode
+            : null
+
+        // Try the next known endpoint when method/path is not available.
+        if (statusCode === 404 || statusCode === 405) {
+          lastError = error
+          continue
+        }
+
+        throw error
+      }
+    }
+
+    if (lastError) {
+      throw lastError
+    }
   }
 
   subscribeToSession(
