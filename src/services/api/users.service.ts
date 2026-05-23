@@ -100,11 +100,30 @@ function toMutationPayload(
   const normalizeText = (value: string | null | undefined): string =>
     typeof value === 'string' ? value : '';
 
+  const splitFullName = (fullName: string): { firstName: string; lastName: string } => {
+    const trimmed = fullName.trim();
+    if (!trimmed) {
+      return { firstName: '', lastName: '' };
+    }
+    const parts = trimmed.split(/\s+/);
+    return {
+      firstName: parts[0] ?? '',
+      lastName: parts.slice(1).join(' '),
+    };
+  };
+
   if (input.email !== undefined) {
     payload.email = input.email;
   }
-  if (input.full_name !== undefined) {
-    payload.full_name = input.full_name;
+  const explicitFirstName = normalizeText((input as Record<string, unknown>).first_name as string | null | undefined).trim();
+  const explicitLastName = normalizeText((input as Record<string, unknown>).last_name as string | null | undefined).trim();
+  if (explicitFirstName || explicitLastName) {
+    payload.first_name = explicitFirstName || null;
+    payload.last_name = explicitLastName || null;
+  } else if (input.full_name !== undefined) {
+    const { firstName, lastName } = splitFullName(normalizeText(input.full_name));
+    payload.first_name = firstName || null;
+    payload.last_name = lastName || null;
   }
   if (input.phone !== undefined) {
     payload.phone = normalizeText(input.phone);

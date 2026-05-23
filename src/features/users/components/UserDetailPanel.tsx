@@ -155,7 +155,10 @@ function UserDetailPanel({
 
 		return (user.custom_permissions ?? [])
 			.map(permissionId =>
-				permissions.find(permission => permission.id === permissionId),
+				permissions.find(
+					permission =>
+						permission.id === permissionId || permission.code === permissionId,
+				),
 			)
 			.filter((permission): permission is UserPermission => Boolean(permission))
 			.map(permission =>

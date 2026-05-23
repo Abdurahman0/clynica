@@ -238,7 +238,10 @@ export function mapUserDtoToModel(dto: UserDto): ManagedUser {
     role: normalizeRole(dto.role),
     is_active: readBoolean(dto.is_active, true),
     custom_permissions: mapCustomPermissionIds(
-      dto.custom_permissions ?? dto.custom_permission_ids,
+      dto.custom_permissions ??
+        dto.custom_permission_ids ??
+        dto.effective_permissions ??
+        dto.direct_permissions,
     ),
     created_by: createdBy.createdById,
     created_by_name: createdByName || null,

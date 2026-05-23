@@ -4,7 +4,6 @@
 
 import { BaseCrudAdapter } from './base-crud.adapter'
 import { ApiRequestor } from './api-requestor'
-import { PERMISSION_CODES } from '../../../auth/types'
 import type {
 	CreateUserInput,
 	IUsersService,
@@ -139,6 +138,48 @@ function normalizePermissionCodes(value: unknown): string[] {
 	return Array.from(unique)
 }
 
+function toBackendPermissionCode(token: string): string {
+	const normalized = token.trim().toLowerCase()
+	if (!normalized) {
+		return ''
+	}
+
+	if (normalized.includes('.')) {
+		return normalized
+	}
+
+	const alias: Record<string, string> = {
+		can_view_users: 'users.view',
+		can_manage_users: 'users.manage',
+		can_view_clients: 'clients.view',
+		can_manage_clients: 'clients.manage',
+		can_view_bookings: 'bookings.view',
+		can_manage_bookings: 'bookings.manage',
+		can_view_statuses: 'statuses.view',
+		can_manage_statuses: 'statuses.manage',
+		can_view_conversations: 'conversations.view',
+		can_manage_conversations: 'conversations.manage',
+		can_access_chats: 'conversations.view',
+		can_view_settings: 'settings.view',
+		can_manage_settings: 'settings.manage',
+		can_manage_integrations: 'settings.manage',
+		can_manage_ai_settings: 'settings.manage',
+		can_view_audit_logs: 'audit_logs.view',
+		can_view_logs: 'audit_logs.view',
+	}
+
+	return alias[normalized] ?? normalized
+}
+
+function normalizeBackendPermissionCodes(codes: string[]): string[] {
+	const unique = new Set<string>()
+	codes
+		.map(code => toBackendPermissionCode(code))
+		.filter(Boolean)
+		.forEach(code => unique.add(code))
+	return Array.from(unique)
+}
+
 function mapUserPayload(value: unknown): ManagedUser | null {
 	const payload = toRecord(value)
 	if (!payload) {
@@ -150,11 +191,21 @@ function mapUserPayload(value: unknown): ManagedUser | null {
 		return null
 	}
 
-	const permissionCodes = normalizePermissionCodes(
-		payload.custom_permissions ??
-			payload.custom_permission_ids ??
-			payload.permissions,
+	const directPermissionCodes = normalizeBackendPermissionCodes(
+		normalizePermissionCodes(
+			payload.direct_permissions ??
+				payload.custom_permissions ??
+				payload.custom_permission_ids ??
+				payload.permissions,
+		),
 	)
+	const effectivePermissionCodes = normalizeBackendPermissionCodes(
+		normalizePermissionCodes(payload.effective_permissions ?? payload.permissions),
+	)
+	const resolvedPermissionCodes =
+		effectivePermissionCodes.length > 0
+			? effectivePermissionCodes
+			: directPermissionCodes
 	const fullName = resolveFullName(payload)
 
 	return {
@@ -164,8 +215,10 @@ function mapUserPayload(value: unknown): ManagedUser | null {
 		phone: toStringValue(payload.phone) || null,
 		role: toUserRole(payload.role),
 		is_active: toBooleanValue(payload.is_active, true),
-		custom_permissions: permissionCodes,
-		custom_permission_ids: permissionCodes,
+		direct_permissions: directPermissionCodes,
+		effective_permissions: effectivePermissionCodes,
+		custom_permissions: resolvedPermissionCodes,
+		custom_permission_ids: directPermissionCodes,
 		created_by: toStringValue(payload.created_by) || null,
 		created_by_name: toStringValue(payload.created_by_name) || null,
 		created_at: toStringValue(payload.created_at) || undefined,
@@ -216,18 +269,23 @@ function parseSingleUserResponse(data: unknown): ManagedUser | null {
 function toMutationPayload(
 	input: CreateUserInput | UpdateUserInput,
 ): Record<string, unknown> {
+	const directFirstName = toStringValue((input as UnknownRecord).first_name)
+	const directLastName = toStringValue((input as UnknownRecord).last_name)
 	const fullName = typeof input.full_name === 'string' ? input.full_name : ''
-	const { firstName, lastName } = splitFullName(fullName)
-	const permissions = Array.isArray(input.custom_permission_ids)
-		? input.custom_permission_ids
-		: []
+	const splitName = splitFullName(fullName)
+	const firstName = directFirstName || splitName.firstName
+	const lastName = directLastName || splitName.lastName
+	const permissions = normalizeBackendPermissionCodes(
+		Array.isArray(input.custom_permission_ids) ? input.custom_permission_ids : [],
+	)
 
 	const payload: Record<string, unknown> = {
 		email: input.email,
 		role: input.role,
 		is_active: input.is_active,
 		is_staff: input.role === 'developer' || input.role === 'admin',
-		permissions,
+		direct_permissions: permissions,
+		custom_permissions: permissions,
 		first_name: firstName || null,
 		last_name: lastName || null,
 	}
@@ -315,26 +373,47 @@ const DEFAULT_ROLES_CATALOG: UserRoleCatalogItem[] = [
 	{
 		key: 'developer',
 		label: 'Developer',
-		default_permissions: [...PERMISSION_CODES],
+		default_permissions: [
+			'audit_logs.view',
+			'bookings.manage',
+			'bookings.view',
+			'clients.manage',
+			'clients.view',
+			'conversations.manage',
+			'conversations.view',
+			'settings.manage',
+			'settings.view',
+			'statuses.manage',
+			'statuses.view',
+			'users.manage',
+			'users.view',
+		],
 	},
 	{
 		key: 'admin',
 		label: 'Admin',
 		default_permissions: [
-			'can_view_dashboard',
-			'can_view_clients',
-			'can_manage_clients',
-			'can_access_chats',
-			'can_manage_users',
+			'bookings.manage',
+			'bookings.view',
+			'clients.manage',
+			'clients.view',
+			'conversations.manage',
+			'conversations.view',
+			'statuses.manage',
+			'statuses.view',
+			'users.manage',
+			'users.view',
 		],
 	},
 	{
 		key: 'operator',
 		label: 'Operator',
 		default_permissions: [
-			'can_view_dashboard',
-			'can_view_clients',
-			'can_access_chats',
+			'bookings.manage',
+			'bookings.view',
+			'clients.view',
+			'conversations.manage',
+			'conversations.view',
 		],
 	},
 ]
@@ -446,7 +525,11 @@ export class UsersAdapter
 	async listUserPermissions(userId: string): Promise<UserPermission[]> {
 		const user = await this.getUserById(userId)
 		const codes = normalizePermissionCodes(
-			user.custom_permission_ids ?? user.custom_permissions ?? [],
+			user.effective_permissions ??
+				user.custom_permissions ??
+				user.custom_permission_ids ??
+				user.direct_permissions ??
+				[],
 		)
 		return codes.map(code => ({
 			id: code,

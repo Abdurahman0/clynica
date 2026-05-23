@@ -35,7 +35,7 @@ interface UserFormState {
   password: string;
   role: UserRole;
   isActive: boolean;
-  customPermissionIds: string[];
+  customPermissionCodes: string[];
 }
 
 const inputClassName = [
@@ -60,7 +60,11 @@ function createInitialState(
       password: '',
       role: user.role,
       isActive: user.is_active ?? true,
-      customPermissionIds: user.custom_permissions ?? [],
+      customPermissionCodes:
+        user.custom_permission_ids ??
+        user.direct_permissions ??
+        user.custom_permissions ??
+        [],
     };
   }
 
@@ -71,7 +75,7 @@ function createInitialState(
     password: '',
     role: 'operator',
     isActive: true,
-    customPermissionIds: [],
+    customPermissionCodes: [],
   };
 }
 
@@ -81,6 +85,29 @@ function resolvePermissionGroupTitle(code: string): 'viewing' | 'managing' {
   }
 
   return 'managing';
+}
+
+function splitFullName(value: string): { firstName: string; lastName: string } {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return { firstName: '', lastName: '' };
+  }
+
+  const parts = trimmed.split(/\s+/);
+  return {
+    firstName: parts[0] ?? '',
+    lastName: parts.slice(1).join(' '),
+  };
+}
+
+function isDeveloperOnlyPermission(code: string): boolean {
+  const normalized = code.trim().toLowerCase();
+  return (
+    normalized.startsWith('settings.') ||
+    normalized.startsWith('audit_logs.') ||
+    normalized === 'can_manage_ai_settings' ||
+    normalized === 'can_view_logs'
+  );
 }
 
 function UserFormPanel({
@@ -141,30 +168,45 @@ function UserFormPanel({
     [canManageDeveloperRole, roleCatalog, t],
   );
 
-  const permissionIdByCode = useMemo(() => {
+  const visiblePermissions = useMemo(
+    () =>
+      permissions.filter(
+        (permission) =>
+          canManageDeveloperRole || !isDeveloperOnlyPermission(permission.code),
+      ),
+    [canManageDeveloperRole, permissions],
+  );
+
+  const visiblePermissionCodes = useMemo(
+    () => new Set(visiblePermissions.map((permission) => permission.code)),
+    [visiblePermissions],
+  );
+
+  const permissionCodeById = useMemo(() => {
     const mapped = new Map<string, string>();
-    permissions.forEach((permission) => {
-      mapped.set(permission.code, permission.id);
+    visiblePermissions.forEach((permission) => {
+      mapped.set(permission.id, permission.code);
     });
     return mapped;
-  }, [permissions]);
+  }, [visiblePermissions]);
 
   const roleDefaults = useMemo(() => {
     const mapped = new Map<UserRole, string[]>();
     roleCatalog.forEach((role) => {
-      const resolvedIds = role.default_permissions
-        .map((permissionCode) => permissionIdByCode.get(permissionCode) ?? permissionCode)
-        .filter((permissionId) => permissionId.length > 0);
-      mapped.set(role.key, resolvedIds);
+      const resolvedCodes = role.default_permissions
+        .map((permissionCode) => permissionCodeById.get(permissionCode) ?? permissionCode)
+        .filter((permissionCode) => permissionCode.length > 0)
+        .filter((permissionCode) => visiblePermissionCodes.has(permissionCode));
+      mapped.set(role.key, resolvedCodes);
     });
     return mapped;
-  }, [permissionIdByCode, roleCatalog]);
+  }, [permissionCodeById, roleCatalog, visiblePermissionCodes]);
 
   const selectedRoleDefaultCount = roleDefaults.get(form.role)?.length ?? 0;
 
   const groupedPermissions = useMemo(() => {
     const groups = new Map<'viewing' | 'managing', UserPermission[]>();
-    permissions.forEach((permission) => {
+    visiblePermissions.forEach((permission) => {
       const groupTitle = resolvePermissionGroupTitle(permission.code);
       const current = groups.get(groupTitle) ?? [];
       current.push(permission);
@@ -179,7 +221,7 @@ function UserFormPanel({
         title,
         items: [...items].sort((left, right) => left.name.localeCompare(right.name)),
       }));
-  }, [permissions]);
+  }, [visiblePermissions]);
 
   const canSubmit = useMemo(() => {
     const isPasswordValid = mode === 'edit' || form.password.trim().length >= 8;
@@ -190,14 +232,14 @@ function UserFormPanel({
     );
   }, [form.email, form.fullName, form.password, mode]);
 
-  function togglePermission(permissionId: string) {
+  function togglePermission(permissionCode: string) {
     setForm((current) => {
-      const selected = current.customPermissionIds.includes(permissionId);
+      const selected = current.customPermissionCodes.includes(permissionCode);
       return {
         ...current,
-        customPermissionIds: selected
-          ? current.customPermissionIds.filter((id) => id !== permissionId)
-          : [...current.customPermissionIds, permissionId],
+        customPermissionCodes: selected
+          ? current.customPermissionCodes.filter((code) => code !== permissionCode)
+          : [...current.customPermissionCodes, permissionCode],
       };
     });
   }
@@ -210,7 +252,7 @@ function UserFormPanel({
 
     setForm((current) => ({
       ...current,
-      customPermissionIds: defaults,
+      customPermissionCodes: defaults,
     }));
   }
 
@@ -238,14 +280,20 @@ function UserFormPanel({
       return;
     }
 
+    const { firstName, lastName } = splitFullName(fullName);
+    const sanitizedCustomPermissionCodes = form.customPermissionCodes.filter((permissionCode) =>
+      visiblePermissionCodes.has(permissionCode),
+    );
+
     const payloadBase = {
       email,
-      full_name: fullName,
+      first_name: firstName,
+      last_name: lastName,
       phone: phone || null,
       role: form.role,
       is_active: form.isActive,
       custom_permission_ids:
-        form.role === 'developer' ? [] : form.customPermissionIds,
+        form.role === 'developer' ? [] : sanitizedCustomPermissionCodes,
     };
 
     if (mode === 'create') {
@@ -398,7 +446,7 @@ function UserFormPanel({
                     return {
                       ...current,
                       role: nextRole,
-                      customPermissionIds:
+                      customPermissionCodes:
                         nextRole === 'developer' ? [] : defaultPermissions,
                     };
                   })
@@ -457,10 +505,10 @@ function UserFormPanel({
                     </p>
                     <div className="grid gap-2 sm:grid-cols-2">
                       {group.items.map((permission) => {
-                        const isChecked = form.customPermissionIds.includes(permission.id);
+                        const isChecked = form.customPermissionCodes.includes(permission.code);
                         return (
                           <button
-                            key={permission.id}
+                            key={permission.code}
                             type="button"
                             className={[
                               'flex items-start gap-2.5 rounded-lg px-3 py-2.5 text-left ring-1 transition duration-fast',
@@ -468,7 +516,7 @@ function UserFormPanel({
                                 ? 'bg-primary/10 text-text-primary ring-primary/30'
                                 : 'bg-surface-subtle text-text-secondary ring-border-soft/35 hover:bg-surface-muted',
                             ].join(' ')}
-                            onClick={() => togglePermission(permission.id)}
+                            onClick={() => togglePermission(permission.code)}
                             disabled={isSubmitting}
                             aria-pressed={isChecked}
                           >

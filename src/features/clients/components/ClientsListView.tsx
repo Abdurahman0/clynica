@@ -24,6 +24,7 @@ export interface ClientsListViewProps {
   onDeleteStatus?: (status: CRMStatusItem) => void;
   selectedClientId?: string | null;
   canManageClients?: boolean;
+  canViewStatuses?: boolean;
   canManageStatuses?: boolean;
   onStatsChange?: (stats: { visible: number; total: number; loading: boolean }) => void;
   onStatusesCountChange?: (count: number) => void;
@@ -135,6 +136,7 @@ export function ClientsListView({
   onDeleteStatus,
   selectedClientId,
   canManageClients = false,
+  canViewStatuses = false,
   canManageStatuses = false,
   onStatsChange,
   onStatusesCountChange,
@@ -202,6 +204,8 @@ export function ClientsListView({
     params: filters,
     autoFetch: true,
   });
+  const canUseStatusData = canViewStatuses || canManageStatuses;
+  const canOpenStatusesTable = canManageStatuses;
 
   useEffect(() => {
     onStatsChange?.({
@@ -212,10 +216,20 @@ export function ClientsListView({
   }, [onStatsChange, state.items.length, state.total, state.isLoading]);
 
   useEffect(() => {
+    if (!canOpenStatusesTable) {
+      onStatusesCountChange?.(0);
+      return;
+    }
     onStatusesCountChange?.(statusCatalog.length);
-  }, [onStatusesCountChange, statusCatalog.length]);
+  }, [canOpenStatusesTable, onStatusesCountChange, statusCatalog.length]);
 
   useEffect(() => {
+    if (!canUseStatusData) {
+      setStatusCatalog([]);
+      setStatusOptionsFromApi([]);
+      return;
+    }
+
     void (async () => {
       try {
         const items = await (services.clients as any).listStatuses?.();
@@ -248,7 +262,7 @@ export function ClientsListView({
         // fallback status options remain
       }
     })();
-  }, []);
+  }, [canUseStatusData]);
 
   const statusOptions = useMemo<SelectOption[]>(() => {
     const base = [{ value: 'all', label: tx.allStatuses }];
@@ -519,7 +533,7 @@ export function ClientsListView({
   const totalPages = Math.max(1, Math.ceil((state.total || 0) / (filters.page_size || 20)));
   const currentPage = filters.page || 1;
 
-  const isClientsMode = tableMode === 'clients';
+  const isClientsMode = !canOpenStatusesTable || tableMode === 'clients';
 
   return (
     <div className="flex flex-col gap-4">
@@ -531,15 +545,17 @@ export function ClientsListView({
             placeholder={tx.searchPlaceholder}
           />
 
-          <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
-            <span className={labelClassName}>{tx.statusLabel}</span>
-            <FilterSelect
-              value={statusFilter}
-              options={statusOptions}
-              onChange={applyStatusFilter}
-              disabled={state.isLoading}
-            />
-          </label>
+          {canUseStatusData ? (
+            <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
+              <span className={labelClassName}>{tx.statusLabel}</span>
+              <FilterSelect
+                value={statusFilter}
+                options={statusOptions}
+                onChange={applyStatusFilter}
+                disabled={state.isLoading}
+              />
+            </label>
+          ) : null}
 
           <label className="grid min-w-[min(180px,100%)] flex-[1_1_180px] gap-1.5 min-[640px]:flex-[0_1_200px]">
             <span className={labelClassName}>{tx.sourceLabel}</span>
@@ -573,32 +589,34 @@ export function ClientsListView({
               {isClientsMode ? tx.listHint : tx.statusesListHint}
             </span>
           </div>
-          <div className="inline-flex items-center gap-1 rounded-lg bg-surface-subtle p-1 ring-1 ring-border-soft/40">
-            <button
-              type="button"
-              className={[
-                'inline-flex min-h-8 items-center rounded-md px-3 text-xs font-semibold transition duration-fast',
-                isClientsMode
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-text-secondary hover:bg-surface-card hover:text-text-primary',
-              ].join(' ')}
-              onClick={() => onTableModeChange?.('clients')}
-            >
-              {tx.clientsTab}
-            </button>
-            <button
-              type="button"
-              className={[
-                'inline-flex min-h-8 items-center rounded-md px-3 text-xs font-semibold transition duration-fast',
-                !isClientsMode
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-text-secondary hover:bg-surface-card hover:text-text-primary',
-              ].join(' ')}
-              onClick={() => onTableModeChange?.('statuses')}
-            >
-              {tx.statusesTab}
-            </button>
-          </div>
+          {canOpenStatusesTable ? (
+            <div className="inline-flex items-center gap-1 rounded-lg bg-surface-subtle p-1 ring-1 ring-border-soft/40">
+              <button
+                type="button"
+                className={[
+                  'inline-flex min-h-8 items-center rounded-md px-3 text-xs font-semibold transition duration-fast',
+                  isClientsMode
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-text-secondary hover:bg-surface-card hover:text-text-primary',
+                ].join(' ')}
+                onClick={() => onTableModeChange?.('clients')}
+              >
+                {tx.clientsTab}
+              </button>
+              <button
+                type="button"
+                className={[
+                  'inline-flex min-h-8 items-center rounded-md px-3 text-xs font-semibold transition duration-fast',
+                  !isClientsMode
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-text-secondary hover:bg-surface-card hover:text-text-primary',
+                ].join(' ')}
+                onClick={() => onTableModeChange?.('statuses')}
+              >
+                {tx.statusesTab}
+              </button>
+            </div>
+          ) : null}
         </div>
 
         <div className="min-w-0 [&_.data-table__row--clickable:hover_.status-badge]:-translate-y-px">

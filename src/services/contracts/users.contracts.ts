@@ -28,10 +28,14 @@ export interface UserRoleCatalogItem {
 export interface ManagedUser extends BaseEntity {
 	email: string
 	full_name: string
+	first_name?: string
+	last_name?: string
 	phone?: string | null
 	role: UserRole
 	status?: 'active' | 'inactive'
 	is_active?: boolean
+	direct_permissions?: string[]
+	effective_permissions?: string[]
 	custom_permissions?: string[]
 	custom_permission_ids?: string[]
 	created_by?: string | null
@@ -43,7 +47,9 @@ export interface ManagedUser extends BaseEntity {
 
 export interface CreateUserInput extends CreateInput<ManagedUser> {
 	email: string
-	full_name: string
+	full_name?: string
+	first_name?: string
+	last_name?: string
 	password: string
 	role: UserRole
 	is_active?: boolean

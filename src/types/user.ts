@@ -58,6 +58,8 @@ export interface ManagedUser {
   id: EntityId;
   email: string;
   full_name: string;
+  first_name?: string;
+  last_name?: string;
   phone?: string | null;
   role: UserRole;
   is_active: boolean;
@@ -79,7 +81,9 @@ export interface UserListParams {
 
 export interface UserMutationInput {
   email: string;
-  full_name: string;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
   phone?: string | null;
   password?: string;
   role: UserRole;

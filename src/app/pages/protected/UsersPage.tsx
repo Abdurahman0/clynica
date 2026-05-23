@@ -63,6 +63,19 @@ const DEFAULT_PAGINATION_META: PaginationMeta = {
   totalPages: 1,
 };
 
+function splitFullName(fullName: string): { firstName: string; lastName: string } {
+  const trimmed = fullName.trim();
+  if (!trimmed) {
+    return { firstName: '', lastName: '' };
+  }
+
+  const parts = trimmed.split(/\s+/);
+  return {
+    firstName: parts[0] ?? '',
+    lastName: parts.slice(1).join(' '),
+  };
+}
+
 function UsersPage() {
   const { t, i18n } = useTranslation();
   const { hasPermission, hasRole, currentUser } = useAuth();
@@ -106,6 +119,10 @@ function UsersPage() {
   }, [search, roleFilter, activeFilter]);
 
   async function ensureAccessCatalogLoaded(): Promise<boolean> {
+    if (!canManageUsers) {
+      return false;
+    }
+
     if (permissionCatalog.length > 0) {
       return true;
     }
@@ -238,10 +255,6 @@ function UsersPage() {
     }
   }, [users, selectedUserId]);
 
-  useEffect(() => {
-    void ensureAccessCatalogLoaded();
-  }, []);
-
   async function openCreateForm() {
     if (!canManageUsers) {
       return;
@@ -258,12 +271,17 @@ function UsersPage() {
     setIsFormOpen(true);
   }
 
-  function openEditForm(user: ManagedUser) {
+  async function openEditForm(user: ManagedUser) {
     if (!canManageUsers) {
       return;
     }
 
     if (user.role === 'developer' && !canManageDeveloperRole) {
+      return;
+    }
+
+    const isCatalogReady = await ensureAccessCatalogLoaded();
+    if (!isCatalogReady) {
       return;
     }
 
@@ -292,17 +310,20 @@ function UsersPage() {
     try {
       if (formMode === 'create') {
         const email = payload.email?.trim();
-        const fullName = payload.full_name?.trim();
+        const fallbackFromFullName = splitFullName(payload.full_name?.trim() ?? '');
+        const firstName = (payload.first_name ?? fallbackFromFullName.firstName).trim();
+        const lastName = (payload.last_name ?? fallbackFromFullName.lastName).trim();
         const role = payload.role;
         const password = payload.password;
 
-        if (!email || !fullName || !role || !password) {
+        if (!email || !firstName || !role || !password) {
           throw new Error(t('users.form.passwordError'));
         }
 
         const createPayload: CreateUserInput = {
           email,
-          full_name: fullName,
+          first_name: firstName,
+          last_name: lastName || undefined,
           role,
           password,
           phone: payload.phone ?? null,
@@ -439,7 +460,9 @@ function UsersPage() {
             {user.role === 'developer'
               ? t('users.fullAccessShort')
               : t('users.permissionsCount', {
-                  count: (user.custom_permissions ?? []).length,
+                  count:
+                    (user.effective_permissions ?? user.custom_permissions ?? user.direct_permissions ?? [])
+                      .length,
                 })}
           </span>
         ),
@@ -491,7 +514,7 @@ function UsersPage() {
               className={actionButtonClassName}
               onClick={(event) => {
                 event.stopPropagation();
-                openEditForm(user);
+                void openEditForm(user);
               }}
               disabled={user.role === 'developer' && !canManageDeveloperRole}
               aria-label={`${t('users.actions.edit')} ${user.full_name}`}
@@ -689,7 +712,7 @@ function UsersPage() {
           currentManagedUserId={currentManagedUserId}
           onClose={() => setSelectedUserId(null)}
           onEdit={(user) => {
-            openEditForm(user);
+            void openEditForm(user);
             setSelectedUserId(null);
           }}
           onDelete={(user) => {

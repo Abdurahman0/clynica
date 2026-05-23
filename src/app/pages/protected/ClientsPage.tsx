@@ -26,7 +26,10 @@ function ClientsPage() {
   const navigate = useNavigate();
   const { hasPermission } = useAuth();
   const canManageClients = hasPermission('can_manage_clients');
+  const canViewStatuses = hasPermission('can_view_statuses');
   const canManageStatuses = hasPermission('can_manage_statuses');
+  const canUseStatusesData = canViewStatuses || canManageStatuses;
+  const canOpenStatusesTable = canManageStatuses;
   const canViewBookings = hasPermission('can_view_bookings');
   const canManageBookings = hasPermission('can_manage_bookings');
   const tx = {
@@ -81,6 +84,12 @@ function ClientsPage() {
     position: '',
     is_active: true,
   });
+
+  useEffect(() => {
+    if (!canOpenStatusesTable) {
+      setTableMode('clients');
+    }
+  }, [canOpenStatusesTable]);
 
   useEffect(() => {
     const state = location.state as { clientId?: string } | null;
@@ -361,14 +370,14 @@ function ClientsPage() {
             <button
               type="button"
               className="inline-flex min-h-9 items-center gap-2 rounded-lg bg-primary px-3.5 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
-              onClick={tableMode === 'clients' ? openCreateForm : openCreateStatusForm}
+              onClick={!canOpenStatusesTable || tableMode === 'clients' ? openCreateForm : openCreateStatusForm}
             >
               <AppIcon name="plus" className="h-4 w-4" aria-hidden="true" />
               {tableMode === 'clients'
                 ? tx.newClient
                 : tx.newStatus}
             </button>
-          ) : tableMode === 'statuses' && canManageStatuses ? (
+          ) : canOpenStatusesTable && tableMode === 'statuses' && canManageStatuses ? (
             <button
               type="button"
               className="inline-flex min-h-9 items-center gap-2 rounded-lg bg-primary px-3.5 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
@@ -380,7 +389,7 @@ function ClientsPage() {
           ) : null}
           <span className="inline-flex min-h-8 items-center gap-2 rounded-pill bg-success-bg px-3 text-[12px] font-semibold text-success">
             <AppIcon name="clients" className="h-3.5 w-3.5" aria-hidden="true" />
-            {tableMode === 'clients'
+            {!canOpenStatusesTable || tableMode === 'clients'
               ? `${stats.visible} ${tx.visible}`
               : t('clients.page.statusesVisibleWithCount', { count: statusesCount })}
           </span>
@@ -418,6 +427,7 @@ function ClientsPage() {
             onDeleteStatus={handleDeleteStatusFromList}
             selectedClientId={selectedClientId}
             canManageClients={canManageClients}
+            canViewStatuses={canUseStatusesData}
             canManageStatuses={canManageStatuses}
             onStatsChange={handleStatsChange}
             onStatusesCountChange={setStatusesCount}

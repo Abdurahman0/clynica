@@ -6,7 +6,6 @@ import type { AuthenticatedUser, PermissionCode } from './types'
 // Renaissance Clinic - Route to Permission Mapping
 const ROUTE_REQUIRED_PERMISSIONS: Partial<Record<AppRouteId, PermissionCode>> =
 	{
-		dashboard: 'can_view_dashboard',
 		clients: 'can_view_clients',
 		chats: 'can_access_chats',
 		users: 'can_view_users',
@@ -103,6 +102,11 @@ export function canAccessRouteForUser(
 		return true
 	}
 
+	// Dashboard is intentionally visible to every authenticated user.
+	if (routeId === 'dashboard') {
+		return true
+	}
+
 	const requiredPermission = ROUTE_REQUIRED_PERMISSIONS[routeId]
 	if (!requiredPermission) {
 		return false
@@ -118,28 +122,5 @@ export function resolveDefaultLandingPathForUser(
 		return routePaths.login
 	}
 
-	if (hasPermission(user, 'can_view_dashboard')) {
-		return routePaths.dashboard
-	}
-
-	if (hasPermission(user, 'can_view_clients')) {
-		return routePaths.clients
-	}
-
-	const fallbackRouteOrder: AppRouteId[] = [
-		'dashboard',
-		'clients',
-		'chats',
-		'users',
-	]
-
-	const firstAllowed = fallbackRouteOrder.find(routeId =>
-		canAccessRouteForUser(user, routeId),
-	)
-
-	if (!firstAllowed) {
-		return routePaths.accessDenied
-	}
-
-	return MODULE_PATH_BY_ROUTE_ID[firstAllowed] ?? routePaths.accessDenied
+	return routePaths.dashboard
 }
