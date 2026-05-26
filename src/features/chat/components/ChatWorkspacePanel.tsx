@@ -617,7 +617,7 @@ function ChatWorkspacePanel({
 	return (
 		<div className='flex h-full min-h-0 flex-col gap-3 bg-background-default text-text-primary'>
 			<div className='w-full rounded-xl bg-background-subtle/80 p-3.5 text-left ring-1 ring-border-soft/50'>
-				<div className='flex items-start justify-between gap-3'>
+				<div className='relative flex items-start justify-between gap-3'>
 					<button
 						type='button'
 						className='flex min-w-0 flex-1 items-center gap-3 rounded-lg border-0 bg-transparent p-0 text-left outline-none transition duration-fast cursor-pointer hover:opacity-95 focus-visible:ring-2 focus-visible:ring-primary/35'
@@ -640,43 +640,84 @@ function ChatWorkspacePanel({
 							</p>
 						</div>
 					</button>
-					<div className='flex shrink-0 items-center gap-2'>
-						{aiPaused ? (
-							<button
-								type='button'
-								className='inline-flex h-10 items-center gap-1.5 rounded-full bg-success-bg px-3 text-success transition duration-fast hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/30 disabled:cursor-not-allowed disabled:opacity-60'
-								onClick={event => {
-									event.stopPropagation()
-									onResumeAI?.(activeSession)
-								}}
-								disabled={isUpdatingAIState}
-								aria-label={labels.resumeAi}
-								title={labels.resumeAi}
-							>
-								<FiPlay className='h-4 w-4' />
-								<span className='text-xs font-semibold uppercase tracking-[0.08em]'>
-									{isUpdatingAIState ? '...' : labels.aiOnAction}
-								</span>
-							</button>
-						) : (
-							<button
-								type='button'
-								className='inline-flex h-10 items-center gap-1.5 rounded-full bg-primary/15 px-3 text-primary transition duration-fast hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60'
-								onClick={event => {
-									event.stopPropagation()
-									setIsPauseEditorOpen(current => !current)
-								}}
-								disabled={isUpdatingAIState}
-								aria-label={labels.pauseAiTime}
-								title={labels.pauseAiTime}
-							>
-								<FiPause className='h-4 w-4' />
-								<span className='text-xs font-semibold uppercase tracking-[0.08em]'>
-									{isUpdatingAIState ? '...' : labels.aiOffAction}
-								</span>
-							</button>
-						)}
+					<div className='pointer-events-none absolute inset-x-0 top-1/2 z-[1] flex -translate-y-1/2 justify-center px-14 max-[640px]:hidden'>
+						<div className='pointer-events-auto'>
+							{aiPaused ? (
+								<button
+									type='button'
+									className='inline-flex h-10 items-center gap-1.5 rounded-full bg-success-bg px-3 text-success transition duration-fast hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/30 disabled:cursor-not-allowed disabled:opacity-60'
+									onClick={event => {
+										event.stopPropagation()
+										onResumeAI?.(activeSession)
+									}}
+									disabled={isUpdatingAIState}
+									aria-label={labels.resumeAi}
+									title={labels.resumeAi}
+								>
+									<FiPlay className='h-4 w-4' />
+									<span className='text-xs font-semibold uppercase tracking-[0.08em]'>
+										{isUpdatingAIState ? '...' : labels.aiOnAction}
+									</span>
+								</button>
+							) : (
+								<button
+									type='button'
+									className='inline-flex h-10 items-center gap-1.5 rounded-full bg-primary/15 px-3 text-primary transition duration-fast hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60'
+									onClick={event => {
+										event.stopPropagation()
+										setIsPauseEditorOpen(current => !current)
+									}}
+									disabled={isUpdatingAIState}
+									aria-label={labels.pauseAiTime}
+									title={labels.pauseAiTime}
+								>
+									<FiPause className='h-4 w-4' />
+									<span className='text-xs font-semibold uppercase tracking-[0.08em]'>
+										{isUpdatingAIState ? '...' : labels.aiOffAction}
+									</span>
+								</button>
+							)}
+						</div>
+					</div>
 
+					<div className='flex shrink-0 items-center gap-2'>
+						<div className='min-[641px]:invisible min-[641px]:w-0 min-[641px]:overflow-hidden'>
+							{aiPaused ? (
+								<button
+									type='button'
+									className='inline-flex h-10 items-center gap-1.5 rounded-full bg-success-bg px-3 text-success transition duration-fast hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-success/30 disabled:cursor-not-allowed disabled:opacity-60'
+									onClick={event => {
+										event.stopPropagation()
+										onResumeAI?.(activeSession)
+									}}
+									disabled={isUpdatingAIState}
+									aria-label={labels.resumeAi}
+									title={labels.resumeAi}
+								>
+									<FiPlay className='h-4 w-4' />
+									<span className='text-xs font-semibold uppercase tracking-[0.08em]'>
+										{isUpdatingAIState ? '...' : labels.aiOnAction}
+									</span>
+								</button>
+							) : (
+								<button
+									type='button'
+									className='inline-flex h-10 items-center gap-1.5 rounded-full bg-primary/15 px-3 text-primary transition duration-fast hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60'
+									onClick={event => {
+										event.stopPropagation()
+										setIsPauseEditorOpen(current => !current)
+									}}
+									disabled={isUpdatingAIState}
+									aria-label={labels.pauseAiTime}
+									title={labels.pauseAiTime}
+								>
+									<FiPause className='h-4 w-4' />
+									<span className='text-xs font-semibold uppercase tracking-[0.08em]'>
+										{isUpdatingAIState ? '...' : labels.aiOffAction}
+									</span>
+								</button>
+							)}
+						</div>
 						{onRequestDeleteSession ? (
 							<button
 								type='button'
