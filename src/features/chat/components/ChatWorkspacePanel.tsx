@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import {
 	FiCalendar,
 	FiEdit2,
@@ -422,9 +422,7 @@ function ChatWorkspacePanel({
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 	const lastScrollSignatureRef = useRef('')
-	const didInitialOpenScrollRef = useRef(false)
-	const initialScrollIntervalRef = useRef<number | null>(null)
-	const initialScrollTimeoutRef = useRef<number | null>(null)
+	const shouldForceBottomOnOpenRef = useRef(false)
 
 	const canSend = useMemo(
 		() => draftMessage.trim().length > 0 && !isSending && Boolean(session),
@@ -445,19 +443,11 @@ function ChatWorkspacePanel({
 		setFollowUpInputError(null)
 		setPreviewImageUrl(null)
 		lastScrollSignatureRef.current = ''
-		didInitialOpenScrollRef.current = false
-		if (initialScrollIntervalRef.current !== null) {
-			window.clearInterval(initialScrollIntervalRef.current)
-			initialScrollIntervalRef.current = null
-		}
-		if (initialScrollTimeoutRef.current !== null) {
-			window.clearTimeout(initialScrollTimeoutRef.current)
-			initialScrollTimeoutRef.current = null
-		}
+		shouldForceBottomOnOpenRef.current = true
 	}, [session?.id])
 
-	useEffect(() => {
-		if (!session || isLoading || didInitialOpenScrollRef.current) {
+	useLayoutEffect(() => {
+		if (!session || isLoading || !shouldForceBottomOnOpenRef.current) {
 			return
 		}
 
@@ -466,49 +456,8 @@ function ChatWorkspacePanel({
 			return
 		}
 
-		const scrollToBottom = () => {
-			container.scrollTo({
-				top: container.scrollHeight,
-				behavior: 'auto',
-			})
-		}
-
-		scrollToBottom()
-		const rafId = window.requestAnimationFrame(scrollToBottom)
-		const nestedRafId = window.requestAnimationFrame(() => {
-			window.requestAnimationFrame(scrollToBottom)
-		})
-		const timeoutId = window.setTimeout(scrollToBottom, 140)
-		const imageNodes = Array.from(container.querySelectorAll('img'))
-		const onImageLoad = () => scrollToBottom()
-		imageNodes.forEach(imageNode => {
-			imageNode.addEventListener('load', onImageLoad)
-		})
-		initialScrollIntervalRef.current = window.setInterval(scrollToBottom, 120)
-		initialScrollTimeoutRef.current = window.setTimeout(() => {
-			if (initialScrollIntervalRef.current !== null) {
-				window.clearInterval(initialScrollIntervalRef.current)
-				initialScrollIntervalRef.current = null
-			}
-		}, 1800)
-		didInitialOpenScrollRef.current = true
-
-		return () => {
-			window.cancelAnimationFrame(rafId)
-			window.cancelAnimationFrame(nestedRafId)
-			window.clearTimeout(timeoutId)
-			imageNodes.forEach(imageNode => {
-				imageNode.removeEventListener('load', onImageLoad)
-			})
-			if (initialScrollIntervalRef.current !== null) {
-				window.clearInterval(initialScrollIntervalRef.current)
-				initialScrollIntervalRef.current = null
-			}
-			if (initialScrollTimeoutRef.current !== null) {
-				window.clearTimeout(initialScrollTimeoutRef.current)
-				initialScrollTimeoutRef.current = null
-			}
-		}
+		container.scrollTop = container.scrollHeight
+		shouldForceBottomOnOpenRef.current = false
 	}, [session?.id, isLoading, messages.length])
 
 	useEffect(() => {
