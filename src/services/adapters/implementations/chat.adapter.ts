@@ -40,6 +40,14 @@ function mapSenderType(value: unknown): ChatMessage['sender_type'] {
   return 'customer'
 }
 
+function toUtcIsoOrRaw(value: string): string {
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) {
+    return value
+  }
+  return parsed.toISOString()
+}
+
 function mapFollowUp(value: unknown): ChatFollowUp | null {
   const record = asRecord(value)
   if (!record) return null
@@ -416,7 +424,10 @@ export class ChatAdapter implements IChatService {
   ): Promise<ChatFollowUp> {
     const response = await this.requestor.post<unknown>(
       `/api/conversations/${sessionId}/follow-up/`,
-      input,
+      {
+        ...input,
+        scheduled_for: toUtcIsoOrRaw(input.scheduled_for),
+      },
     )
     const record = asRecord(response)
     const followUp = mapFollowUp(record?.follow_up ?? record?.active_follow_up ?? response)
@@ -430,9 +441,13 @@ export class ChatAdapter implements IChatService {
     sessionId: string,
     input: { scheduled_for?: string; message?: string },
   ): Promise<ChatFollowUp> {
+    const payload: { scheduled_for?: string; message?: string } = { ...input }
+    if (payload.scheduled_for) {
+      payload.scheduled_for = toUtcIsoOrRaw(payload.scheduled_for)
+    }
     const response = await this.requestor.patch<unknown>(
       `/api/conversations/${sessionId}/follow-up/`,
-      input,
+      payload,
     )
     const record = asRecord(response)
     const followUp = mapFollowUp(record?.follow_up ?? record?.active_follow_up ?? response)
