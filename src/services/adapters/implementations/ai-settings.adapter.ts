@@ -56,26 +56,36 @@ function parseValueRecord(value: unknown): UnknownRecord {
 
 function mapSetting(value: unknown): any {
 	const record = asRecord(value) ?? {}
+	const settingKey = asString(record.key) || asString(record.name)
 	const rawValue = parseValueRecord(record.value)
 	const systemPromptRaw =
 		asString(record.system_prompt) ||
 		asString(record.systemPrompt) ||
 		asString(rawValue.system_prompt) ||
 		asString(rawValue.systemPrompt) ||
+		asString(rawValue.text) ||
 		asString(record.value)
+	const modelNameRaw =
+		asString(record.model_name) ||
+		asString(record.model) ||
+		asString(record.modelName) ||
+		asString(rawValue.model_name) ||
+		asString(rawValue.model) ||
+		asString(rawValue.modelName) ||
+		asString(rawValue.name)
 
 	return {
 		id: asString(record.id),
 		created_at: asString(record.created_at) || asString(record.updated_at),
 		updated_at: asString(record.updated_at),
-		name: asString(record.key) || asString(record.name),
+		name: settingKey,
 		system_prompt: systemPromptRaw,
 		follow_up_message:
 			asString(record.follow_up_message) ||
 			asString(rawValue.follow_up_message) ||
 			asString(rawValue.followUpMessage) ||
 			'',
-		model_name: asString(rawValue.model_name) || 'gpt-4.1-mini',
+		model_name: modelNameRaw || 'gpt-4.1-mini',
 		temperature: asNumber(rawValue.temperature, 0.35),
 		auto_order_enabled: asBoolean(rawValue.auto_order_enabled, true),
 		order_confidence_threshold: asNumber(rawValue.order_confidence_threshold, 0.82),

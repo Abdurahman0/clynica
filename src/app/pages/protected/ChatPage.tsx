@@ -185,15 +185,9 @@ function ChatPage() {
       closeSessionAria: t('chatPage.closeSessionAria'),
       aiPauseError: t('chatPage.errors.aiPause'),
       aiResumeError: t('chatPage.errors.aiResume'),
-      followUpCreateError: t('chatPage.errors.followUpCreate', {
-        defaultValue: 'Follow-up yaratib bo\'lmadi.',
-      }),
-      followUpUpdateError: t('chatPage.errors.followUpUpdate', {
-        defaultValue: 'Follow-up yangilanmadi.',
-      }),
-      followUpCancelError: t('chatPage.errors.followUpCancel', {
-        defaultValue: 'Follow-up bekor qilinmadi.',
-      }),
+      followUpCreateError: t('chatPage.errors.followUpCreate'),
+      followUpUpdateError: t('chatPage.errors.followUpUpdate'),
+      followUpCancelError: t('chatPage.errors.followUpCancel'),
       sessionDeleteError: t('chatPage.errors.sessionDelete'),
       sessionDeleteConfirm: t('chatPage.confirmations.deleteSession'),
       deleteSession: t('chatPage.workspace.deleteSession'),

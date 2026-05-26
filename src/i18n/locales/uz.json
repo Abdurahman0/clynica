@@ -2510,6 +2510,9 @@
       "messageSend": "Xabar yuborilmadi.",
       "aiPause": "AI ni to'xtatib bo'lmadi.",
       "aiResume": "AI ni yoqib bo'lmadi.",
+      "followUpCreate": "Follow-up yaratib bo'lmadi.",
+      "followUpUpdate": "Follow-up yangilanmadi.",
+      "followUpCancel": "Follow-up bekor qilinmadi.",
       "sessionDelete": "Suhbatni o'chirib bo'lmadi.",
       "requestOperator": "Operator so'rovi yuborilmadi."
     },
@@ -2585,7 +2588,22 @@
         "customer": "Mijoz",
         "ai": "AI yordamchi",
         "operator": "Operator",
-        "system": "Tizim"
+        "system": "Tizim",
+        "followUp": "Follow-up"
+      },
+      "followUp": {
+        "title": "Follow-up",
+        "set": "Follow-up qo'shish",
+        "edit": "Tahrirlash",
+        "cancel": "Bekor qilish",
+        "save": "Follow-up saqlash",
+        "update": "Follow-up yangilash",
+        "message": "Xabar",
+        "messagePlaceholder": "Follow-up xabarini kiriting...",
+        "dateTime": "Sana va vaqt",
+        "scheduledAt": "Belgilangan vaqt",
+        "validationMessage": "Follow-up xabarini kiriting.",
+        "noData": "-"
       },
       "timeUnavailable": "Mavjud emas",
       "requestOperator": "Operator chaqirish",
