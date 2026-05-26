@@ -31,9 +31,32 @@ function asBoolean(value: unknown, fallback: boolean): boolean {
 	return fallback
 }
 
+function parseValueRecord(value: unknown): UnknownRecord {
+	const directRecord = asRecord(value)
+	if (directRecord) {
+		return directRecord
+	}
+
+	if (typeof value === 'string') {
+		const trimmed = value.trim()
+		if (!trimmed) {
+			return {}
+		}
+
+		try {
+			const parsed = JSON.parse(trimmed) as unknown
+			return asRecord(parsed) ?? {}
+		} catch {
+			return {}
+		}
+	}
+
+	return {}
+}
+
 function mapSetting(value: unknown): any {
 	const record = asRecord(value) ?? {}
-	const rawValue = asRecord(record.value) ?? {}
+	const rawValue = parseValueRecord(record.value)
 	const systemPromptRaw =
 		asString(record.system_prompt) ||
 		asString(record.systemPrompt) ||
@@ -43,11 +66,15 @@ function mapSetting(value: unknown): any {
 
 	return {
 		id: asString(record.id),
-		created_at: asString(record.updated_at),
+		created_at: asString(record.created_at) || asString(record.updated_at),
 		updated_at: asString(record.updated_at),
-		name: asString(record.key),
+		name: asString(record.key) || asString(record.name),
 		system_prompt: systemPromptRaw,
-		follow_up_message: asString(rawValue.follow_up_message) || '',
+		follow_up_message:
+			asString(record.follow_up_message) ||
+			asString(rawValue.follow_up_message) ||
+			asString(rawValue.followUpMessage) ||
+			'',
 		model_name: asString(rawValue.model_name) || 'gpt-4.1-mini',
 		temperature: asNumber(rawValue.temperature, 0.35),
 		auto_order_enabled: asBoolean(rawValue.auto_order_enabled, true),
@@ -58,7 +85,7 @@ function mapSetting(value: unknown): any {
 		),
 		is_active: asBoolean(rawValue.is_active, false),
 		updated_by: asString(record.updated_by) || null,
-		updated_by_name: null,
+		updated_by_name: asString(record.updated_by_name) || null,
 	}
 }
 

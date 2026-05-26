@@ -464,21 +464,11 @@ function ChatWorkspacePanel({
 		}
 	}
 
-	if (!session) {
-		return (
-			<div className='grid h-full min-h-0 place-items-center p-1'>
-				<EmptyState
-					title={labels.emptyChatTitle}
-					description={labels.emptyChatDescription}
-				/>
-			</div>
-		)
-	}
-
-	const activeSession = session
-	const activeFollowUp = activeSession.active_follow_up ?? null
-	const sessionTitle = getSessionTitle(activeSession, labels.unknownCustomer)
-	const aiPaused = isAIPaused(activeSession)
+	const activeFollowUp = session?.active_follow_up ?? null
+	const sessionTitle = session
+		? getSessionTitle(session, labels.unknownCustomer)
+		: labels.unknownCustomer
+	const aiPaused = session ? isAIPaused(session) : false
 	const pauseDateLabel = pauseDate
 		? formatLocalizedDate(pauseDate, i18n.language, {
 				locale,
@@ -502,6 +492,19 @@ function ChatWorkspacePanel({
 		}
 		setFollowUpMessage(activeFollowUp.message || '')
 	}, [activeFollowUp?.scheduled_for, activeFollowUp?.message])
+
+	if (!session) {
+		return (
+			<div className='grid h-full min-h-0 place-items-center p-1'>
+				<EmptyState
+					title={labels.emptyChatTitle}
+					description={labels.emptyChatDescription}
+				/>
+			</div>
+		)
+	}
+
+	const activeSession = session
 
 	function handleQuickPause(minutes: number) {
 		const target = new Date(Date.now() + minutes * 60 * 1000)
