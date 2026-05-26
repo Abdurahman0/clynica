@@ -423,6 +423,8 @@ function ChatWorkspacePanel({
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 	const lastScrollSignatureRef = useRef('')
 	const didInitialOpenScrollRef = useRef(false)
+	const initialScrollIntervalRef = useRef<number | null>(null)
+	const initialScrollTimeoutRef = useRef<number | null>(null)
 
 	const canSend = useMemo(
 		() => draftMessage.trim().length > 0 && !isSending && Boolean(session),
@@ -444,6 +446,14 @@ function ChatWorkspacePanel({
 		setPreviewImageUrl(null)
 		lastScrollSignatureRef.current = ''
 		didInitialOpenScrollRef.current = false
+		if (initialScrollIntervalRef.current !== null) {
+			window.clearInterval(initialScrollIntervalRef.current)
+			initialScrollIntervalRef.current = null
+		}
+		if (initialScrollTimeoutRef.current !== null) {
+			window.clearTimeout(initialScrollTimeoutRef.current)
+			initialScrollTimeoutRef.current = null
+		}
 	}, [session?.id])
 
 	useEffect(() => {
@@ -463,13 +473,41 @@ function ChatWorkspacePanel({
 			})
 		}
 
+		scrollToBottom()
 		const rafId = window.requestAnimationFrame(scrollToBottom)
+		const nestedRafId = window.requestAnimationFrame(() => {
+			window.requestAnimationFrame(scrollToBottom)
+		})
 		const timeoutId = window.setTimeout(scrollToBottom, 140)
+		const imageNodes = Array.from(container.querySelectorAll('img'))
+		const onImageLoad = () => scrollToBottom()
+		imageNodes.forEach(imageNode => {
+			imageNode.addEventListener('load', onImageLoad)
+		})
+		initialScrollIntervalRef.current = window.setInterval(scrollToBottom, 120)
+		initialScrollTimeoutRef.current = window.setTimeout(() => {
+			if (initialScrollIntervalRef.current !== null) {
+				window.clearInterval(initialScrollIntervalRef.current)
+				initialScrollIntervalRef.current = null
+			}
+		}, 1800)
 		didInitialOpenScrollRef.current = true
 
 		return () => {
 			window.cancelAnimationFrame(rafId)
+			window.cancelAnimationFrame(nestedRafId)
 			window.clearTimeout(timeoutId)
+			imageNodes.forEach(imageNode => {
+				imageNode.removeEventListener('load', onImageLoad)
+			})
+			if (initialScrollIntervalRef.current !== null) {
+				window.clearInterval(initialScrollIntervalRef.current)
+				initialScrollIntervalRef.current = null
+			}
+			if (initialScrollTimeoutRef.current !== null) {
+				window.clearTimeout(initialScrollTimeoutRef.current)
+				initialScrollTimeoutRef.current = null
+			}
 		}
 	}, [session?.id, isLoading, messages.length])
 
