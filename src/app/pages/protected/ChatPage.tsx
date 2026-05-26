@@ -190,7 +190,9 @@ function ChatPage() {
       followUpCancelError: t('chatPage.errors.followUpCancel'),
       sessionDeleteError: t('chatPage.errors.sessionDelete'),
       sessionDeleteConfirm: t('chatPage.confirmations.deleteSession'),
+      followUpCancelConfirm: t('chatPage.confirmations.cancelFollowUp'),
       deleteSession: t('chatPage.workspace.deleteSession'),
+      deleteFollowUp: t('chatPage.workspace.followUp.cancel'),
       cancel: t('chatPage.workspace.cancel'),
     }),
     [t],
@@ -215,6 +217,8 @@ function ChatPage() {
   const [pendingDeleteSession, setPendingDeleteSession] = useState<Conversation | null>(
     null,
   );
+  const [pendingCancelFollowUpSession, setPendingCancelFollowUpSession] =
+    useState<Conversation | null>(null);
   const [isUpdatingAIState, setIsUpdatingAIState] = useState(false);
   const [isUpdatingFollowUp, setIsUpdatingFollowUp] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
@@ -718,16 +722,38 @@ function ChatPage() {
     }
   }
 
-  async function handleCancelFollowUp(session: Conversation) {
+  async function handleCancelFollowUp(session: Conversation): Promise<boolean> {
     setActionError(null);
     setIsUpdatingFollowUp(true);
     try {
       await services.chat.cancelFollowUp(session.id);
       await refreshSessionAfterFollowUp(session.id);
+      return true;
     } catch (error) {
       setActionError(readErrorMessage(error, copy.followUpCancelError));
+      return false;
     } finally {
       setIsUpdatingFollowUp(false);
+    }
+  }
+
+  function requestCancelFollowUp(session: Conversation) {
+    if (isUpdatingFollowUp) {
+      return;
+    }
+
+    setPendingCancelFollowUpSession(session);
+  }
+
+  async function confirmCancelFollowUp() {
+    const session = pendingCancelFollowUpSession;
+    if (!session) {
+      return;
+    }
+
+    const success = await handleCancelFollowUp(session);
+    if (success) {
+      setPendingCancelFollowUpSession(null);
     }
   }
 
@@ -839,7 +865,7 @@ function ChatPage() {
               onResumeAI={handleResumeAI}
               onCreateFollowUp={handleCreateFollowUp}
               onUpdateFollowUp={handleUpdateFollowUp}
-              onCancelFollowUp={handleCancelFollowUp}
+              onRequestCancelFollowUp={requestCancelFollowUp}
             />
           </div>
         </section>
@@ -871,7 +897,7 @@ function ChatPage() {
               onResumeAI={handleResumeAI}
               onCreateFollowUp={handleCreateFollowUp}
               onUpdateFollowUp={handleUpdateFollowUp}
-              onCancelFollowUp={handleCancelFollowUp}
+              onRequestCancelFollowUp={requestCancelFollowUp}
             />
           </div>
         </div>
@@ -901,6 +927,27 @@ function ChatPage() {
             void confirmDeleteSession();
           }}
           ariaLabel={copy.deleteSession}
+        />
+      ) : null}
+
+      {pendingCancelFollowUpSession ? (
+        <ConfirmDialog
+          eyebrow={copy.deleteFollowUp}
+          title={copy.deleteFollowUp}
+          description={copy.followUpCancelConfirm}
+          cancelLabel={copy.cancel}
+          confirmLabel={copy.deleteFollowUp}
+          isBusy={isUpdatingFollowUp}
+          confirmTone="danger"
+          onCancel={() => {
+            if (!isUpdatingFollowUp) {
+              setPendingCancelFollowUpSession(null);
+            }
+          }}
+          onConfirm={() => {
+            void confirmCancelFollowUp();
+          }}
+          ariaLabel={copy.deleteFollowUp}
         />
       ) : null}
     </>

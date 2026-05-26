@@ -2517,7 +2517,8 @@
       "requestOperator": "Запрос оператора не отправлен."
     },
     "confirmations": {
-      "deleteSession": "Удалить этот чат и всю его историю?"
+      "deleteSession": "Удалить этот чат и всю его историю?",
+      "cancelFollowUp": "Отменить этот фоллоу-ап?"
     },
     "filters": {
       "searchPlaceholder": "Поиск по чату, клиенту или внешнему ID",

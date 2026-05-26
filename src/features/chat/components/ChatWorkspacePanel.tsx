@@ -52,7 +52,7 @@ interface ChatWorkspacePanelProps {
 		session: Conversation,
 		input: { scheduled_for: string; message: string },
 	) => Promise<void>
-	onCancelFollowUp?: (session: Conversation) => Promise<void>
+	onRequestCancelFollowUp?: (session: Conversation) => void
 }
 
 const PAUSE_HOUR_OPTIONS = Array.from({ length: 24 }, (_, index) => {
@@ -349,7 +349,7 @@ function ChatWorkspacePanel({
 	onResumeAI,
 	onCreateFollowUp,
 	onUpdateFollowUp,
-	onCancelFollowUp,
+	onRequestCancelFollowUp,
 }: ChatWorkspacePanelProps) {
 	const { t, i18n } = useTranslation()
 	const locale = i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'
@@ -884,7 +884,7 @@ function ChatWorkspacePanel({
 												type='button'
 												className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-danger-bg/70 text-danger transition duration-fast hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-60'
 												onClick={() => {
-													void onCancelFollowUp?.(activeSession)
+													onRequestCancelFollowUp?.(activeSession)
 												}}
 												disabled={isUpdatingFollowUp}
 												aria-label={labels.followUpCancel}

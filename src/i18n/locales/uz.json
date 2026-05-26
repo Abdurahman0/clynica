@@ -2517,7 +2517,8 @@
       "requestOperator": "Operator so'rovi yuborilmadi."
     },
     "confirmations": {
-      "deleteSession": "Ushbu suhbat va uning barcha tarixini o'chirasizmi?"
+      "deleteSession": "Ushbu suhbat va uning barcha tarixini o'chirasizmi?",
+      "cancelFollowUp": "Ushbu follow-upni bekor qilasizmi?"
     },
     "filters": {
       "searchPlaceholder": "Suhbat, mijoz yoki tashqi ID bo'yicha qidirish",
