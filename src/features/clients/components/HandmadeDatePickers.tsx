@@ -106,6 +106,33 @@ function toDateTimeLabel(value: string | undefined, locale: string): string {
   return `${formatDateWithHandmadeMonth(date, locale)} ${parsed.hour}:${parsed.minute}`;
 }
 
+function toLocalDateTimeOrNull(date: string, hour: string, minute: string): Date | null {
+  if (!date) {
+    return null;
+  }
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+  if (!match) {
+    return null;
+  }
+
+  const parsed = new Date(
+    Number(match[1]),
+    Number(match[2]) - 1,
+    Number(match[3]),
+    Number(hour),
+    Number(minute),
+    0,
+    0,
+  );
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed;
+}
+
 export function HandmadeDatePicker({
   value,
   onChange,
@@ -169,18 +196,43 @@ export function HandmadeDateTimePicker({
   }, [value]);
 
   const selectedDate = useMemo(() => parseDateOnly(draftDate), [draftDate]);
+  const now = new Date();
+  const selectedDateMidnight = selectedDate
+    ? new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate())
+    : null;
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const isPastDate = Boolean(selectedDateMidnight && selectedDateMidnight < todayMidnight);
+  const isToday = Boolean(
+    selectedDateMidnight &&
+      selectedDateMidnight.getTime() === todayMidnight.getTime(),
+  );
+  const isCurrentHourToday = isToday && draftHour === `${now.getHours()}`.padStart(2, '0');
+  const selectedDateTime = toLocalDateTimeOrNull(draftDate, draftHour, draftMinute);
+  const canSave = Boolean(
+    selectedDateTime && selectedDateTime.getTime() > now.getTime(),
+  );
 
   const hourOptions = useMemo<SelectOption[]>(
-    () => Array.from({ length: 24 }, (_, index) => ({ value: `${index}`.padStart(2, '0'), label: `${index}`.padStart(2, '0') })),
-    [],
+    () =>
+      Array.from({ length: 24 }, (_, index) => {
+        const value = `${index}`.padStart(2, '0');
+        const disabled = isPastDate || (isToday && index < now.getHours());
+        return { value, label: value, disabled };
+      }),
+    [isPastDate, isToday, now],
   );
 
   const minuteOptions = useMemo<SelectOption[]>(
-    () => Array.from({ length: 12 }, (_, index) => {
-      const minute = `${index * 5}`.padStart(2, '0');
-      return { value: minute, label: minute };
-    }),
-    [],
+    () =>
+      Array.from({ length: 12 }, (_, index) => {
+        const minuteValue = index * 5;
+        const minute = `${minuteValue}`.padStart(2, '0');
+        const disabled =
+          isPastDate ||
+          (isCurrentHourToday && minuteValue < now.getMinutes());
+        return { value: minute, label: minute, disabled };
+      }),
+    [isPastDate, isCurrentHourToday, now],
   );
 
   const hasDate = draftDate.length > 0;
@@ -194,6 +246,11 @@ export function HandmadeDateTimePicker({
         </button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[320px] p-3">
+        <div className="mb-3 grid grid-cols-2 gap-2">
+          <FilterSelect value={draftHour} options={hourOptions} onChange={setDraftHour} disabled={!hasDate || isPastDate} size="compact" />
+          <FilterSelect value={draftMinute} options={minuteOptions} onChange={setDraftMinute} disabled={!hasDate || isPastDate} size="compact" />
+        </div>
+
         <Calendar
           mode="single"
           selected={selectedDate}
@@ -204,11 +261,6 @@ export function HandmadeDateTimePicker({
             setDraftDate(toDateOnly(date));
           }}
         />
-
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <FilterSelect value={draftHour} options={hourOptions} onChange={setDraftHour} disabled={!hasDate} size="compact" />
-          <FilterSelect value={draftMinute} options={minuteOptions} onChange={setDraftMinute} disabled={!hasDate} size="compact" />
-        </div>
 
         <div className="mt-3 flex items-center justify-between gap-2">
           <button
@@ -222,9 +274,9 @@ export function HandmadeDateTimePicker({
           <button
             type="button"
             className="inline-flex h-8 items-center rounded-md bg-primary px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground transition duration-fast hover:bg-primary-accent disabled:cursor-not-allowed disabled:opacity-60"
-            disabled={!hasDate}
+            disabled={!canSave}
             onClick={() => {
-              if (!hasDate) {
+              if (!canSave) {
                 return;
               }
               onChange(`${draftDate}T${draftHour}:${draftMinute}`);
