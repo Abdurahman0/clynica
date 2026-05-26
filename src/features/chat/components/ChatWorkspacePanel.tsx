@@ -238,19 +238,20 @@ function toIsoWithOffsetOrNull(
 	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offset}`
 }
 
-function toIsoWithOffsetFromDateTimeInputOrNull(value: string): string | null {
+function toUtcIsoFromDateTimeInputOrNull(value: string): string | null {
 	const trimmed = value.trim()
 	if (!trimmed) {
 		return null
 	}
 
-	const localMatch = /^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):([0-5]\d)$/.exec(trimmed)
+	const localMatch =
+		/^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):([0-5]\d)$/.exec(trimmed)
 	if (!localMatch) {
 		const parsed = new Date(trimmed)
 		if (Number.isNaN(parsed.getTime())) {
 			return null
 		}
-		return trimmed
+		return parsed.toISOString()
 	}
 
 	const parsed = new Date(
@@ -267,20 +268,7 @@ function toIsoWithOffsetFromDateTimeInputOrNull(value: string): string | null {
 		return null
 	}
 
-	const year = parsed.getFullYear()
-	const month = String(parsed.getMonth() + 1).padStart(2, '0')
-	const day = String(parsed.getDate()).padStart(2, '0')
-	const hours = String(parsed.getHours()).padStart(2, '0')
-	const minutes = String(parsed.getMinutes()).padStart(2, '0')
-	const seconds = String(parsed.getSeconds()).padStart(2, '0')
-	const offsetMinutes = -parsed.getTimezoneOffset()
-	const sign = offsetMinutes >= 0 ? '+' : '-'
-	const absoluteOffset = Math.abs(offsetMinutes)
-	const offsetHours = String(Math.floor(absoluteOffset / 60)).padStart(2, '0')
-	const offsetRestMinutes = String(absoluteOffset % 60).padStart(2, '0')
-	const offset = `${sign}${offsetHours}:${offsetRestMinutes}`
-
-	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offset}`
+	return parsed.toISOString()
 }
 
 function splitTimeValue(value: string): { hour: string; minute: string } {
@@ -592,9 +580,7 @@ function ChatWorkspacePanel({
 			return
 		}
 
-		const scheduledFor = toIsoWithOffsetFromDateTimeInputOrNull(
-			followUpDateTimeInput,
-		)
+		const scheduledFor = toUtcIsoFromDateTimeInputOrNull(followUpDateTimeInput)
 		if (!scheduledFor) {
 			setFollowUpInputError(labels.invalidTime)
 			return
