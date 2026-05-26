@@ -2518,7 +2518,8 @@
     },
     "confirmations": {
       "deleteSession": "Удалить этот чат и всю его историю?",
-      "cancelFollowUp": "Отменить этот фоллоу-ап?"
+      "cancelFollowUp": "Отменить этот фоллоу-ап?",
+      "cancelFollowUpConfirmLabel": "Да, отменить"
     },
     "filters": {
       "searchPlaceholder": "Поиск по чату, клиенту или внешнему ID",

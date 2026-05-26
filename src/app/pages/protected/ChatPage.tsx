@@ -191,6 +191,7 @@ function ChatPage() {
       sessionDeleteError: t('chatPage.errors.sessionDelete'),
       sessionDeleteConfirm: t('chatPage.confirmations.deleteSession'),
       followUpCancelConfirm: t('chatPage.confirmations.cancelFollowUp'),
+      followUpCancelConfirmLabel: t('chatPage.confirmations.cancelFollowUpConfirmLabel'),
       deleteSession: t('chatPage.workspace.deleteSession'),
       deleteFollowUp: t('chatPage.workspace.followUp.cancel'),
       cancel: t('chatPage.workspace.cancel'),
@@ -936,7 +937,7 @@ function ChatPage() {
           title={copy.deleteFollowUp}
           description={copy.followUpCancelConfirm}
           cancelLabel={copy.cancel}
-          confirmLabel={copy.deleteFollowUp}
+          confirmLabel={copy.followUpCancelConfirmLabel}
           isBusy={isUpdatingFollowUp}
           confirmTone="danger"
           onCancel={() => {

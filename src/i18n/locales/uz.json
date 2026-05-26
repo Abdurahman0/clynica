@@ -2518,7 +2518,8 @@
     },
     "confirmations": {
       "deleteSession": "Ushbu suhbat va uning barcha tarixini o'chirasizmi?",
-      "cancelFollowUp": "Ushbu follow-upni bekor qilasizmi?"
+      "cancelFollowUp": "Ushbu follow-upni bekor qilasizmi?",
+      "cancelFollowUpConfirmLabel": "Ha, bekor qilish"
     },
     "filters": {
       "searchPlaceholder": "Suhbat, mijoz yoki tashqi ID bo'yicha qidirish",
