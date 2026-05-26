@@ -7,7 +7,7 @@ export type ChatChannel = 'telegram' | 'instagram' | 'web' | 'manual'
 
 export type ConversationState = 'open' | 'pending' | 'resolved'
 
-export type MessageSenderType = 'customer' | 'ai' | 'operator' | 'system'
+export type MessageSenderType = 'customer' | 'ai' | 'operator' | 'system' | 'follow_up'
 
 export type MessageDirection = 'incoming' | 'outgoing'
 
@@ -17,6 +17,14 @@ export type MessageDeliveryStatus =
 	| 'delivered'
 	| 'read'
 	| 'failed'
+
+export interface ConversationFollowUp {
+	id: EntityId
+	scheduled_for: TimestampString
+	message: string
+	created_at?: TimestampString
+	updated_at?: TimestampString
+}
 
 export interface Conversation {
 	id: EntityId
@@ -38,6 +46,7 @@ export interface Conversation {
 	unread_count?: number
 	created_at: TimestampString
 	updated_at: TimestampString
+	active_follow_up?: ConversationFollowUp | null
 }
 
 export interface ChatMessage {

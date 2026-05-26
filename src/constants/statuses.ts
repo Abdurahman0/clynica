@@ -69,6 +69,7 @@ export const MESSAGE_SENDER_TYPES = [
 	'ai',
 	'operator',
 	'system',
+	'follow_up',
 ] as const satisfies readonly MessageSenderType[]
 
 export const MESSAGE_SENDER_TYPE_LABELS: Record<MessageSenderType, string> = {
@@ -76,6 +77,7 @@ export const MESSAGE_SENDER_TYPE_LABELS: Record<MessageSenderType, string> = {
 	ai: 'AI',
 	operator: 'Operator',
 	system: 'System',
+	follow_up: 'Follow-up',
 }
 
 export const MESSAGE_SENDER_TYPE_OPTIONS: SelectOption[] = [
@@ -83,6 +85,7 @@ export const MESSAGE_SENDER_TYPE_OPTIONS: SelectOption[] = [
 	{ value: 'ai', label: MESSAGE_SENDER_TYPE_LABELS.ai },
 	{ value: 'operator', label: MESSAGE_SENDER_TYPE_LABELS.operator },
 	{ value: 'system', label: MESSAGE_SENDER_TYPE_LABELS.system },
+	{ value: 'follow_up', label: MESSAGE_SENDER_TYPE_LABELS.follow_up },
 ]
 
 export const MESSAGE_DELIVERY_STATUSES = [

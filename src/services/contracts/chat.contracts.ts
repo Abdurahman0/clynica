@@ -8,7 +8,15 @@ import type {
 	PaginatedResponse,
 } from './common.contracts'
 
-export type ChatMessageSender = 'customer' | 'ai' | 'operator' | 'system'
+export type ChatMessageSender = 'customer' | 'ai' | 'operator' | 'system' | 'follow_up'
+
+export interface ChatFollowUp {
+	id: string
+	scheduled_for: string
+	message: string
+	created_at?: string
+	updated_at?: string
+}
 
 export interface ChatMessage extends BaseEntity {
 	session_id: string
@@ -29,6 +37,7 @@ export interface ChatSession extends BaseEntity {
 	last_message_at?: string
 	messages_count?: number
 	metadata?: Record<string, unknown>
+	active_follow_up?: ChatFollowUp | null
 }
 
 export interface CreateMessageInput {
@@ -64,6 +73,16 @@ export interface IChatService {
 		sessionId: string,
 		input: CreateMessageInput,
 	): Promise<ChatMessage>
+	getActiveFollowUp(sessionId: string): Promise<ChatFollowUp | null>
+	createFollowUp(
+		sessionId: string,
+		input: { scheduled_for: string; message: string },
+	): Promise<ChatFollowUp>
+	updateFollowUp(
+		sessionId: string,
+		input: { scheduled_for?: string; message?: string },
+	): Promise<ChatFollowUp>
+	cancelFollowUp(sessionId: string): Promise<void>
 
 	// WebSocket
 	subscribeToSession(

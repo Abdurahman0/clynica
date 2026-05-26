@@ -4,6 +4,7 @@
 
 import { ApiRequestor } from './api-requestor'
 import type {
+  ChatFollowUp,
   ChatMessage,
   ChatMessagesListParams,
   ChatSession,
@@ -28,8 +29,32 @@ function asString(value: unknown): string {
 
 function mapSenderType(value: unknown): ChatMessage['sender_type'] {
   const sender = asString(value).toLowerCase()
-  if (sender === 'operator' || sender === 'ai' || sender === 'system') return sender
+  if (
+    sender === 'operator' ||
+    sender === 'ai' ||
+    sender === 'system' ||
+    sender === 'follow_up'
+  ) {
+    return sender
+  }
   return 'customer'
+}
+
+function mapFollowUp(value: unknown): ChatFollowUp | null {
+  const record = asRecord(value)
+  if (!record) return null
+
+  const scheduledFor = asString(record.scheduled_for)
+  const message = asString(record.message)
+  if (!scheduledFor || !message) return null
+
+  return {
+    id: asString(record.id) || `follow-up-${scheduledFor}`,
+    scheduled_for: scheduledFor,
+    message,
+    created_at: asString(record.created_at) || undefined,
+    updated_at: asString(record.updated_at) || undefined,
+  }
 }
 
 function mapMessage(value: unknown): ChatMessage {
@@ -72,6 +97,13 @@ function mapConversation(value: unknown): ChatSession {
     typeof record.is_operator_active === 'boolean'
       ? record.is_operator_active
       : asString(record.ai_status) === 'paused'
+  const followUpContainer = asRecord(record.follow_up)
+  const activeFollowUp = mapFollowUp(
+    record.active_follow_up ??
+      followUpContainer?.active_follow_up ??
+      followUpContainer?.follow_up ??
+      followUpContainer,
+  )
 
   return {
     id: asString(record.id),
@@ -101,6 +133,7 @@ function mapConversation(value: unknown): ChatSession {
     unread_count: 0,
     created_at: asString(record.created_at),
     updated_at: asString(record.updated_at),
+    active_follow_up: activeFollowUp,
   } as unknown as ChatSession
 }
 
@@ -363,6 +396,54 @@ export class ChatAdapter implements IChatService {
       {},
     )
     return mapConversation(response)
+  }
+
+  async getActiveFollowUp(sessionId: string): Promise<ChatFollowUp | null> {
+    const response = await this.requestor.get<unknown>(
+      `/api/conversations/${sessionId}/follow-up/`,
+    )
+    const record = asRecord(response)
+    if (!record) {
+      return mapFollowUp(response)
+    }
+
+    return mapFollowUp(record.follow_up ?? record.active_follow_up ?? record)
+  }
+
+  async createFollowUp(
+    sessionId: string,
+    input: { scheduled_for: string; message: string },
+  ): Promise<ChatFollowUp> {
+    const response = await this.requestor.post<unknown>(
+      `/api/conversations/${sessionId}/follow-up/`,
+      input,
+    )
+    const record = asRecord(response)
+    const followUp = mapFollowUp(record?.follow_up ?? record?.active_follow_up ?? response)
+    if (!followUp) {
+      throw new Error('Failed to parse follow-up response')
+    }
+    return followUp
+  }
+
+  async updateFollowUp(
+    sessionId: string,
+    input: { scheduled_for?: string; message?: string },
+  ): Promise<ChatFollowUp> {
+    const response = await this.requestor.patch<unknown>(
+      `/api/conversations/${sessionId}/follow-up/`,
+      input,
+    )
+    const record = asRecord(response)
+    const followUp = mapFollowUp(record?.follow_up ?? record?.active_follow_up ?? response)
+    if (!followUp) {
+      throw new Error('Failed to parse follow-up response')
+    }
+    return followUp
+  }
+
+  async cancelFollowUp(sessionId: string): Promise<void> {
+    await this.requestor.delete(`/api/conversations/${sessionId}/follow-up/`)
   }
 
   async deleteSession(_sessionId: string): Promise<void> {

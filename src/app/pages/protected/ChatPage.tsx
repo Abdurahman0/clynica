@@ -9,6 +9,7 @@ import ChatSessionList from '../../../features/chat/components/ChatSessionList';
 import ChatWorkspacePanel from '../../../features/chat/components/ChatWorkspacePanel';
 import { usePersistentState } from '../../../lib/persistent-state';
 import { services } from '../../../services';
+import { useAuth } from '../../../auth';
 import type {
   ChatMessage,
   Conversation,
@@ -168,6 +169,8 @@ function sortSessionsByOrdering(
 function ChatPage() {
   const { t } = useTranslation();
   const location = useLocation();
+  const { hasPermission } = useAuth();
+  const canManageConversations = hasPermission('can_manage_conversations');
   const copy = useMemo(
     () => ({
       orderingLatestMessage: t('chatPage.ordering.latestMessage'),
@@ -182,6 +185,15 @@ function ChatPage() {
       closeSessionAria: t('chatPage.closeSessionAria'),
       aiPauseError: t('chatPage.errors.aiPause'),
       aiResumeError: t('chatPage.errors.aiResume'),
+      followUpCreateError: t('chatPage.errors.followUpCreate', {
+        defaultValue: 'Follow-up yaratib bo\'lmadi.',
+      }),
+      followUpUpdateError: t('chatPage.errors.followUpUpdate', {
+        defaultValue: 'Follow-up yangilanmadi.',
+      }),
+      followUpCancelError: t('chatPage.errors.followUpCancel', {
+        defaultValue: 'Follow-up bekor qilinmadi.',
+      }),
       sessionDeleteError: t('chatPage.errors.sessionDelete'),
       sessionDeleteConfirm: t('chatPage.confirmations.deleteSession'),
       deleteSession: t('chatPage.workspace.deleteSession'),
@@ -210,6 +222,7 @@ function ChatPage() {
     null,
   );
   const [isUpdatingAIState, setIsUpdatingAIState] = useState(false);
+  const [isUpdatingFollowUp, setIsUpdatingFollowUp] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
 
   const requestedSessionId = useMemo(() => {
@@ -320,9 +333,29 @@ function ChatPage() {
         }
 
         const session = sessionResponse;
-        sessionCacheRef.current[session.id] = session;
-        setActiveSession(session);
-        setSessions((current) => applySessionListState(applySessionUpdate(current, session)));
+        let activeFollowUp = session.active_follow_up ?? null;
+        try {
+          activeFollowUp = await services.chat.getActiveFollowUp(sessionId);
+        } catch {
+          // Keep conversation loading resilient even if follow-up endpoint is unavailable.
+        }
+        const sessionWithFollowUp: Conversation = {
+          ...session,
+          active_follow_up: activeFollowUp
+            ? {
+                id: activeFollowUp.id,
+                scheduled_for: activeFollowUp.scheduled_for,
+                message: activeFollowUp.message,
+                created_at: activeFollowUp.created_at,
+                updated_at: activeFollowUp.updated_at,
+              }
+            : null,
+        };
+        sessionCacheRef.current[session.id] = sessionWithFollowUp;
+        setActiveSession(sessionWithFollowUp);
+        setSessions((current) =>
+          applySessionListState(applySessionUpdate(current, sessionWithFollowUp)),
+        );
       } catch {
         if (
           requestId !== sessionRequestRef.current ||
@@ -635,6 +668,75 @@ function ChatPage() {
     }
   }
 
+  function readErrorMessage(error: unknown, fallback: string): string {
+    if (error && typeof error === 'object') {
+      const messageValue = (error as { message?: unknown }).message;
+      if (typeof messageValue === 'string' && messageValue.trim()) {
+        return messageValue.trim();
+      }
+
+      const detailsValue = (error as { details?: unknown }).details;
+      if (detailsValue && typeof detailsValue === 'object') {
+        const detail = (detailsValue as Record<string, unknown>).detail;
+        if (typeof detail === 'string' && detail.trim()) {
+          return detail.trim();
+        }
+      }
+    }
+
+    return fallback;
+  }
+
+  async function refreshSessionAfterFollowUp(sessionId: EntityId) {
+    await loadActiveSession(sessionId, { silent: true });
+    await loadSessions({ silent: true });
+  }
+
+  async function handleCreateFollowUp(
+    session: Conversation,
+    input: { scheduled_for: string; message: string },
+  ) {
+    setActionError(null);
+    setIsUpdatingFollowUp(true);
+    try {
+      await services.chat.createFollowUp(session.id, input);
+      await refreshSessionAfterFollowUp(session.id);
+    } catch (error) {
+      setActionError(readErrorMessage(error, copy.followUpCreateError));
+    } finally {
+      setIsUpdatingFollowUp(false);
+    }
+  }
+
+  async function handleUpdateFollowUp(
+    session: Conversation,
+    input: { scheduled_for: string; message: string },
+  ) {
+    setActionError(null);
+    setIsUpdatingFollowUp(true);
+    try {
+      await services.chat.updateFollowUp(session.id, input);
+      await refreshSessionAfterFollowUp(session.id);
+    } catch (error) {
+      setActionError(readErrorMessage(error, copy.followUpUpdateError));
+    } finally {
+      setIsUpdatingFollowUp(false);
+    }
+  }
+
+  async function handleCancelFollowUp(session: Conversation) {
+    setActionError(null);
+    setIsUpdatingFollowUp(true);
+    try {
+      await services.chat.cancelFollowUp(session.id);
+      await refreshSessionAfterFollowUp(session.id);
+    } catch (error) {
+      setActionError(readErrorMessage(error, copy.followUpCancelError));
+    } finally {
+      setIsUpdatingFollowUp(false);
+    }
+  }
+
   function handleDeleteSession(session: Conversation) {
     setPendingDeleteSession(session);
   }
@@ -735,10 +837,15 @@ function ChatPage() {
               isSending={isSendingMessage}
               isDeletingSession={isDeletingSession}
               isUpdatingAIState={isUpdatingAIState}
+              isUpdatingFollowUp={isUpdatingFollowUp}
+              canManageFollowUp={canManageConversations}
               onSendMessage={handleSendMessage}
               onRequestDeleteSession={handleDeleteSession}
               onPauseAI={handlePauseAI}
               onResumeAI={handleResumeAI}
+              onCreateFollowUp={handleCreateFollowUp}
+              onUpdateFollowUp={handleUpdateFollowUp}
+              onCancelFollowUp={handleCancelFollowUp}
             />
           </div>
         </section>
@@ -762,10 +869,15 @@ function ChatPage() {
               isSending={isSendingMessage}
               isDeletingSession={isDeletingSession}
               isUpdatingAIState={isUpdatingAIState}
+              isUpdatingFollowUp={isUpdatingFollowUp}
+              canManageFollowUp={canManageConversations}
               onSendMessage={handleSendMessage}
               onRequestDeleteSession={handleDeleteSession}
               onPauseAI={handlePauseAI}
               onResumeAI={handleResumeAI}
+              onCreateFollowUp={handleCreateFollowUp}
+              onUpdateFollowUp={handleUpdateFollowUp}
+              onCancelFollowUp={handleCancelFollowUp}
             />
           </div>
         </div>

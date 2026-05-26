@@ -34,13 +34,19 @@ function asBoolean(value: unknown, fallback: boolean): boolean {
 function mapSetting(value: unknown): any {
 	const record = asRecord(value) ?? {}
 	const rawValue = asRecord(record.value) ?? {}
+	const systemPromptRaw =
+		asString(record.system_prompt) ||
+		asString(record.systemPrompt) ||
+		asString(rawValue.system_prompt) ||
+		asString(rawValue.systemPrompt) ||
+		asString(record.value)
 
 	return {
 		id: asString(record.id),
 		created_at: asString(record.updated_at),
 		updated_at: asString(record.updated_at),
 		name: asString(record.key),
-		system_prompt: asString(rawValue.system_prompt || record.value),
+		system_prompt: systemPromptRaw,
 		follow_up_message: asString(rawValue.follow_up_message) || '',
 		model_name: asString(rawValue.model_name) || 'gpt-4.1-mini',
 		temperature: asNumber(rawValue.temperature, 0.35),

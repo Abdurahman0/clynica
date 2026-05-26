@@ -311,7 +311,9 @@ function AISettingDetailPanel({
 									</h3>
 									<div className='max-h-[320px] overflow-y-auto rounded-lg bg-surface-subtle/80 p-3'>
 										<p className='m-0 whitespace-pre-wrap text-sm leading-6 text-text-primary'>
-											{setting.system_prompt}
+											{setting.system_prompt?.trim()?.length
+												? setting.system_prompt
+												: '-'}
 										</p>
 									</div>
 								</div>

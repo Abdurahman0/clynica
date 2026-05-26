@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react'
 import {
+	FiCalendar,
+	FiEdit2,
 	FiImage,
 	FiPause,
 	FiPlay,
 	FiSend,
 	FiTrash2,
 	FiUser,
+	FiX,
 } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next'
 import { ru, uz } from 'date-fns/locale'
@@ -34,10 +37,21 @@ interface ChatWorkspacePanelProps {
 	isSending: boolean
 	isDeletingSession?: boolean
 	isUpdatingAIState?: boolean
+	isUpdatingFollowUp?: boolean
+	canManageFollowUp?: boolean
 	onSendMessage: (content: string) => Promise<void>
 	onRequestDeleteSession?: (session: Conversation) => void
 	onPauseAI?: (session: Conversation, pausedUntilIso: string) => void
 	onResumeAI?: (session: Conversation) => void
+	onCreateFollowUp?: (
+		session: Conversation,
+		input: { scheduled_for: string; message: string },
+	) => Promise<void>
+	onUpdateFollowUp?: (
+		session: Conversation,
+		input: { scheduled_for: string; message: string },
+	) => Promise<void>
+	onCancelFollowUp?: (session: Conversation) => Promise<void>
 }
 
 const PAUSE_HOUR_OPTIONS = Array.from({ length: 24 }, (_, index) => {
@@ -181,6 +195,41 @@ function toPauseIsoOrNull(
 	return parsed.toISOString()
 }
 
+function toIsoWithOffsetOrNull(
+	date: Date | undefined,
+	timeValue: string,
+): string | null {
+	if (!date || !timeValue) {
+		return null
+	}
+
+	const timeMatch = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(timeValue)
+	if (!timeMatch) {
+		return null
+	}
+
+	const parsed = new Date(date)
+	parsed.setHours(Number(timeMatch[1]), Number(timeMatch[2]), 0, 0)
+	if (Number.isNaN(parsed.getTime())) {
+		return null
+	}
+
+	const year = parsed.getFullYear()
+	const month = String(parsed.getMonth() + 1).padStart(2, '0')
+	const day = String(parsed.getDate()).padStart(2, '0')
+	const hours = String(parsed.getHours()).padStart(2, '0')
+	const minutes = String(parsed.getMinutes()).padStart(2, '0')
+	const seconds = String(parsed.getSeconds()).padStart(2, '0')
+	const offsetMinutes = -parsed.getTimezoneOffset()
+	const sign = offsetMinutes >= 0 ? '+' : '-'
+	const absoluteOffset = Math.abs(offsetMinutes)
+	const offsetHours = String(Math.floor(absoluteOffset / 60)).padStart(2, '0')
+	const offsetRestMinutes = String(absoluteOffset % 60).padStart(2, '0')
+	const offset = `${sign}${offsetHours}:${offsetRestMinutes}`
+
+	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offset}`
+}
+
 function splitTimeValue(value: string): { hour: string; minute: string } {
 	const match = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(value)
 	if (!match) {
@@ -239,10 +288,15 @@ function ChatWorkspacePanel({
 	isSending,
 	isDeletingSession = false,
 	isUpdatingAIState = false,
+	isUpdatingFollowUp = false,
+	canManageFollowUp = false,
 	onSendMessage,
 	onRequestDeleteSession,
 	onPauseAI,
 	onResumeAI,
+	onCreateFollowUp,
+	onUpdateFollowUp,
+	onCancelFollowUp,
 }: ChatWorkspacePanelProps) {
 	const { t, i18n } = useTranslation()
 	const locale = i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'
@@ -252,6 +306,7 @@ function ChatWorkspacePanel({
 		ai: t('chatPage.workspace.sender.ai'),
 		operator: t('chatPage.workspace.sender.operator'),
 		system: t('chatPage.workspace.sender.system'),
+		follow_up: t('chatPage.workspace.sender.followUp', { defaultValue: 'Follow-up' }),
 	}
 	const labels = {
 		selectDate: t('chatPage.workspace.selectDate'),
@@ -274,6 +329,22 @@ function ChatWorkspacePanel({
 		aiOffAction: t('chatPage.workspace.aiOffAction'),
 		aiPausedStatus: t('chatPage.workspace.aiPausedStatus'),
 		operatorRequested: t('chatPage.workspace.operatorRequested'),
+		followUpTitle: t('chatPage.workspace.followUp.title', { defaultValue: 'Follow-up' }),
+		followUpSet: t('chatPage.workspace.followUp.set', { defaultValue: 'Set follow-up' }),
+		followUpEdit: t('chatPage.workspace.followUp.edit', { defaultValue: 'Edit' }),
+		followUpCancel: t('chatPage.workspace.followUp.cancel', { defaultValue: 'Cancel' }),
+		followUpSave: t('chatPage.workspace.followUp.save', { defaultValue: 'Save follow-up' }),
+		followUpUpdate: t('chatPage.workspace.followUp.update', { defaultValue: 'Update follow-up' }),
+		followUpMessage: t('chatPage.workspace.followUp.message', { defaultValue: 'Message' }),
+		followUpMessagePlaceholder: t('chatPage.workspace.followUp.messagePlaceholder', {
+			defaultValue: 'Follow-up message...',
+		}),
+		followUpDateTime: t('chatPage.workspace.followUp.dateTime', { defaultValue: 'Date and time' }),
+		followUpScheduledAt: t('chatPage.workspace.followUp.scheduledAt', { defaultValue: 'Scheduled for' }),
+		followUpValidationMessage: t('chatPage.workspace.followUp.validationMessage', {
+			defaultValue: 'Enter follow-up message.',
+		}),
+		followUpNoData: t('chatPage.workspace.followUp.noData', { defaultValue: '-' }),
 		saveLoading: t('chatPage.workspace.saveLoading'),
 		pauseSubmit: t('chatPage.workspace.pauseSubmit'),
 		loadingMessagesTitle: t('chatPage.workspace.loadingMessagesTitle'),
@@ -295,6 +366,12 @@ function ChatWorkspacePanel({
 	const [pauseDate, setPauseDate] = useState<Date | undefined>(undefined)
 	const [pauseTimeInput, setPauseTimeInput] = useState('')
 	const [pauseInputError, setPauseInputError] = useState<string | null>(null)
+	const [isFollowUpEditorOpen, setIsFollowUpEditorOpen] = useState(false)
+	const [isFollowUpCalendarOpen, setIsFollowUpCalendarOpen] = useState(false)
+	const [followUpDate, setFollowUpDate] = useState<Date | undefined>(undefined)
+	const [followUpTimeInput, setFollowUpTimeInput] = useState('')
+	const [followUpMessage, setFollowUpMessage] = useState('')
+	const [followUpInputError, setFollowUpInputError] = useState<string | null>(null)
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 	const lastScrollSignatureRef = useRef('')
@@ -313,6 +390,12 @@ function ChatWorkspacePanel({
 		setPauseInputError(null)
 		setPauseDate(defaults.date)
 		setPauseTimeInput(defaults.time)
+		setIsFollowUpEditorOpen(false)
+		setIsFollowUpCalendarOpen(false)
+		setFollowUpDate(defaults.date)
+		setFollowUpTimeInput(defaults.time)
+		setFollowUpMessage('')
+		setFollowUpInputError(null)
 		setPreviewImageUrl(null)
 		lastScrollSignatureRef.current = ''
 		didInitialOpenScrollRef.current = false
@@ -393,6 +476,7 @@ function ChatWorkspacePanel({
 	}
 
 	const activeSession = session
+	const activeFollowUp = activeSession.active_follow_up ?? null
 	const sessionTitle = getSessionTitle(activeSession, labels.unknownCustomer)
 	const aiPaused = isAIPaused(activeSession)
 	const pauseDateLabel = pauseDate
@@ -404,6 +488,20 @@ function ChatWorkspacePanel({
 			})
 		: labels.selectDate
 	const pauseTimeParts = splitTimeValue(pauseTimeInput)
+	const followUpTimeParts = splitTimeValue(followUpTimeInput)
+
+	useEffect(() => {
+		if (!activeFollowUp) {
+			return
+		}
+
+		const parsed = new Date(activeFollowUp.scheduled_for)
+		if (!Number.isNaN(parsed.getTime())) {
+			setFollowUpDate(parsed)
+			setFollowUpTimeInput(toTimeInputValue(parsed))
+		}
+		setFollowUpMessage(activeFollowUp.message || '')
+	}, [activeFollowUp?.scheduled_for, activeFollowUp?.message])
 
 	function handleQuickPause(minutes: number) {
 		const target = new Date(Date.now() + minutes * 60 * 1000)
@@ -431,6 +529,69 @@ function ChatWorkspacePanel({
 		setPauseInputError(null)
 		onPauseAI(activeSession, pauseIso)
 		setIsPauseEditorOpen(false)
+	}
+
+	function openFollowUpEditor() {
+		const defaults = createPauseDefaults()
+		if (activeFollowUp) {
+			const parsed = new Date(activeFollowUp.scheduled_for)
+			setFollowUpDate(Number.isNaN(parsed.getTime()) ? defaults.date : parsed)
+			setFollowUpTimeInput(
+				Number.isNaN(parsed.getTime()) ? defaults.time : toTimeInputValue(parsed),
+			)
+			setFollowUpMessage(activeFollowUp.message || '')
+		} else {
+			setFollowUpDate(defaults.date)
+			setFollowUpTimeInput(defaults.time)
+			setFollowUpMessage('')
+		}
+		setFollowUpInputError(null)
+		setIsFollowUpEditorOpen(true)
+	}
+
+	function closeFollowUpEditor() {
+		setIsFollowUpEditorOpen(false)
+		setIsFollowUpCalendarOpen(false)
+		setFollowUpInputError(null)
+	}
+
+	async function submitFollowUp() {
+		if (!canManageFollowUp) {
+			return
+		}
+
+		const scheduledFor = toIsoWithOffsetOrNull(followUpDate, followUpTimeInput)
+		if (!scheduledFor) {
+			setFollowUpInputError(labels.invalidTime)
+			return
+		}
+
+		if (new Date(scheduledFor).getTime() <= Date.now()) {
+			setFollowUpInputError(labels.futureTime)
+			return
+		}
+
+		const message = followUpMessage.trim()
+		if (!message) {
+			setFollowUpInputError(labels.followUpValidationMessage)
+			return
+		}
+
+		setFollowUpInputError(null)
+
+		if (activeFollowUp) {
+			await onUpdateFollowUp?.(activeSession, {
+				scheduled_for: scheduledFor,
+				message,
+			})
+		} else {
+			await onCreateFollowUp?.(activeSession, {
+				scheduled_for: scheduledFor,
+				message,
+			})
+		}
+
+		closeFollowUpEditor()
 	}
 
 	return (
@@ -646,6 +807,200 @@ function ChatWorkspacePanel({
 								{isUpdatingAIState ? labels.saveLoading : labels.pauseSubmit}
 							</button>
 						</div>
+					</div>
+				) : null}
+
+				{(activeFollowUp || canManageFollowUp) ? (
+					<div className='mt-2 grid gap-2 rounded-xl bg-surface-card/90 p-3 ring-1 ring-border-soft/55'>
+						<div className='flex items-center justify-between gap-2'>
+							<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted'>
+								{labels.followUpTitle}
+							</p>
+							{!isFollowUpEditorOpen && !activeFollowUp && canManageFollowUp ? (
+								<button
+									type='button'
+									className='inline-flex min-h-8 items-center rounded-lg bg-primary/12 px-3 text-xs font-semibold text-primary transition duration-fast hover:bg-primary/18'
+									onClick={openFollowUpEditor}
+									disabled={isUpdatingFollowUp}
+								>
+									{labels.followUpSet}
+								</button>
+							) : null}
+						</div>
+
+						{activeFollowUp && !isFollowUpEditorOpen ? (
+							<div className='grid gap-2 rounded-lg bg-surface-subtle/70 p-3 ring-1 ring-border-soft/40'>
+								<div className='flex flex-wrap items-center justify-between gap-2'>
+									<p className='m-0 text-sm font-semibold text-text-primary'>
+										{labels.followUpScheduledAt}: {formatDateTime(activeFollowUp.scheduled_for, i18n.language, labels.timeUnavailable)}
+									</p>
+									{canManageFollowUp ? (
+										<div className='flex items-center gap-1.5'>
+											<button
+												type='button'
+												className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-surface-card/75 text-text-secondary transition duration-fast hover:bg-surface-card hover:text-text-primary'
+												onClick={openFollowUpEditor}
+												disabled={isUpdatingFollowUp}
+												aria-label={labels.followUpEdit}
+												title={labels.followUpEdit}
+											>
+												<FiEdit2 className='h-3.5 w-3.5' />
+											</button>
+											<button
+												type='button'
+												className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-danger-bg/70 text-danger transition duration-fast hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-60'
+												onClick={() => {
+													void onCancelFollowUp?.(activeSession)
+												}}
+												disabled={isUpdatingFollowUp}
+												aria-label={labels.followUpCancel}
+												title={labels.followUpCancel}
+											>
+												<FiX className='h-3.5 w-3.5' />
+											</button>
+										</div>
+									) : null}
+								</div>
+								<p className='m-0 whitespace-pre-wrap text-sm leading-6 text-text-secondary'>
+									{activeFollowUp.message || labels.followUpNoData}
+								</p>
+							</div>
+						) : null}
+
+						{isFollowUpEditorOpen ? (
+							<div className='grid gap-2'>
+								<div className='grid gap-2 min-[520px]:grid-cols-[minmax(0,1fr)_196px]'>
+									<Popover
+										open={isFollowUpCalendarOpen}
+										onOpenChange={setIsFollowUpCalendarOpen}
+									>
+										<PopoverTrigger asChild>
+											<button
+												type='button'
+												className='inline-flex h-10 w-full items-center justify-between gap-2 rounded-pill border border-border-soft/70 bg-gradient-to-b from-surface-card to-surface-subtle/80 px-3.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary shadow-[0_15px_26px_-22px_rgba(16,185,129,0.55)] transition duration-fast hover:border-success/45 hover:text-text-primary'
+												aria-label={labels.followUpDateTime}
+											>
+												<span className='inline-flex items-center gap-2 truncate'>
+													<FiCalendar className='h-3.5 w-3.5 text-success' />
+													<span className='truncate'>
+														{followUpDate
+															? formatLocalizedDate(followUpDate, i18n.language, {
+																	locale,
+																	withYear: true,
+																	shortMonth: true,
+																	fallback: labels.selectDate,
+																})
+															: labels.selectDate}
+													</span>
+												</span>
+												<AppIcon
+													name='chevron-down'
+													className={[
+														'h-3.5 w-3.5 shrink-0 transition duration-fast',
+														isFollowUpCalendarOpen
+															? 'rotate-180 text-success'
+															: 'text-text-muted',
+													].join(' ')}
+													aria-hidden='true'
+												/>
+											</button>
+										</PopoverTrigger>
+										<PopoverContent className='w-auto p-3' align='start'>
+											<Calendar
+												mode='single'
+												selected={followUpDate}
+												defaultMonth={followUpDate ?? new Date()}
+												locale={calendarLocale}
+												formatters={
+													i18n.language === 'uz'
+														? {
+																formatCaption: date =>
+																	formatUzMonthYear(date, false),
+															}
+														: undefined
+												}
+												onSelect={value => {
+													setFollowUpDate(value ?? undefined)
+													setFollowUpInputError(null)
+													setIsFollowUpCalendarOpen(false)
+												}}
+											/>
+										</PopoverContent>
+									</Popover>
+
+									<div className='grid grid-cols-2 gap-2 rounded-pill bg-surface-subtle/70 p-1 ring-1 ring-border-soft/45'>
+										<FilterSelect
+											value={followUpTimeParts.hour}
+											options={PAUSE_HOUR_OPTIONS}
+											onChange={nextHour => {
+												setFollowUpTimeInput(`${nextHour}:${followUpTimeParts.minute}`)
+												setFollowUpInputError(null)
+											}}
+											disabled={isUpdatingFollowUp}
+											size='compact'
+										/>
+										<FilterSelect
+											value={followUpTimeParts.minute}
+											options={PAUSE_MINUTE_OPTIONS}
+											onChange={nextMinute => {
+												setFollowUpTimeInput(`${followUpTimeParts.hour}:${nextMinute}`)
+												setFollowUpInputError(null)
+											}}
+											disabled={isUpdatingFollowUp}
+											size='compact'
+										/>
+									</div>
+								</div>
+
+								<div className='grid gap-1.5'>
+									<label className='text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted'>
+										{labels.followUpMessage}
+									</label>
+									<textarea
+										value={followUpMessage}
+										onChange={event => {
+											setFollowUpMessage(event.target.value)
+											setFollowUpInputError(null)
+										}}
+										rows={3}
+										className='w-full resize-y rounded-xl border border-border-soft/60 bg-surface-card px-3 py-2.5 text-sm text-text-primary outline-none transition duration-fast focus:border-primary/45 focus:ring-2 focus:ring-primary/20'
+										placeholder={labels.followUpMessagePlaceholder}
+										disabled={isUpdatingFollowUp}
+									/>
+								</div>
+
+								{followUpInputError ? (
+									<p className='m-0 text-[12px] font-medium text-danger'>
+										{followUpInputError}
+									</p>
+								) : null}
+
+								<div className='flex items-center justify-end gap-2'>
+									<button
+										type='button'
+										className='inline-flex min-h-9 items-center rounded-lg bg-surface-subtle px-3 text-xs font-semibold text-text-secondary transition duration-fast hover:bg-surface-muted'
+										onClick={closeFollowUpEditor}
+										disabled={isUpdatingFollowUp}
+									>
+										{labels.cancel}
+									</button>
+									<button
+										type='button'
+										className='inline-flex min-h-9 items-center rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent disabled:cursor-not-allowed disabled:opacity-60'
+										onClick={() => {
+											void submitFollowUp()
+										}}
+										disabled={isUpdatingFollowUp}
+									>
+										{isUpdatingFollowUp
+											? labels.saveLoading
+											: activeFollowUp
+												? labels.followUpUpdate
+												: labels.followUpSave}
+									</button>
+								</div>
+							</div>
+						) : null}
 					</div>
 				) : null}
 			</div>
