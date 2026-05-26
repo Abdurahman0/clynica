@@ -26,6 +26,7 @@ import {
 	formatLocalizedDate,
 	formatUzMonthYear,
 } from '../../../i18n/date-format'
+import { HandmadeDateTimePicker } from '../../clients/components/HandmadeDatePickers'
 import ChatUserProfilePanel from './ChatUserProfilePanel'
 import { getConversationDisplayName } from '../utils/conversation-display'
 import type { ChatMessage, Conversation } from '../../../types/domain'
@@ -159,6 +160,13 @@ function toTimeInputValue(value: Date): string {
 	return `${hours}:${minutes}`
 }
 
+function toLocalDateTimeInputValue(value: Date): string {
+	const year = value.getFullYear()
+	const month = String(value.getMonth() + 1).padStart(2, '0')
+	const day = String(value.getDate()).padStart(2, '0')
+	return `${year}-${month}-${day}T${toTimeInputValue(value)}`
+}
+
 function createPauseDefaults(): { date: Date; time: string } {
 	const target = new Date(Date.now() + 30 * 60 * 1000)
 	return {
@@ -210,6 +218,51 @@ function toIsoWithOffsetOrNull(
 
 	const parsed = new Date(date)
 	parsed.setHours(Number(timeMatch[1]), Number(timeMatch[2]), 0, 0)
+	if (Number.isNaN(parsed.getTime())) {
+		return null
+	}
+
+	const year = parsed.getFullYear()
+	const month = String(parsed.getMonth() + 1).padStart(2, '0')
+	const day = String(parsed.getDate()).padStart(2, '0')
+	const hours = String(parsed.getHours()).padStart(2, '0')
+	const minutes = String(parsed.getMinutes()).padStart(2, '0')
+	const seconds = String(parsed.getSeconds()).padStart(2, '0')
+	const offsetMinutes = -parsed.getTimezoneOffset()
+	const sign = offsetMinutes >= 0 ? '+' : '-'
+	const absoluteOffset = Math.abs(offsetMinutes)
+	const offsetHours = String(Math.floor(absoluteOffset / 60)).padStart(2, '0')
+	const offsetRestMinutes = String(absoluteOffset % 60).padStart(2, '0')
+	const offset = `${sign}${offsetHours}:${offsetRestMinutes}`
+
+	return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offset}`
+}
+
+function toIsoWithOffsetFromDateTimeInputOrNull(value: string): string | null {
+	const trimmed = value.trim()
+	if (!trimmed) {
+		return null
+	}
+
+	const localMatch = /^(\d{4})-(\d{2})-(\d{2})T([01]\d|2[0-3]):([0-5]\d)$/.exec(trimmed)
+	if (!localMatch) {
+		const parsed = new Date(trimmed)
+		if (Number.isNaN(parsed.getTime())) {
+			return null
+		}
+		return trimmed
+	}
+
+	const parsed = new Date(
+		Number(localMatch[1]),
+		Number(localMatch[2]) - 1,
+		Number(localMatch[3]),
+		Number(localMatch[4]),
+		Number(localMatch[5]),
+		0,
+		0,
+	)
+
 	if (Number.isNaN(parsed.getTime())) {
 		return null
 	}
@@ -363,9 +416,7 @@ function ChatWorkspacePanel({
 	const [pauseTimeInput, setPauseTimeInput] = useState('')
 	const [pauseInputError, setPauseInputError] = useState<string | null>(null)
 	const [isFollowUpEditorOpen, setIsFollowUpEditorOpen] = useState(false)
-	const [isFollowUpCalendarOpen, setIsFollowUpCalendarOpen] = useState(false)
-	const [followUpDate, setFollowUpDate] = useState<Date | undefined>(undefined)
-	const [followUpTimeInput, setFollowUpTimeInput] = useState('')
+	const [followUpDateTimeInput, setFollowUpDateTimeInput] = useState('')
 	const [followUpMessage, setFollowUpMessage] = useState('')
 	const [followUpInputError, setFollowUpInputError] = useState<string | null>(null)
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
@@ -387,9 +438,7 @@ function ChatWorkspacePanel({
 		setPauseDate(defaults.date)
 		setPauseTimeInput(defaults.time)
 		setIsFollowUpEditorOpen(false)
-		setIsFollowUpCalendarOpen(false)
-		setFollowUpDate(defaults.date)
-		setFollowUpTimeInput(defaults.time)
+		setFollowUpDateTimeInput(toLocalDateTimeInputValue(defaults.date))
 		setFollowUpMessage('')
 		setFollowUpInputError(null)
 		setPreviewImageUrl(null)
@@ -474,7 +523,6 @@ function ChatWorkspacePanel({
 			})
 		: labels.selectDate
 	const pauseTimeParts = splitTimeValue(pauseTimeInput)
-	const followUpTimeParts = splitTimeValue(followUpTimeInput)
 
 	useEffect(() => {
 		if (!activeFollowUp) {
@@ -483,8 +531,7 @@ function ChatWorkspacePanel({
 
 		const parsed = new Date(activeFollowUp.scheduled_for)
 		if (!Number.isNaN(parsed.getTime())) {
-			setFollowUpDate(parsed)
-			setFollowUpTimeInput(toTimeInputValue(parsed))
+			setFollowUpDateTimeInput(toLocalDateTimeInputValue(parsed))
 		}
 		setFollowUpMessage(activeFollowUp.message || '')
 	}, [activeFollowUp?.scheduled_for, activeFollowUp?.message])
@@ -534,14 +581,14 @@ function ChatWorkspacePanel({
 		const defaults = createPauseDefaults()
 		if (activeFollowUp) {
 			const parsed = new Date(activeFollowUp.scheduled_for)
-			setFollowUpDate(Number.isNaN(parsed.getTime()) ? defaults.date : parsed)
-			setFollowUpTimeInput(
-				Number.isNaN(parsed.getTime()) ? defaults.time : toTimeInputValue(parsed),
+			setFollowUpDateTimeInput(
+				toLocalDateTimeInputValue(
+					Number.isNaN(parsed.getTime()) ? defaults.date : parsed,
+				),
 			)
 			setFollowUpMessage(activeFollowUp.message || '')
 		} else {
-			setFollowUpDate(defaults.date)
-			setFollowUpTimeInput(defaults.time)
+			setFollowUpDateTimeInput(toLocalDateTimeInputValue(defaults.date))
 			setFollowUpMessage('')
 		}
 		setFollowUpInputError(null)
@@ -550,7 +597,6 @@ function ChatWorkspacePanel({
 
 	function closeFollowUpEditor() {
 		setIsFollowUpEditorOpen(false)
-		setIsFollowUpCalendarOpen(false)
 		setFollowUpInputError(null)
 	}
 
@@ -559,7 +605,9 @@ function ChatWorkspacePanel({
 			return
 		}
 
-		const scheduledFor = toIsoWithOffsetOrNull(followUpDate, followUpTimeInput)
+		const scheduledFor = toIsoWithOffsetFromDateTimeInputOrNull(
+			followUpDateTimeInput,
+		)
 		if (!scheduledFor) {
 			setFollowUpInputError(labels.invalidTime)
 			return
@@ -868,87 +916,20 @@ function ChatWorkspacePanel({
 
 						{isFollowUpEditorOpen ? (
 							<div className='grid gap-2'>
-								<div className='grid gap-2 min-[520px]:grid-cols-[minmax(0,1fr)_196px]'>
-									<Popover
-										open={isFollowUpCalendarOpen}
-										onOpenChange={setIsFollowUpCalendarOpen}
-									>
-										<PopoverTrigger asChild>
-											<button
-												type='button'
-												className='inline-flex h-10 w-full items-center justify-between gap-2 rounded-pill border border-border-soft/70 bg-gradient-to-b from-surface-card to-surface-subtle/80 px-3.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary shadow-[0_15px_26px_-22px_rgba(16,185,129,0.55)] transition duration-fast hover:border-success/45 hover:text-text-primary'
-												aria-label={labels.followUpDateTime}
-											>
-												<span className='inline-flex items-center gap-2 truncate'>
-													<FiCalendar className='h-3.5 w-3.5 text-success' />
-													<span className='truncate'>
-														{followUpDate
-															? formatLocalizedDate(followUpDate, i18n.language, {
-																	locale,
-																	withYear: true,
-																	shortMonth: true,
-																	fallback: labels.selectDate,
-																})
-															: labels.selectDate}
-													</span>
-												</span>
-												<AppIcon
-													name='chevron-down'
-													className={[
-														'h-3.5 w-3.5 shrink-0 transition duration-fast',
-														isFollowUpCalendarOpen
-															? 'rotate-180 text-success'
-															: 'text-text-muted',
-													].join(' ')}
-													aria-hidden='true'
-												/>
-											</button>
-										</PopoverTrigger>
-										<PopoverContent className='w-auto p-3' align='start'>
-											<Calendar
-												mode='single'
-												selected={followUpDate}
-												defaultMonth={followUpDate ?? new Date()}
-												locale={calendarLocale}
-												formatters={
-													i18n.language === 'uz'
-														? {
-																formatCaption: date =>
-																	formatUzMonthYear(date, false),
-															}
-														: undefined
-												}
-												onSelect={value => {
-													setFollowUpDate(value ?? undefined)
-													setFollowUpInputError(null)
-													setIsFollowUpCalendarOpen(false)
-												}}
-											/>
-										</PopoverContent>
-									</Popover>
-
-									<div className='grid grid-cols-2 gap-2 rounded-pill bg-surface-subtle/70 p-1 ring-1 ring-border-soft/45'>
-										<FilterSelect
-											value={followUpTimeParts.hour}
-											options={PAUSE_HOUR_OPTIONS}
-											onChange={nextHour => {
-												setFollowUpTimeInput(`${nextHour}:${followUpTimeParts.minute}`)
-												setFollowUpInputError(null)
-											}}
-											disabled={isUpdatingFollowUp}
-											size='compact'
-										/>
-										<FilterSelect
-											value={followUpTimeParts.minute}
-											options={PAUSE_MINUTE_OPTIONS}
-											onChange={nextMinute => {
-												setFollowUpTimeInput(`${followUpTimeParts.hour}:${nextMinute}`)
-												setFollowUpInputError(null)
-											}}
-											disabled={isUpdatingFollowUp}
-											size='compact'
-										/>
-									</div>
+								<div className='grid gap-1.5'>
+									<label className='text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted'>
+										{labels.followUpDateTime}
+									</label>
+									<HandmadeDateTimePicker
+										value={followUpDateTimeInput}
+										onChange={value => {
+											setFollowUpDateTimeInput(value)
+											setFollowUpInputError(null)
+										}}
+										placeholder={labels.selectDate}
+										locale={locale}
+										disabled={isUpdatingFollowUp}
+									/>
 								</div>
 
 								<div className='grid gap-1.5'>
