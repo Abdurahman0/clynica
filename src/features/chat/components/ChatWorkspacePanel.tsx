@@ -409,6 +409,7 @@ function ChatWorkspacePanel({
 	const [followUpInputError, setFollowUpInputError] = useState<string | null>(null)
 	const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null)
+	const followUpPanelRef = useRef<HTMLDivElement | null>(null)
 	const lastScrollSignatureRef = useRef('')
 	const shouldForceBottomOnOpenRef = useRef(false)
 	const previousFollowUpIdRef = useRef<string | null>(null)
@@ -469,6 +470,27 @@ function ChatWorkspacePanel({
 			behavior: 'auto',
 		})
 	}, [messages, session])
+
+	useEffect(() => {
+		if (!isFollowUpEditorOpen) {
+			return
+		}
+
+		function handlePointerDown(event: PointerEvent) {
+			const panel = followUpPanelRef.current
+			const target = event.target
+			if (!panel || !(target instanceof Node) || panel.contains(target)) {
+				return
+			}
+
+			closeFollowUpEditor()
+		}
+
+		document.addEventListener('pointerdown', handlePointerDown)
+		return () => {
+			document.removeEventListener('pointerdown', handlePointerDown)
+		}
+	}, [isFollowUpEditorOpen])
 
 	async function submitMessage() {
 		if (!canSend) {
@@ -632,7 +654,10 @@ function ChatWorkspacePanel({
 	}
 
 	const followUpPanel = shouldShowFollowUpPanel ? (
-		<div className='relative rounded-xl bg-surface-card/90 p-2.5 ring-1 ring-border-soft/55'>
+		<div
+			ref={followUpPanelRef}
+			className='relative rounded-xl bg-surface-card/90 p-2.5 ring-1 ring-border-soft/55'
+		>
 			<div className='flex min-h-9 items-center justify-between gap-2'>
 				<div className='min-w-0'>
 					<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted'>
