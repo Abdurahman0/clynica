@@ -32,7 +32,7 @@ function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 grid place-items-center bg-background-overlay/64 px-4 backdrop-blur-[2px]"
+      className="fixed inset-0 z-[1000] grid place-items-center bg-background-overlay/64 px-4 backdrop-blur-[2px]"
       onClick={() => {
         if (!isBusy) {
           onCancel();
