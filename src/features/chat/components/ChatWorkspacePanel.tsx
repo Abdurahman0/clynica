@@ -502,6 +502,10 @@ function ChatWorkspacePanel({
 
 	useEffect(() => {
 		if (!activeFollowUp) {
+			if (isFollowUpEditorOpen) {
+				setIsFollowUpEditorOpen(false)
+			}
+			setFollowUpInputError(null)
 			return
 		}
 
@@ -510,7 +514,7 @@ function ChatWorkspacePanel({
 			setFollowUpDateTimeInput(toLocalDateTimeInputValue(parsed))
 		}
 		setFollowUpMessage(activeFollowUp.message || '')
-	}, [activeFollowUp?.scheduled_for, activeFollowUp?.message])
+	}, [activeFollowUp?.scheduled_for, activeFollowUp?.message, isFollowUpEditorOpen])
 
 	if (!session) {
 		return (
