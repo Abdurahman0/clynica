@@ -616,65 +616,62 @@ function ChatWorkspacePanel({
 	}
 
 	const followUpPanel = shouldShowFollowUpPanel ? (
-		<div className='grid gap-2 rounded-xl bg-surface-card/90 p-3 ring-1 ring-border-soft/55'>
-			<div className='flex items-center justify-between gap-2'>
-				<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted'>
-					{labels.followUpTitle}
-				</p>
-				{!isFollowUpEditorOpen && !activeFollowUp && canManageFollowUp ? (
-					<button
-						type='button'
-						className='inline-flex min-h-8 items-center rounded-lg bg-primary/12 px-3 text-xs font-semibold text-primary transition duration-fast hover:bg-primary/18'
-						onClick={openFollowUpEditor}
-						disabled={isUpdatingFollowUp}
-					>
-						{labels.followUpSet}
-					</button>
-				) : null}
-			</div>
-
-			{activeFollowUp && !isFollowUpEditorOpen ? (
-				<div className='grid gap-2 rounded-lg bg-surface-subtle/70 p-3 ring-1 ring-border-soft/40'>
-					<div className='flex flex-wrap items-center justify-between gap-2'>
-						<p className='m-0 text-sm font-semibold text-text-primary'>
-							{labels.followUpScheduledAt}:{' '}
+		<div className='relative rounded-xl bg-surface-card/90 p-2.5 ring-1 ring-border-soft/55'>
+			<div className='flex min-h-9 items-center justify-between gap-2'>
+				<div className='min-w-0'>
+					<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted'>
+						{labels.followUpTitle}
+					</p>
+					{activeFollowUp ? (
+						<p className='m-0 truncate text-[12px] font-semibold text-text-primary'>
 							{formatDateTime(activeFollowUp.scheduled_for, i18n.language, labels.timeUnavailable)}
 						</p>
-						{canManageFollowUp ? (
-							<div className='flex items-center gap-1.5'>
-								<button
-									type='button'
-									className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-surface-card/75 text-text-secondary transition duration-fast hover:bg-surface-card hover:text-text-primary'
-									onClick={openFollowUpEditor}
-									disabled={isUpdatingFollowUp}
-									aria-label={labels.followUpEdit}
-									title={labels.followUpEdit}
-								>
-									<FiEdit2 className='h-3.5 w-3.5' />
-								</button>
-								<button
-									type='button'
-									className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-danger-bg/70 text-danger transition duration-fast hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-60'
-									onClick={() => {
-										onRequestCancelFollowUp?.(activeSession)
-									}}
-									disabled={isUpdatingFollowUp}
-									aria-label={labels.followUpCancel}
-									title={labels.followUpCancel}
-								>
-									<FiX className='h-3.5 w-3.5' />
-								</button>
-							</div>
-						) : null}
-					</div>
-					<p className='m-0 whitespace-pre-wrap text-sm leading-6 text-text-secondary'>
-						{activeFollowUp.message || labels.followUpNoData}
-					</p>
+					) : null}
 				</div>
-			) : null}
+
+				<div className='flex shrink-0 items-center gap-1.5'>
+					{!activeFollowUp && canManageFollowUp ? (
+						<button
+							type='button'
+							className='inline-flex min-h-8 items-center rounded-lg bg-primary/12 px-3 text-xs font-semibold text-primary transition duration-fast hover:bg-primary/18 disabled:cursor-not-allowed disabled:opacity-60'
+							onClick={openFollowUpEditor}
+							disabled={isUpdatingFollowUp}
+						>
+							{labels.followUpSet}
+						</button>
+					) : null}
+
+					{activeFollowUp && canManageFollowUp ? (
+						<>
+							<button
+								type='button'
+								className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-surface-subtle/75 text-text-secondary transition duration-fast hover:bg-surface-subtle hover:text-text-primary'
+								onClick={openFollowUpEditor}
+								disabled={isUpdatingFollowUp}
+								aria-label={labels.followUpEdit}
+								title={labels.followUpEdit}
+							>
+								<FiEdit2 className='h-3.5 w-3.5' />
+							</button>
+							<button
+								type='button'
+								className='inline-flex h-8 w-8 items-center justify-center rounded-md bg-danger-bg/70 text-danger transition duration-fast hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-60'
+								onClick={() => {
+									onRequestCancelFollowUp?.(activeSession)
+								}}
+								disabled={isUpdatingFollowUp}
+								aria-label={labels.followUpCancel}
+								title={labels.followUpCancel}
+							>
+								<FiX className='h-3.5 w-3.5' />
+							</button>
+						</>
+					) : null}
+				</div>
+			</div>
 
 			{isFollowUpEditorOpen ? (
-				<div className='grid gap-2'>
+				<div className='absolute left-1/2 top-[calc(100%+0.5rem)] z-40 grid w-[min(92vw,520px)] -translate-x-1/2 gap-2 rounded-xl bg-surface-card p-3 text-left shadow-[0_22px_52px_-28px_rgba(15,23,42,0.55)] ring-1 ring-border-soft/70'>
 					<div className='grid gap-1.5'>
 						<label className='text-[11px] font-semibold uppercase tracking-[0.08em] text-text-muted'>
 							{labels.followUpDateTime}
