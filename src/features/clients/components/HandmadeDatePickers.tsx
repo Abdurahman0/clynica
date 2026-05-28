@@ -152,7 +152,7 @@ export function HandmadeDatePicker({
           <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[300px] p-3">
+      <PopoverContent align="start" className="w-[300px] p-3" data-follow-up-panel="true">
         <Calendar
           mode="single"
           selected={selectedDate}
@@ -245,7 +245,7 @@ export function HandmadeDateTimePicker({
           <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[320px] p-3">
+      <PopoverContent align="start" className="w-[320px] p-3" data-follow-up-panel="true">
         <div className="mb-3 grid grid-cols-2 gap-2">
           <FilterSelect value={draftHour} options={hourOptions} onChange={setDraftHour} disabled={!hasDate || isPastDate} size="compact" />
           <FilterSelect value={draftMinute} options={minuteOptions} onChange={setDraftMinute} disabled={!hasDate || isPastDate} size="compact" />

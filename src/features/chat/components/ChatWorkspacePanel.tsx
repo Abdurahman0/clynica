@@ -419,6 +419,13 @@ function ChatWorkspacePanel({
 		[draftMessage, isSending, session],
 	)
 
+	function isInsideFollowUpPanel(target: EventTarget | null): boolean {
+		return (
+			target instanceof Element &&
+			Boolean(target.closest('[data-follow-up-panel="true"]'))
+		)
+	}
+
 	useEffect(() => {
 		const defaults = createPauseDefaults()
 		setIsProfilePanelOpen(false)
@@ -477,9 +484,7 @@ function ChatWorkspacePanel({
 		}
 
 		function handlePointerDown(event: PointerEvent) {
-			const panel = followUpPanelRef.current
-			const target = event.target
-			if (!panel || !(target instanceof Node) || panel.contains(target)) {
+			if (isInsideFollowUpPanel(event.target)) {
 				return
 			}
 
@@ -656,6 +661,7 @@ function ChatWorkspacePanel({
 	const followUpPanel = shouldShowFollowUpPanel ? (
 		<div
 			ref={followUpPanelRef}
+			data-follow-up-panel='true'
 			className='relative rounded-xl bg-surface-card/90 p-2.5 ring-1 ring-border-soft/55'
 		>
 			<div className='flex min-h-9 items-center justify-between gap-2'>
