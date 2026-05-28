@@ -411,6 +411,7 @@ function ChatWorkspacePanel({
 	const messagesContainerRef = useRef<HTMLDivElement | null>(null)
 	const lastScrollSignatureRef = useRef('')
 	const shouldForceBottomOnOpenRef = useRef(false)
+	const previousFollowUpIdRef = useRef<string | null>(null)
 
 	const canSend = useMemo(
 		() => draftMessage.trim().length > 0 && !isSending && Boolean(session),
@@ -432,6 +433,7 @@ function ChatWorkspacePanel({
 		setPreviewImageUrl(null)
 		lastScrollSignatureRef.current = ''
 		shouldForceBottomOnOpenRef.current = true
+		previousFollowUpIdRef.current = null
 	}, [session?.id])
 
 	useLayoutEffect(() => {
@@ -501,20 +503,30 @@ function ChatWorkspacePanel({
 	const pauseTimeParts = splitTimeValue(pauseTimeInput)
 
 	useEffect(() => {
+		const previousFollowUpId = previousFollowUpIdRef.current
+
 		if (!activeFollowUp) {
-			if (isFollowUpEditorOpen) {
+			if (previousFollowUpId && isFollowUpEditorOpen) {
 				setIsFollowUpEditorOpen(false)
+				setFollowUpInputError(null)
 			}
-			setFollowUpInputError(null)
+			previousFollowUpIdRef.current = null
 			return
 		}
+
+		previousFollowUpIdRef.current = activeFollowUp.id
 
 		const parsed = new Date(activeFollowUp.scheduled_for)
 		if (!Number.isNaN(parsed.getTime())) {
 			setFollowUpDateTimeInput(toLocalDateTimeInputValue(parsed))
 		}
 		setFollowUpMessage(activeFollowUp.message || '')
-	}, [activeFollowUp?.scheduled_for, activeFollowUp?.message, isFollowUpEditorOpen])
+	}, [
+		activeFollowUp?.id,
+		activeFollowUp?.scheduled_for,
+		activeFollowUp?.message,
+		isFollowUpEditorOpen,
+	])
 
 	if (!session) {
 		return (
