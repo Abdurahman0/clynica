@@ -12,9 +12,17 @@ export interface AISetting {
   auto_order_enabled: boolean;
   order_confidence_threshold: number;
   resume_after_operator_minutes: number;
+  default_follow_ups?: AIDefaultFollowUpItem[];
   is_active: boolean;
   updated_by: EntityId | null;
   updated_by_name?: string | null;
+}
+
+export interface AIDefaultFollowUpItem {
+  enabled: boolean;
+  delay_hours?: number;
+  delay_days?: number;
+  message: string;
 }
 
 export interface AISettingsListParams {
@@ -29,13 +37,14 @@ export interface AISettingsListParams {
 
 export interface AISettingMutationInput {
   name: string;
-  system_prompt: string;
+  system_prompt?: string;
   follow_up_message?: string | null;
-  model_name: string;
-  temperature: number;
-  auto_order_enabled: boolean;
-  order_confidence_threshold: number;
-  resume_after_operator_minutes: number;
+  model_name?: string;
+  temperature?: number;
+  auto_order_enabled?: boolean;
+  order_confidence_threshold?: number;
+  resume_after_operator_minutes?: number;
+  default_follow_ups?: AIDefaultFollowUpItem[];
   is_active?: boolean;
 }
 

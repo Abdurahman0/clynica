@@ -48,6 +48,7 @@ type AISettingsOrdering =
 
 const PAGE_SIZE = 8;
 const DEFAULT_ORDERING: AISettingsOrdering = '-updated_at';
+const DEFAULT_FOLLOW_UPS_KEY = 'default_follow_ups';
 
 const DEFAULT_PAGINATION_META: PaginationMeta = {
   page: 1,
@@ -90,6 +91,10 @@ function toBooleanActiveFilter(value: ActiveFilter): boolean | undefined {
   }
 
   return undefined;
+}
+
+function isDefaultFollowUpsSetting(setting: AISetting): boolean {
+  return setting.name === DEFAULT_FOLLOW_UPS_KEY;
 }
 
 function AiSettingsPage() {
@@ -220,14 +225,22 @@ function AiSettingsPage() {
         render: (setting) => (
           <div className="grid gap-0.5">
             <div className="flex items-center gap-2">
-              <span className={tablePrimaryTextClassName}>{setting.name}</span>
+            <span className={tablePrimaryTextClassName}>
+              {isDefaultFollowUpsSetting(setting)
+                ? t('aiSettings.form.defaultFollowUps.title')
+                : setting.name}
+            </span>
               {activeSettingId === setting.id || setting.is_active ? (
                 <span className="inline-flex min-h-5 items-center rounded-pill bg-success-bg px-2 text-[10px] font-semibold uppercase tracking-[0.08em] text-success">
                   {t('common.active')}
                 </span>
               ) : null}
             </div>
-            <span className={tableSecondaryTextClassName}>{setting.model_name}</span>
+            <span className={tableSecondaryTextClassName}>
+              {isDefaultFollowUpsSetting(setting)
+                ? t('aiSettings.form.defaultFollowUps.tableHint')
+                : setting.model_name}
+            </span>
           </div>
         ),
       },
@@ -235,7 +248,11 @@ function AiSettingsPage() {
         key: 'model',
         label: t('aiSettings.columns.model'),
         render: (setting) => (
-          <span className={tablePrimaryTextClassName}>{setting.model_name}</span>
+          <span className={tablePrimaryTextClassName}>
+            {isDefaultFollowUpsSetting(setting)
+              ? t('aiSettings.form.defaultFollowUps.kind')
+              : setting.model_name}
+          </span>
         ),
       },
       {
@@ -243,7 +260,7 @@ function AiSettingsPage() {
         label: t('aiSettings.columns.temperature'),
         render: (setting) => (
           <span className={tablePrimaryTextClassName}>
-            {setting.temperature.toFixed(2)}
+            {isDefaultFollowUpsSetting(setting) ? '-' : setting.temperature.toFixed(2)}
           </span>
         ),
       },
@@ -252,10 +269,24 @@ function AiSettingsPage() {
         label: t('aiSettings.columns.autoOrder'),
         render: (setting) => (
           <StatusBadge
-            status={setting.auto_order_enabled ? 'enabled' : 'disabled'}
-            tone={setting.auto_order_enabled ? 'info' : 'neutral'}
+            status={
+              isDefaultFollowUpsSetting(setting)
+                ? 'default_follow_ups'
+                : setting.auto_order_enabled
+                  ? 'enabled'
+                  : 'disabled'
+            }
+            tone={
+              isDefaultFollowUpsSetting(setting)
+                ? 'info'
+                : setting.auto_order_enabled
+                  ? 'info'
+                  : 'neutral'
+            }
             label={
-              setting.auto_order_enabled
+              isDefaultFollowUpsSetting(setting)
+                ? t('aiSettings.form.defaultFollowUps.kind')
+                : setting.auto_order_enabled
                 ? t('aiSettings.autoOrderOn')
                 : t('aiSettings.autoOrderOff')
             }
@@ -267,10 +298,28 @@ function AiSettingsPage() {
         label: t('aiSettings.columns.followUp'),
         render: (setting) => (
           <StatusBadge
-            status={setting.resume_after_operator_minutes > 0 ? 'enabled' : 'disabled'}
-            tone={setting.resume_after_operator_minutes > 0 ? 'info' : 'neutral'}
+            status={
+              isDefaultFollowUpsSetting(setting)
+                ? 'enabled'
+                : setting.resume_after_operator_minutes > 0
+                  ? 'enabled'
+                  : 'disabled'
+            }
+            tone={
+              isDefaultFollowUpsSetting(setting)
+                ? 'info'
+                : setting.resume_after_operator_minutes > 0
+                  ? 'info'
+                  : 'neutral'
+            }
             label={
-              setting.resume_after_operator_minutes > 0
+              isDefaultFollowUpsSetting(setting)
+                ? t('aiSettings.form.defaultFollowUps.enabledCount', {
+                    count:
+                      setting.default_follow_ups?.filter((item) => item.enabled).length ?? 0,
+                    total: 3,
+                  })
+                : setting.resume_after_operator_minutes > 0
                 ? `${t('aiSettings.followUpOn')} (${setting.resume_after_operator_minutes}m)`
                 : t('aiSettings.followUpOff')
             }
@@ -282,10 +331,24 @@ function AiSettingsPage() {
         label: t('aiSettings.columns.active'),
         render: (setting) => (
           <StatusBadge
-            status={activeSettingId === setting.id || setting.is_active ? 'active' : 'inactive'}
-            tone={activeSettingId === setting.id || setting.is_active ? 'success' : 'neutral'}
+            status={
+              isDefaultFollowUpsSetting(setting)
+                ? 'managed'
+                : activeSettingId === setting.id || setting.is_active
+                  ? 'active'
+                  : 'inactive'
+            }
+            tone={
+              isDefaultFollowUpsSetting(setting)
+                ? 'info'
+                : activeSettingId === setting.id || setting.is_active
+                  ? 'success'
+                  : 'neutral'
+            }
             label={
-              activeSettingId === setting.id || setting.is_active
+              isDefaultFollowUpsSetting(setting)
+                ? t('aiSettings.form.defaultFollowUps.managedByBackend')
+                : activeSettingId === setting.id || setting.is_active
                 ? t('common.active')
                 : t('common.inactive')
             }
@@ -338,7 +401,11 @@ function AiSettingsPage() {
                 event.stopPropagation();
                 requestDelete(setting);
               }}
-              disabled={activeSettingId === setting.id || setting.is_active}
+              disabled={
+                isDefaultFollowUpsSetting(setting) ||
+                activeSettingId === setting.id ||
+                setting.is_active
+              }
               aria-label={`${t('aiSettings.actions.delete')} ${setting.name}`}
             >
               <FiTrash2 className="h-3.5 w-3.5" />

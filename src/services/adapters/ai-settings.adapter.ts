@@ -64,6 +64,46 @@ function readBoolean(value: unknown, fallback = false): boolean {
   return fallback;
 }
 
+function mapDefaultFollowUpItem(value: unknown): {
+  enabled: boolean;
+  delay_hours?: number;
+  delay_days?: number;
+  message: string;
+} | null {
+  const record = toRecord(value);
+  if (!record) {
+    return null;
+  }
+
+  const delayHours = readNumber(record.delay_hours, Number.NaN);
+  const delayDays = readNumber(record.delay_days, Number.NaN);
+  const item: {
+    enabled: boolean;
+    delay_hours?: number;
+    delay_days?: number;
+    message: string;
+  } = {
+    enabled: readBoolean(record.enabled, true),
+    message: readString(record.message),
+  };
+
+  if (Number.isFinite(delayHours) && delayHours > 0) {
+    item.delay_hours = Math.round(delayHours);
+  } else if (Number.isFinite(delayDays) && delayDays > 0) {
+    item.delay_days = Math.round(delayDays);
+  }
+
+  return item;
+}
+
+function mapDefaultFollowUps(value: unknown) {
+  const record = toRecord(value);
+  const items = Array.isArray(record?.items) ? record.items : [];
+  return items
+    .map((item) => mapDefaultFollowUpItem(item))
+    .filter((item): item is NonNullable<ReturnType<typeof mapDefaultFollowUpItem>> => item !== null);
+}
+
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
@@ -159,6 +199,7 @@ export function mapAISettingDtoToModel(dto: AISettingDto): AISetting {
         ),
       ),
     ),
+    default_follow_ups: mapDefaultFollowUps(dto.value),
     is_active: readBoolean(dto.is_active ?? dto.isActive, false),
     updated_by: updatedByPayload.updatedById,
     updated_by_name: updatedByName || null,

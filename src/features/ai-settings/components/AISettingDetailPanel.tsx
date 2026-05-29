@@ -319,6 +319,45 @@ function AISettingDetailPanel({
 								</div>
 							</PageCard>
 
+							{setting.default_follow_ups?.length ? (
+								<PageCard>
+									<div className='grid gap-3'>
+										<h3 className='m-0 text-[1rem] font-semibold text-text-primary'>
+											{t('aiSettings.form.defaultFollowUps.title')}
+										</h3>
+										<div className='grid gap-2'>
+											{setting.default_follow_ups.map((item, index) => {
+												const delay = item.delay_hours
+													? `${item.delay_hours} ${t('aiSettings.form.defaultFollowUps.hours')}`
+													: `${item.delay_days ?? 1} ${t('aiSettings.form.defaultFollowUps.days')}`
+
+												return (
+													<div
+														key={`${index}-${delay}`}
+														className='rounded-lg bg-surface-subtle/80 p-3'
+													>
+														<div className='flex flex-wrap items-center justify-between gap-2'>
+															<p className='m-0 text-sm font-semibold text-text-primary'>
+																{t('aiSettings.form.defaultFollowUps.step', {
+																	number: index + 1,
+																})}
+															</p>
+															<span className='inline-flex min-h-6 items-center rounded-pill bg-info-bg px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-info'>
+																{item.enabled ? delay : t('common.inactive')}
+															</span>
+														</div>
+														<p className='m-0 mt-2 whitespace-pre-wrap text-sm leading-6 text-text-secondary'>
+															{item.message || t('common.na')}
+														</p>
+													</div>
+												)
+											})}
+										</div>
+									</div>
+								</PageCard>
+							) : null}
+
+							{!setting.default_follow_ups?.length ? (
 							<PageCard>
 								<div className='grid gap-3'>
 									<h3 className='m-0 text-[1rem] font-semibold text-text-primary'>
@@ -333,6 +372,7 @@ function AISettingDetailPanel({
 									</div>
 								</div>
 							</PageCard>
+							) : null}
 
 							<PageCard>
 								<dl className='m-0 grid gap-2'>

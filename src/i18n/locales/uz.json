@@ -1522,7 +1522,24 @@
       "saving": "Saqlanmoqda...",
       "createSubmit": "Konfiguratsiya qo'shish",
       "editSubmit": "O'zgarishlarni saqlash",
-      "saveError": "Konfiguratsiyani saqlab bo'lmadi."
+      "saveError": "Konfiguratsiyani saqlab bo'lmadi.",
+      "defaultFollowUps": {
+        "title": "Standart follow-up zanjiri",
+        "hint": "Clientga aylanmagan chatlar uchun ketma-ket yuboriladigan 3 ta avtomatik follow-up xabarini sozlang.",
+        "tableHint": "3 bosqichli avtomatik follow-up",
+        "kind": "Avtomatik follow-up",
+        "enabledCount": "{{count}}/{{total}} yoqilgan",
+        "managedByBackend": "Backend boshqaradi",
+        "step": "{{number}}-follow-up",
+        "stepHint": "Bu bosqich yuborilgach keyingi yoqilgan bosqich avtomatik rejalashtiriladi.",
+        "delay": "Kechikish",
+        "unit": "Birlik",
+        "hours": "soat",
+        "days": "kun",
+        "message": "Xabar",
+        "messagePlaceholder": "Follow-up xabarini kiriting",
+        "validationError": "Yoqilgan follow-up uchun kechikish va xabarni to'ldiring."
+      }
     },
     "detail": {
       "ariaLabel": "AI konfiguratsiya tafsilotlari",

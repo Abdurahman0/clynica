@@ -72,6 +72,28 @@ function toMutationPayload(
 ): Record<string, unknown> {
   const payload: Record<string, unknown> = {};
 
+  if (input.default_follow_ups !== undefined) {
+    payload.value = {
+      items: input.default_follow_ups.map((item) => {
+        const delayHours = readNumber(item.delay_hours);
+        const delayDays = readNumber(item.delay_days);
+        const followUp: Record<string, unknown> = {
+          enabled: Boolean(item.enabled),
+          message: item.message,
+        };
+
+        if (delayHours && delayHours > 0) {
+          followUp.delay_hours = Math.round(delayHours);
+        } else {
+          followUp.delay_days = Math.max(1, Math.round(delayDays ?? 1));
+        }
+
+        return followUp;
+      }),
+    };
+    return payload;
+  }
+
   if (input.name !== undefined) {
     payload.name = input.name;
   }

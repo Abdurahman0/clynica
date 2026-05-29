@@ -31,6 +31,32 @@ function asBoolean(value: unknown, fallback: boolean): boolean {
 	return fallback
 }
 
+function mapDefaultFollowUpItem(value: unknown): any | null {
+	const record = asRecord(value)
+	if (!record) return null
+
+	const delayHours = asNumber(record.delay_hours, Number.NaN)
+	const delayDays = asNumber(record.delay_days, Number.NaN)
+	const item: any = {
+		enabled: asBoolean(record.enabled, true),
+		message: asString(record.message),
+	}
+
+	if (Number.isFinite(delayHours) && delayHours > 0) {
+		item.delay_hours = Math.round(delayHours)
+	} else if (Number.isFinite(delayDays) && delayDays > 0) {
+		item.delay_days = Math.round(delayDays)
+	}
+
+	return item
+}
+
+function mapDefaultFollowUps(value: unknown): any[] {
+	const record = asRecord(value)
+	const items = Array.isArray(record?.items) ? record.items : []
+	return items.map(mapDefaultFollowUpItem).filter(Boolean)
+}
+
 function parseValueRecord(value: unknown): UnknownRecord {
 	const directRecord = asRecord(value)
 	if (directRecord) {
@@ -93,6 +119,7 @@ function mapSetting(value: unknown): any {
 			0,
 			Math.round(asNumber(rawValue.resume_after_operator_minutes, 15)),
 		),
+		default_follow_ups: mapDefaultFollowUps(rawValue),
 		is_active: asBoolean(rawValue.is_active, false),
 		updated_by: asString(record.updated_by) || null,
 		updated_by_name: asString(record.updated_by_name) || null,
@@ -100,6 +127,27 @@ function mapSetting(value: unknown): any {
 }
 
 function toMutationValue(input: any): UnknownRecord {
+	if (Array.isArray(input?.default_follow_ups)) {
+		return {
+			items: input.default_follow_ups.map((item: any) => {
+				const delayHours = asNumber(item?.delay_hours, Number.NaN)
+				const delayDays = asNumber(item?.delay_days, Number.NaN)
+				const payload: UnknownRecord = {
+					enabled: asBoolean(item?.enabled, false),
+					message: asString(item?.message),
+				}
+
+				if (Number.isFinite(delayHours) && delayHours > 0) {
+					payload.delay_hours = Math.round(delayHours)
+				} else {
+					payload.delay_days = Math.max(1, Math.round(asNumber(delayDays, 1)))
+				}
+
+				return payload
+			}),
+		}
+	}
+
 	return {
 		system_prompt: asString(input?.system_prompt),
 		follow_up_message: asString(input?.follow_up_message),

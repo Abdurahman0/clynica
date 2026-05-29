@@ -23,8 +23,42 @@ interface AISettingFormState {
   orderConfidenceThreshold: string;
   followUpEnabled: boolean;
   followUpMinutes: string;
+  defaultFollowUps: DefaultFollowUpFormItem[];
   isActive: boolean;
 }
+
+interface DefaultFollowUpFormItem {
+  enabled: boolean;
+  delayUnit: 'hours' | 'days';
+  delayValue: string;
+  message: string;
+}
+
+const DEFAULT_FOLLOW_UPS_KEY = 'default_follow_ups';
+
+const DEFAULT_FOLLOW_UP_ITEMS: DefaultFollowUpFormItem[] = [
+  {
+    enabled: true,
+    delayUnit: 'hours',
+    delayValue: '3',
+    message:
+      "Opa, savollarizga javob berdimmi? Konsultatsiyaga yozib qo'yishimni xohlasangiz, qaysi kun qulayligini ayting.",
+  },
+  {
+    enabled: true,
+    delayUnit: 'days',
+    delayValue: '1',
+    message:
+      "Opa, Nilufar Rahmatovnaning jadvalida bu hafta bo'sh vaqtlar bor. Konsultatsiyaga yozilishni istaysizmi?",
+  },
+  {
+    enabled: true,
+    delayUnit: 'days',
+    delayValue: '3',
+    message:
+      "Opa, yana bir bor eslatib o'taman, konsultatsiya uchun vaqtlar cheklangan. Bugun yozib qo'yishingiz mumkin.",
+  },
+];
 
 const inputClassName = [
   'w-full rounded-lg border border-border-soft/60 bg-surface-card px-3.5 py-2.5 text-sm font-medium text-text-primary',
@@ -40,6 +74,31 @@ const textareaClassName = [
 
 const labelClassName =
   'text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted';
+
+function normalizeDefaultFollowUps(setting: AISetting | null | undefined): DefaultFollowUpFormItem[] {
+  if (!setting?.default_follow_ups?.length) {
+    return DEFAULT_FOLLOW_UP_ITEMS.map((item) => ({ ...item }));
+  }
+
+  const source = setting.default_follow_ups;
+
+  return Array.from({ length: 3 }, (_, index) => {
+    const item = source[index];
+    if (!item) {
+      return { ...DEFAULT_FOLLOW_UP_ITEMS[index] };
+    }
+
+    const delayHours = item.delay_hours;
+    const delayDays = item.delay_days;
+
+    return {
+      enabled: item.enabled,
+      delayUnit: delayHours && delayHours > 0 ? 'hours' : 'days',
+      delayValue: String(delayHours && delayHours > 0 ? delayHours : delayDays || 1),
+      message: item.message,
+    };
+  });
+}
 
 function createInitialState(
   mode: 'create' | 'edit',
@@ -59,6 +118,7 @@ function createInitialState(
         setting.resume_after_operator_minutes > 0
           ? setting.resume_after_operator_minutes.toString()
           : '15',
+      defaultFollowUps: normalizeDefaultFollowUps(setting),
       isActive: setting.is_active,
     };
   }
@@ -73,6 +133,7 @@ function createInitialState(
     orderConfidenceThreshold: '0.82',
     followUpEnabled: true,
     followUpMinutes: '15',
+    defaultFollowUps: normalizeDefaultFollowUps(null),
     isActive: false,
   };
 }
@@ -119,12 +180,36 @@ function AISettingFormPanel({
   }, [isSubmitting, onClose]);
 
   const canSubmit = useMemo(
-    () =>
-      form.name.trim().length > 0 &&
-      form.systemPrompt.trim().length > 0 &&
-      form.modelName.trim().length > 0,
-    [form.modelName, form.name, form.systemPrompt],
+    () => {
+      if (form.name.trim() === DEFAULT_FOLLOW_UPS_KEY) {
+        return form.defaultFollowUps.every(
+          (item) =>
+            !item.enabled ||
+            (Number(item.delayValue) > 0 && item.message.trim().length > 0),
+        );
+      }
+
+      return (
+        form.name.trim().length > 0 &&
+        form.systemPrompt.trim().length > 0 &&
+        form.modelName.trim().length > 0
+      );
+    },
+    [form.defaultFollowUps, form.modelName, form.name, form.systemPrompt],
   );
+  const isDefaultFollowUpsSetting = form.name.trim() === DEFAULT_FOLLOW_UPS_KEY;
+
+  function updateDefaultFollowUp(
+    index: number,
+    patch: Partial<DefaultFollowUpFormItem>,
+  ) {
+    setForm((current) => ({
+      ...current,
+      defaultFollowUps: current.defaultFollowUps.map((item, itemIndex) =>
+        itemIndex === index ? { ...item, ...patch } : item,
+      ),
+    }));
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -137,6 +222,36 @@ function AISettingFormPanel({
     const confidenceThreshold = Number(form.orderConfidenceThreshold);
     const followUpMinutes = Number(form.followUpMinutes);
     const followUpMessage = form.followUpMessage.trim();
+
+    if (name === DEFAULT_FOLLOW_UPS_KEY) {
+      const defaultFollowUps = form.defaultFollowUps.map((item) => {
+        const delay = Number(item.delayValue);
+        return {
+          enabled: item.enabled,
+          ...(item.delayUnit === 'hours'
+            ? { delay_hours: Math.max(1, Math.round(delay)) }
+            : { delay_days: Math.max(1, Math.round(delay)) }),
+          message: item.message.trim(),
+        };
+      });
+
+      const invalidFollowUp = defaultFollowUps.some((item) => {
+        const delay =
+          'delay_hours' in item ? item.delay_hours : item.delay_days;
+        return item.enabled && (!delay || delay < 1 || !item.message);
+      });
+
+      if (invalidFollowUp) {
+        setFieldError(t('aiSettings.form.defaultFollowUps.validationError'));
+        return;
+      }
+
+      onSubmit({
+        name,
+        default_follow_ups: defaultFollowUps,
+      });
+      return;
+    }
 
     if (!name || !systemPrompt || !modelName) {
       setFieldError(t('aiSettings.form.requiredError'));
@@ -235,7 +350,12 @@ function AISettingFormPanel({
         </header>
 
         <form className="grid gap-3" onSubmit={handleSubmit} noValidate>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div
+            className={[
+              'grid gap-3',
+              isDefaultFollowUpsSetting ? '' : 'sm:grid-cols-2',
+            ].join(' ')}
+          >
             <div className="grid gap-1.5">
               <label className={labelClassName} htmlFor="ai-setting-name">
                 {t('aiSettings.form.name')}
@@ -249,11 +369,12 @@ function AISettingFormPanel({
                 }
                 className={inputClassName}
                 placeholder={t('aiSettings.form.namePlaceholder')}
-                disabled={isSubmitting}
+                disabled={isSubmitting || setting?.name === DEFAULT_FOLLOW_UPS_KEY}
                 required
               />
             </div>
 
+            {!isDefaultFollowUpsSetting ? (
             <div className="grid gap-1.5">
               <label className={labelClassName} htmlFor="ai-setting-model-name">
                 {t('aiSettings.form.modelName')}
@@ -271,8 +392,125 @@ function AISettingFormPanel({
                 required
               />
             </div>
+            ) : null}
           </div>
 
+          {isDefaultFollowUpsSetting ? (
+            <div className="grid gap-3">
+              <div className="rounded-xl bg-surface-card p-4 ring-1 ring-border-soft/35">
+                <h3 className="m-0 text-sm font-semibold text-text-primary">
+                  {t('aiSettings.form.defaultFollowUps.title')}
+                </h3>
+                <p className="m-0 mt-1 text-[12px] leading-5 text-text-secondary">
+                  {t('aiSettings.form.defaultFollowUps.hint')}
+                </p>
+              </div>
+
+              {form.defaultFollowUps.map((item, index) => (
+                <div
+                  key={index}
+                  className="grid gap-3 rounded-xl bg-surface-card p-4 ring-1 ring-border-soft/35"
+                >
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="m-0 text-sm font-semibold text-text-primary">
+                        {t('aiSettings.form.defaultFollowUps.step', {
+                          number: index + 1,
+                        })}
+                      </p>
+                      <p className="m-0 mt-0.5 text-[12px] text-text-secondary">
+                        {t('aiSettings.form.defaultFollowUps.stepHint')}
+                      </p>
+                    </div>
+                    <Switch
+                      checked={item.enabled}
+                      onChange={(nextValue) =>
+                        updateDefaultFollowUp(index, { enabled: nextValue })
+                      }
+                      disabled={isSubmitting}
+                    />
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_160px]">
+                    <div className="grid gap-1.5">
+                      <label
+                        className={labelClassName}
+                        htmlFor={`ai-default-follow-up-delay-${index}`}
+                      >
+                        {t('aiSettings.form.defaultFollowUps.delay')}
+                      </label>
+                      <input
+                        id={`ai-default-follow-up-delay-${index}`}
+                        type="number"
+                        min={1}
+                        step={1}
+                        value={item.delayValue}
+                        onChange={(event) =>
+                          updateDefaultFollowUp(index, {
+                            delayValue: event.target.value,
+                          })
+                        }
+                        className={inputClassName}
+                        disabled={isSubmitting || !item.enabled}
+                        required={item.enabled}
+                      />
+                    </div>
+                    <div className="grid gap-1.5">
+                      <label
+                        className={labelClassName}
+                        htmlFor={`ai-default-follow-up-unit-${index}`}
+                      >
+                        {t('aiSettings.form.defaultFollowUps.unit')}
+                      </label>
+                      <select
+                        id={`ai-default-follow-up-unit-${index}`}
+                        value={item.delayUnit}
+                        onChange={(event) =>
+                          updateDefaultFollowUp(index, {
+                            delayUnit: event.target.value as 'hours' | 'days',
+                          })
+                        }
+                        className={inputClassName}
+                        disabled={isSubmitting || !item.enabled}
+                      >
+                        <option value="hours">
+                          {t('aiSettings.form.defaultFollowUps.hours')}
+                        </option>
+                        <option value="days">
+                          {t('aiSettings.form.defaultFollowUps.days')}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-1.5">
+                    <label
+                      className={labelClassName}
+                      htmlFor={`ai-default-follow-up-message-${index}`}
+                    >
+                      {t('aiSettings.form.defaultFollowUps.message')}
+                    </label>
+                    <textarea
+                      id={`ai-default-follow-up-message-${index}`}
+                      value={item.message}
+                      onChange={(event) =>
+                        updateDefaultFollowUp(index, {
+                          message: event.target.value,
+                        })
+                      }
+                      className={[inputClassName, 'min-h-[110px] resize-y leading-6'].join(' ')}
+                      placeholder={t(
+                        'aiSettings.form.defaultFollowUps.messagePlaceholder',
+                      )}
+                      disabled={isSubmitting || !item.enabled}
+                      required={item.enabled}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+          <>
           <div className="grid gap-1.5">
             <label className={labelClassName} htmlFor="ai-setting-system-prompt">
               {t('aiSettings.form.systemPrompt')}
@@ -489,6 +727,8 @@ function AISettingFormPanel({
               />
             </div>
           </div>
+          </>
+          )}
 
           {fieldError || errorMessage ? (
             <p className="m-0 rounded-lg bg-danger-bg px-3 py-2 text-sm font-medium text-danger">
