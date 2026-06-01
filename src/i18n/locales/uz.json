@@ -261,7 +261,8 @@
     "placeholders": {
       "newList": "Yangi ro'yxat nomi",
       "taskTitle": "Topshiriq nomi",
-      "description": "Topshiriq haqida qisqa izoh"
+      "description": "Topshiriq haqida qisqa izoh",
+      "dueDate": "Muddatni tanlang"
     },
     "columns": {
       "todo": "Qilinadi",
@@ -278,16 +279,30 @@
     },
     "fields": {
       "title": "Nomi",
+      "listTitle": "Ro'yxat nomi",
       "description": "Tavsif",
       "priority": "Muhimlik",
       "assignee": "Mas'ul",
-      "dueDate": "Muddat"
+      "dueDate": "Muddat",
+      "color": "Rang"
     },
     "modal": {
+      "listEyebrow": "Yangi ro'yxat",
+      "listTitle": "Ro'yxat qo'shish",
       "createEyebrow": "Yangi topshiriq",
       "createTitle": "Topshiriq qo'shish",
       "eyebrow": "Topshiriq tafsilotlari",
       "title": "Topshiriqni tahrirlash"
+    },
+    "assignees": {
+      "unassigned": "Biriktirilmagan"
+    },
+    "colors": {
+      "blue": "Ko'k",
+      "cyan": "Havorang",
+      "green": "Yashil",
+      "amber": "Sariq",
+      "rose": "Qizil"
     },
     "samples": {
       "clientFlow": "Mijoz profili maydonlarini tekshirish",

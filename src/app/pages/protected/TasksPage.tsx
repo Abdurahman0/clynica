@@ -8,10 +8,12 @@ import {
 	FiPaperclip,
 	FiPlus,
 	FiTrash2,
-	FiUser,
 	FiX,
 } from 'react-icons/fi'
 import { PageLayout } from '../../../components/shared/page'
+import { FilterSelect } from '../../../components/shared/data'
+import { HandmadeDatePicker } from '../../../features/clients/components/HandmadeDatePickers'
+import type { SelectOption } from '../../../types/common'
 
 type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
 type ColumnTone = 'blue' | 'cyan' | 'green' | 'amber' | 'rose'
@@ -218,7 +220,7 @@ function formatDueDate(value: string, fallback: string): string {
 }
 
 function TasksPage() {
-	const { t } = useTranslation()
+	const { i18n, t } = useTranslation()
 	const initialBoard = useMemo(() => createInitialBoard(t), [t])
 	const [board, setBoard] = useState<TaskBoard>(() => readStoredBoard() ?? initialBoard)
 	const [draftColumnId, setDraftColumnId] = useState<string | null>(null)
@@ -229,7 +231,11 @@ function TasksPage() {
 		assignee: '',
 		dueDate: '',
 	})
-	const [newListTitle, setNewListTitle] = useState('')
+	const [isListModalOpen, setIsListModalOpen] = useState(false)
+	const [listDraft, setListDraft] = useState({
+		title: '',
+		tone: 'blue' as ColumnTone,
+	})
 	const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
 	const [editDraft, setEditDraft] = useState({
 		title: '',
@@ -251,6 +257,38 @@ function TasksPage() {
 	const completedCards =
 		board.columns.find(column => column.id === 'done')?.cardIds.length ?? 0
 	const selectedCard = selectedCardId ? board.cards[selectedCardId] : null
+	const priorityOptions = useMemo<SelectOption[]>(
+		() =>
+			(['low', 'medium', 'high', 'urgent'] as TaskPriority[]).map(priority => ({
+				value: priority,
+				label: t(`tasks.priorities.${priority}`),
+			})),
+		[t],
+	)
+	const assigneeOptions = useMemo<SelectOption[]>(() => {
+		const assignees = new Set(['AR', 'MK', 'SA'])
+		Object.values(board.cards).forEach(card => {
+			if (card.assignee) {
+				assignees.add(card.assignee)
+			}
+		})
+
+		return [
+			{ value: '', label: t('tasks.assignees.unassigned') },
+			...Array.from(assignees).map(assignee => ({
+				value: assignee,
+				label: assignee,
+			})),
+		]
+	}, [board.cards, t])
+	const listToneOptions = useMemo<SelectOption[]>(
+		() =>
+			toneCycle.map(tone => ({
+				value: tone,
+				label: t(`tasks.colors.${tone}`),
+			})),
+		[t],
+	)
 
 	const moveCard = useCallback(
 		(cardId: string, targetColumnId: string, targetIndex?: number) => {
@@ -386,9 +424,17 @@ function TasksPage() {
 		closeCreateModal()
 	}
 
+	const closeListModal = () => {
+		setIsListModalOpen(false)
+		setListDraft({
+			title: '',
+			tone: 'blue',
+		})
+	}
+
 	const handleAddList = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault()
-		const title = newListTitle.trim()
+		const title = listDraft.title.trim()
 		if (!title) {
 			return
 		}
@@ -400,12 +446,12 @@ function TasksPage() {
 				{
 					id: createId('column'),
 					title,
-					tone: toneCycle[current.columns.length % toneCycle.length],
+					tone: listDraft.tone,
 					cardIds: [],
 				},
 			],
 		}))
-		setNewListTitle('')
+		closeListModal()
 	}
 
 	const openCard = (card: TaskCard) => {
@@ -472,48 +518,6 @@ function TasksPage() {
 	return (
 		<PageLayout>
 			<section className='overflow-hidden rounded-[28px] bg-surface-card text-text-primary shadow-sm ring-1 ring-border-soft/50'>
-				<div className='relative overflow-hidden border-b border-border-soft/50 bg-[radial-gradient(circle_at_18%_0%,rgb(var(--color-primary)/0.18),transparent_34%),linear-gradient(135deg,rgb(var(--color-surface-card))_0%,rgb(var(--color-surface-subtle))_55%,rgb(var(--color-background-subtle))_100%)] px-5 py-5 sm:px-8 sm:py-7'>
-					<div className='absolute right-0 top-0 h-32 w-72 rounded-full bg-primary/10 blur-3xl' />
-					<div className='relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between'>
-						<div className='flex min-w-0 items-start gap-4'>
-							<div className='grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary text-lg font-black text-primary-foreground shadow-sm ring-1 ring-primary/20'>
-								RC
-							</div>
-							<div className='min-w-0'>
-								<p className='mb-1 text-xs font-bold uppercase tracking-[0.28em] text-text-muted'>
-									{t('tasks.eyebrow')}
-								</p>
-								<h1 className='truncate font-display text-2xl font-black tracking-[-0.04em] text-text-primary sm:text-3xl'>
-									{t('tasks.title')}
-								</h1>
-								<p className='mt-2 max-w-3xl text-sm leading-6 text-text-secondary'>
-									{t('tasks.subtitle')}
-								</p>
-							</div>
-						</div>
-
-						<div className='flex flex-wrap items-center gap-2 text-xs font-bold text-text-secondary'>
-							<span className='rounded-full bg-surface-card px-3 py-2 shadow-sm ring-1 ring-border-soft/50'>
-								{t('tasks.stats.lists')}:{' '}
-								{board.columns.length}
-							</span>
-							<span className='rounded-full bg-surface-card px-3 py-2 shadow-sm ring-1 ring-border-soft/50'>
-								{t('tasks.stats.tasks')}: {totalCards}
-							</span>
-							<span className='rounded-full bg-success-bg px-3 py-2 text-success shadow-sm ring-1 ring-success/15'>
-								{t('tasks.stats.done')}: {completedCards}
-							</span>
-							<button
-								type='button'
-								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-card text-text-secondary shadow-sm ring-1 ring-border-soft/50 transition hover:bg-surface-subtle hover:text-text-primary'
-								aria-label={t('tasks.actions.boardMenu')}
-							>
-								<FiMoreHorizontal className='h-5 w-5' />
-							</button>
-						</div>
-					</div>
-				</div>
-
 				<div className='border-b border-border-soft/50 bg-surface-subtle/70 px-5 py-4 sm:px-8'>
 					<div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
 						<div className='flex flex-wrap items-center gap-3'>
@@ -538,24 +542,33 @@ function TasksPage() {
 							</div>
 						</div>
 
-						<form
-							onSubmit={handleAddList}
-							className='flex w-full flex-col gap-2 sm:flex-row lg:w-auto'
-						>
-							<input
-								value={newListTitle}
-								onChange={event => setNewListTitle(event.target.value)}
-								placeholder={t('tasks.placeholders.newList')}
-								className='min-h-11 rounded-2xl border border-border-soft/60 bg-surface-card px-4 text-sm font-semibold text-text-primary outline-none transition placeholder:text-text-muted focus:border-primary/50 focus:ring-2 focus:ring-primary/20'
-							/>
+						<div className='flex flex-wrap items-center gap-2 text-xs font-bold text-text-secondary'>
+							<span className='rounded-full bg-surface-card px-3 py-2 shadow-sm ring-1 ring-border-soft/50'>
+								{t('tasks.stats.lists')}:{' '}
+								{board.columns.length}
+							</span>
+							<span className='rounded-full bg-surface-card px-3 py-2 shadow-sm ring-1 ring-border-soft/50'>
+								{t('tasks.stats.tasks')}: {totalCards}
+							</span>
+							<span className='rounded-full bg-success-bg px-3 py-2 text-success shadow-sm ring-1 ring-success/15'>
+								{t('tasks.stats.done')}: {completedCards}
+							</span>
 							<button
-								type='submit'
+								type='button'
+								onClick={() => setIsListModalOpen(true)}
 								className='inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-surface-card px-4 text-sm font-black text-text-primary shadow-sm ring-1 ring-border-soft/50 transition hover:bg-surface-muted'
 							>
 								<FiPlus className='h-4 w-4' />
 								{t('tasks.actions.newList')}
 							</button>
-						</form>
+							<button
+								type='button'
+								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-card text-text-secondary shadow-sm ring-1 ring-border-soft/50 transition hover:bg-surface-subtle hover:text-text-primary'
+								aria-label={t('tasks.actions.boardMenu')}
+							>
+								<FiMoreHorizontal className='h-5 w-5' />
+							</button>
+						</div>
 					</div>
 				</div>
 
@@ -674,6 +687,105 @@ function TasksPage() {
 				</div>
 			</section>
 
+			{isListModalOpen ? (
+				<div
+					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					onMouseDown={event => {
+						if (event.target === event.currentTarget) {
+							closeListModal()
+						}
+					}}
+				>
+					<form
+						onSubmit={handleAddList}
+						className='w-full max-w-lg rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+					>
+						<div className='mb-5 flex items-start justify-between gap-4'>
+							<div>
+								<p className='text-xs font-black uppercase tracking-[0.22em] text-primary'>
+									{t('tasks.modal.listEyebrow')}
+								</p>
+								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-text-primary'>
+									{t('tasks.modal.listTitle')}
+								</h2>
+							</div>
+							<button
+								type='button'
+								onClick={closeListModal}
+								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-subtle text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
+								aria-label={t('common.cancel')}
+							>
+								<FiX className='h-5 w-5' />
+							</button>
+						</div>
+
+						<div className='grid gap-3'>
+							<label className='grid gap-1.5'>
+								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+									{t('tasks.fields.listTitle')}
+								</span>
+								<input
+									value={listDraft.title}
+									onChange={event =>
+										setListDraft(current => ({
+											...current,
+											title: event.target.value,
+										}))
+									}
+									autoFocus
+									placeholder={t('tasks.placeholders.newList')}
+									className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition placeholder:text-text-muted focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+								/>
+							</label>
+
+							<label className='grid gap-1.5'>
+								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+									{t('tasks.fields.color')}
+								</span>
+								<FilterSelect
+									value={listDraft.tone}
+									onChange={value =>
+										setListDraft(current => ({
+											...current,
+											tone: value as ColumnTone,
+										}))
+									}
+									options={listToneOptions}
+								/>
+							</label>
+
+							<div
+								className={`rounded-2xl border border-border-soft/55 border-t-4 ${columnToneClasses[listDraft.tone].top} bg-surface-subtle p-4`}
+							>
+								<p className='m-0 text-sm font-black text-text-primary'>
+									{listDraft.title || t('tasks.placeholders.newList')}
+								</p>
+								<p className='m-0 mt-1 text-xs font-semibold text-text-secondary'>
+									{t(`tasks.colors.${listDraft.tone}`)}
+								</p>
+							</div>
+						</div>
+
+						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+							<button
+								type='button'
+								onClick={closeListModal}
+								className='inline-flex h-11 items-center justify-center rounded-2xl bg-surface-subtle px-4 text-sm font-black text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
+							>
+								{t('common.cancel')}
+							</button>
+							<button
+								type='submit'
+								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
+							>
+								<FiPlus className='h-4 w-4' />
+								{t('tasks.actions.newList')}
+							</button>
+						</div>
+					</form>
+				</div>
+			) : null}
+
 			{draftColumnId ? (
 				<div
 					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
@@ -754,60 +866,48 @@ function TasksPage() {
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
 									</span>
-									<select
+									<FilterSelect
 										value={createDraft.priority}
 										onChange={event =>
 											setCreateDraft(current => ({
 												...current,
-												priority: event.target.value as TaskPriority,
+												priority: event as TaskPriority,
 											}))
 										}
-										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
-									>
-										{(['low', 'medium', 'high', 'urgent'] as TaskPriority[]).map(
-											priority => (
-												<option key={priority} value={priority}>
-													{t(`tasks.priorities.${priority}`)}
-												</option>
-											),
-										)}
-									</select>
+										options={priorityOptions}
+									/>
 								</label>
 
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.assignee')}
 									</span>
-									<div className='relative'>
-										<FiUser className='pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted' />
-										<input
-											value={createDraft.assignee}
-											onChange={event =>
-												setCreateDraft(current => ({
-													...current,
-													assignee: event.target.value,
-												}))
-											}
-											maxLength={3}
-											className='min-h-12 w-full rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 pl-10 text-sm font-semibold uppercase text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
-										/>
-									</div>
+									<FilterSelect
+										value={createDraft.assignee}
+										onChange={value =>
+											setCreateDraft(current => ({
+												...current,
+												assignee: value,
+											}))
+										}
+										options={assigneeOptions}
+									/>
 								</label>
 
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.dueDate')}
 									</span>
-									<input
-										type='date'
+									<HandmadeDatePicker
 										value={createDraft.dueDate}
 										onChange={event =>
 											setCreateDraft(current => ({
 												...current,
-												dueDate: event.target.value,
+												dueDate: event,
 											}))
 										}
-										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+										placeholder={t('tasks.placeholders.dueDate')}
+										locale={i18n.language}
 									/>
 								</label>
 							</div>
@@ -904,60 +1004,48 @@ function TasksPage() {
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
 									</span>
-									<select
+									<FilterSelect
 										value={editDraft.priority}
 										onChange={event =>
 											setEditDraft(current => ({
 												...current,
-												priority: event.target.value as TaskPriority,
+												priority: event as TaskPriority,
 											}))
 										}
-										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
-									>
-										{(['low', 'medium', 'high', 'urgent'] as TaskPriority[]).map(
-											priority => (
-												<option key={priority} value={priority}>
-													{t(`tasks.priorities.${priority}`)}
-												</option>
-											),
-										)}
-									</select>
+										options={priorityOptions}
+									/>
 								</label>
 
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.assignee')}
 									</span>
-									<div className='relative'>
-										<FiUser className='pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted' />
-										<input
-											value={editDraft.assignee}
-											onChange={event =>
-												setEditDraft(current => ({
-													...current,
-													assignee: event.target.value,
-												}))
-											}
-											maxLength={3}
-											className='min-h-12 w-full rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 pl-10 text-sm font-semibold uppercase text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
-										/>
-									</div>
+									<FilterSelect
+										value={editDraft.assignee}
+										onChange={value =>
+											setEditDraft(current => ({
+												...current,
+												assignee: value,
+											}))
+										}
+										options={assigneeOptions}
+									/>
 								</label>
 
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.dueDate')}
 									</span>
-									<input
-										type='date'
+									<HandmadeDatePicker
 										value={editDraft.dueDate}
 										onChange={event =>
 											setEditDraft(current => ({
 												...current,
-												dueDate: event.target.value,
+												dueDate: event,
 											}))
 										}
-										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+										placeholder={t('tasks.placeholders.dueDate')}
+										locale={i18n.language}
 									/>
 								</label>
 							</div>

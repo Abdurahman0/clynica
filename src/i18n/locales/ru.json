@@ -261,7 +261,8 @@
     "placeholders": {
       "newList": "Название нового списка",
       "taskTitle": "Название задачи",
-      "description": "Краткое описание задачи"
+      "description": "Краткое описание задачи",
+      "dueDate": "Выберите срок"
     },
     "columns": {
       "todo": "К выполнению",
@@ -278,16 +279,30 @@
     },
     "fields": {
       "title": "Название",
+      "listTitle": "Название списка",
       "description": "Описание",
       "priority": "Приоритет",
       "assignee": "Ответственный",
-      "dueDate": "Срок"
+      "dueDate": "Срок",
+      "color": "Цвет"
     },
     "modal": {
+      "listEyebrow": "Новый список",
+      "listTitle": "Добавить список",
       "createEyebrow": "Новая задача",
       "createTitle": "Добавить задачу",
       "eyebrow": "Детали задачи",
       "title": "Редактировать задачу"
+    },
+    "assignees": {
+      "unassigned": "Не назначено"
+    },
+    "colors": {
+      "blue": "Синий",
+      "cyan": "Голубой",
+      "green": "Зелёный",
+      "amber": "Жёлтый",
+      "rose": "Красный"
     },
     "samples": {
       "clientFlow": "Проверить поля профиля клиента",

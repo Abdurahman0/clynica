@@ -23,7 +23,7 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={joinClassNames(
-        'z-[220] w-auto rounded-xl border border-border-soft/80 bg-surface-card p-3 shadow-[0_30px_50px_-32px_rgba(15,23,42,0.65)] outline-none',
+        'z-[950] w-auto rounded-xl border border-border-soft/80 bg-surface-card p-3 shadow-[0_30px_50px_-32px_rgba(15,23,42,0.65)] outline-none',
         className,
       )}
       {...props}
