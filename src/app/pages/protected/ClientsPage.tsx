@@ -191,6 +191,21 @@ function ClientsPage() {
 
     setEditingClient(client);
     setIsFormOpen(true);
+
+    if (!canViewBookings) {
+      return;
+    }
+
+    void services.clients
+      .getClient(client.id)
+      .then((detailedClient: Client) => {
+        setEditingClient((current) =>
+          current?.id === client.id ? detailedClient : current,
+        );
+      })
+      .catch(() => {
+        // Keep the already opened row payload if details are temporarily unavailable.
+      });
   }
 
   function openEditStatusForm(status: CRMStatusItem) {
