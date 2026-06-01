@@ -148,7 +148,10 @@ export function HandmadeDatePicker({
     <Popover>
       <PopoverTrigger asChild>
         <button type="button" className={triggerClassName} disabled={disabled}>
-          <span className={label ? 'text-text-primary' : 'text-text-muted'}>{label || placeholder}</span>
+          <span className={[
+            'block min-w-0 flex-1 truncate whitespace-nowrap',
+            label ? 'text-text-primary' : 'text-text-muted',
+          ].join(' ')}>{label || placeholder}</span>
           <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
         </button>
       </PopoverTrigger>
@@ -241,7 +244,10 @@ export function HandmadeDateTimePicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <button type="button" className={triggerClassName} disabled={disabled}>
-          <span className={value ? 'text-text-primary' : 'text-text-muted'}>{toDateTimeLabel(value, locale) || placeholder}</span>
+          <span className={[
+            'block min-w-0 flex-1 truncate whitespace-nowrap',
+            value ? 'text-text-primary' : 'text-text-muted',
+          ].join(' ')}>{toDateTimeLabel(value, locale) || placeholder}</span>
           <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
         </button>
       </PopoverTrigger>
