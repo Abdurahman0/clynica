@@ -743,22 +743,6 @@ function TasksPage() {
 							<div className='rounded-2xl bg-primary px-5 py-3 text-sm font-black text-primary-foreground shadow-sm'>
 								{t('tasks.boardName')}
 							</div>
-							<div className='h-8 w-px bg-border-soft' />
-							<div className='flex items-center gap-2'>
-								<span className='text-xs font-bold uppercase tracking-[0.22em] text-text-muted'>
-									{t('tasks.members')}
-								</span>
-								<div className='flex -space-x-2'>
-									{['AR', 'MK', 'SA'].map(member => (
-										<span
-											key={member}
-											className='grid h-8 w-8 place-items-center rounded-full border-2 border-surface-subtle bg-gradient-to-br from-primary to-success text-[10px] font-black text-primary-foreground'
-										>
-											{member}
-										</span>
-									))}
-								</div>
-							</div>
 						</div>
 
 						<div className='flex flex-wrap items-center gap-2 text-xs font-bold text-text-secondary'>
