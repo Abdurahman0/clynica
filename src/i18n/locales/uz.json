@@ -257,6 +257,7 @@
       "boardMenu": "Doska menyusi",
       "listMenu": "Ro'yxat menyusi",
       "newList": "Yangi ro'yxat",
+      "saveList": "Ro'yxatni saqlash",
       "addTask": "Topshiriq qo'shish",
       "deleteTask": "Topshiriqni o'chirish",
       "deleteList": "Ro'yxatni o'chirish"
@@ -292,6 +293,8 @@
     "modal": {
       "listEyebrow": "Yangi ro'yxat",
       "listTitle": "Ro'yxat qo'shish",
+      "editListEyebrow": "Ro'yxatni tahrirlash",
+      "editListTitle": "Ro'yxatni tahrirlash",
       "createEyebrow": "Yangi topshiriq",
       "createTitle": "Topshiriq qo'shish",
       "eyebrow": "Topshiriq tafsilotlari",

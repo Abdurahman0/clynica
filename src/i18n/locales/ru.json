@@ -257,6 +257,7 @@
       "boardMenu": "Меню доски",
       "listMenu": "Меню списка",
       "newList": "Новый список",
+      "saveList": "Сохранить список",
       "addTask": "Добавить задачу",
       "deleteTask": "Удалить задачу",
       "deleteList": "Удалить список"
@@ -292,6 +293,8 @@
     "modal": {
       "listEyebrow": "Новый список",
       "listTitle": "Добавить список",
+      "editListEyebrow": "Редактирование списка",
+      "editListTitle": "Редактировать список",
       "createEyebrow": "Новая задача",
       "createTitle": "Добавить задачу",
       "eyebrow": "Детали задачи",

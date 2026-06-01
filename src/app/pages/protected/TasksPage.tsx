@@ -397,6 +397,7 @@ function TasksPage() {
 				selectedCard.assigneeName ||
 				selectedCard.assignedTo
 			: t('tasks.assignees.unassigned')
+	const isEditingList = Boolean(listDraft.id)
 	const listToneOptions = useMemo<SelectOption[]>(
 		() =>
 			toneCycle.map(tone => ({
@@ -956,10 +957,18 @@ function TasksPage() {
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
 								<p className='text-xs font-black uppercase tracking-[0.22em] text-primary'>
-									{t('tasks.modal.listEyebrow')}
+									{t(
+										isEditingList
+											? 'tasks.modal.editListEyebrow'
+											: 'tasks.modal.listEyebrow',
+									)}
 								</p>
 								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-text-primary'>
-									{t('tasks.modal.listTitle')}
+									{t(
+										isEditingList
+											? 'tasks.modal.editListTitle'
+											: 'tasks.modal.listTitle',
+									)}
 								</h2>
 							</div>
 							<button
@@ -1045,8 +1054,12 @@ function TasksPage() {
 								disabled={isSaving}
 								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
 							>
-								<FiPlus className='h-4 w-4' />
-								{t('tasks.actions.newList')}
+								{isEditingList ? (
+									<FiCheckCircle className='h-4 w-4' />
+								) : (
+									<FiPlus className='h-4 w-4' />
+								)}
+								{t(isEditingList ? 'tasks.actions.saveList' : 'tasks.actions.newList')}
 							</button>
 							</div>
 						</div>
