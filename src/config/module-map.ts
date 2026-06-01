@@ -86,7 +86,7 @@ export const moduleMap: AppModule[] = [
     priority: 'medium',
     priorityOrder: 4,
     allowedRoles: ['developer', 'admin', 'operator'],
-    accessStrategy: 'static-role-based',
+    accessStrategy: 'permission-based',
     pages: [
       {
         id: 'tasks-board',

@@ -93,6 +93,10 @@ const USER_PERMISSION_LABEL_KEYS: Record<string, string> = {
   can_manage_bookings: 'labels.permissions.can_manage_bookings',
   can_view_statuses: 'labels.permissions.can_view_statuses',
   can_manage_statuses: 'labels.permissions.can_manage_statuses',
+  can_view_tasks: 'labels.permissions.can_view_tasks',
+  can_manage_tasks: 'labels.permissions.can_manage_tasks',
+  can_view_task_statuses: 'labels.permissions.can_view_task_statuses',
+  can_manage_task_statuses: 'labels.permissions.can_manage_task_statuses',
   can_view_settings: 'labels.permissions.can_view_settings',
   can_manage_settings: 'labels.permissions.can_manage_settings',
   can_view_logs: 'labels.permissions.can_view_logs',
@@ -126,6 +130,10 @@ const USER_PERMISSION_LABEL_KEYS: Record<string, string> = {
   'settings.manage': 'labels.permissions.settings.manage',
   'statuses.view': 'labels.permissions.statuses.view',
   'statuses.manage': 'labels.permissions.statuses.manage',
+  'tasks.view': 'labels.permissions.tasks.view',
+  'tasks.manage': 'labels.permissions.tasks.manage',
+  'task_statuses.view': 'labels.permissions.task_statuses.view',
+  'task_statuses.manage': 'labels.permissions.task_statuses.manage',
 };
 
 const USER_PERMISSION_DESCRIPTION_KEYS: Record<string, string> = {
@@ -156,6 +164,10 @@ const USER_PERMISSION_DESCRIPTION_KEYS: Record<string, string> = {
   can_manage_bookings: 'labels.permissionDescriptions.can_manage_bookings',
   can_view_statuses: 'labels.permissionDescriptions.can_view_statuses',
   can_manage_statuses: 'labels.permissionDescriptions.can_manage_statuses',
+  can_view_tasks: 'labels.permissionDescriptions.can_view_tasks',
+  can_manage_tasks: 'labels.permissionDescriptions.can_manage_tasks',
+  can_view_task_statuses: 'labels.permissionDescriptions.can_view_task_statuses',
+  can_manage_task_statuses: 'labels.permissionDescriptions.can_manage_task_statuses',
   can_view_settings: 'labels.permissionDescriptions.can_view_settings',
   can_manage_settings: 'labels.permissionDescriptions.can_manage_settings',
   can_view_logs: 'labels.permissionDescriptions.can_view_logs',
@@ -189,6 +201,10 @@ const USER_PERMISSION_DESCRIPTION_KEYS: Record<string, string> = {
   'settings.manage': 'labels.permissionDescriptions.settings.manage',
   'statuses.view': 'labels.permissionDescriptions.statuses.view',
   'statuses.manage': 'labels.permissionDescriptions.statuses.manage',
+  'tasks.view': 'labels.permissionDescriptions.tasks.view',
+  'tasks.manage': 'labels.permissionDescriptions.tasks.manage',
+  'task_statuses.view': 'labels.permissionDescriptions.task_statuses.view',
+  'task_statuses.manage': 'labels.permissionDescriptions.task_statuses.manage',
 };
 
 function resolveLabel(

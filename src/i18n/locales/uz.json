@@ -246,6 +246,8 @@
     "boardName": "Klinika doskasi",
     "members": "A'zolar",
     "noDueDate": "Muddat yo'q",
+    "loading": "Topshiriqlar yuklanmoqda...",
+    "empty": "Topshiriq statuslari topilmadi.",
     "stats": {
       "lists": "Ro'yxatlar",
       "tasks": "Topshiriqlar",
@@ -256,7 +258,8 @@
       "listMenu": "Ro'yxat menyusi",
       "newList": "Yangi ro'yxat",
       "addTask": "Topshiriq qo'shish",
-      "deleteTask": "Topshiriqni o'chirish"
+      "deleteTask": "Topshiriqni o'chirish",
+      "deleteList": "Ro'yxatni o'chirish"
     },
     "placeholders": {
       "newList": "Yangi ro'yxat nomi",
@@ -303,6 +306,17 @@
       "green": "Yashil",
       "amber": "Sariq",
       "rose": "Qizil"
+    },
+    "kinds": {
+      "manual": "Qo'lda",
+      "booking_two_days": "2 kun qoldi",
+      "booking_today": "Bugungi bron",
+      "unknown": "Avto"
+    },
+    "errors": {
+      "loadFailed": "Topshiriqlarni yuklab bo'lmadi.",
+      "saveFailed": "O'zgarishlarni saqlab bo'lmadi.",
+      "deleteFailed": "O'chirish amalga oshmadi."
     },
     "samples": {
       "clientFlow": "Mijoz profili maydonlarini tekshirish",
@@ -1971,6 +1985,10 @@
       "can_manage_bookings": "Bronlarni boshqarish",
       "can_view_statuses": "Statuslarni ko'rish",
       "can_manage_statuses": "Statuslarni boshqarish",
+      "can_view_tasks": "Topshiriqlarni ko'rish",
+      "can_manage_tasks": "Topshiriqlarni boshqarish",
+      "can_view_task_statuses": "Topshiriq statuslarini ko'rish",
+      "can_manage_task_statuses": "Topshiriq statuslarini boshqarish",
       "can_view_settings": "Sozlamalarni ko'rish",
       "can_manage_settings": "Sozlamalarni boshqarish",
       "can_view_contracts": "Shartnomalarni ko'rish",
@@ -2036,6 +2054,14 @@
         "view": "Statuslarni ko'rish",
         "manage": "Statuslarni boshqarish"
       },
+      "tasks": {
+        "view": "Topshiriqlarni ko'rish",
+        "manage": "Topshiriqlarni boshqarish"
+      },
+      "task_statuses": {
+        "view": "Topshiriq statuslarini ko'rish",
+        "manage": "Topshiriq statuslarini boshqarish"
+      },
       "users": {
         "view": "Foydalanuvchilarni ko'rish",
         "manage": "Foydalanuvchilarni boshqarish"
@@ -2070,6 +2096,10 @@
       "can_manage_bookings": "Bronlarni yaratish, tahrirlash va o'chirishga ruxsat beradi.",
       "can_view_statuses": "Statuslar ro'yxatini ko'rishga ruxsat beradi.",
       "can_manage_statuses": "Statuslarni yaratish va boshqarishga ruxsat beradi.",
+      "can_view_tasks": "Topshiriqlar doskasini ko'rishga ruxsat beradi.",
+      "can_manage_tasks": "Topshiriqlarni ko'chirish va ruxsatli rollar uchun boshqarishga ruxsat beradi.",
+      "can_view_task_statuses": "Topshiriq status ustunlarini ko'rishga ruxsat beradi.",
+      "can_manage_task_statuses": "Topshiriq status ustunlarini yaratish va tahrirlashga ruxsat beradi.",
       "can_view_settings": "Sozlamalar bo'limini ko'rishga ruxsat beradi.",
       "can_manage_settings": "Sozlamalar bo'limini boshqarishga ruxsat beradi.",
       "can_view_contracts": "Shartnomalar ro'yxati va tafsilotlarini ko'rishga ruxsat beradi.",
@@ -2134,6 +2164,14 @@
       "statuses": {
         "view": "Statuslar ro'yxatini ko'rish",
         "manage": "Statuslarni yaratish, yangilash va boshqarish"
+      },
+      "tasks": {
+        "view": "Topshiriqlar doskasini ko'rish",
+        "manage": "Topshiriqlarni ko'chirish va boshqarish"
+      },
+      "task_statuses": {
+        "view": "Topshiriq status ustunlarini ko'rish",
+        "manage": "Topshiriq status ustunlarini yaratish va tahrirlash"
       },
       "users": {
         "view": "Foydalanuvchilar ro'yxati va rollar ma'lumotini ko'rish",

@@ -8,6 +8,7 @@ const ROUTE_REQUIRED_PERMISSIONS: Partial<Record<AppRouteId, PermissionCode>> =
 	{
 		clients: 'can_view_clients',
 		chats: 'can_access_chats',
+		tasks: 'can_view_tasks',
 		users: 'can_view_users',
 		integrations: 'can_manage_integrations',
 		'ai-settings': 'can_view_settings',
@@ -22,6 +23,8 @@ const IMPLIED_PERMISSIONS: Partial<Record<PermissionCode, PermissionCode[]>> = {
 	can_view_contracts: ['can_manage_contracts'],
 	can_view_users: ['can_manage_users'],
 	can_view_statuses: ['can_manage_statuses'],
+	can_view_tasks: ['can_manage_tasks'],
+	can_view_task_statuses: ['can_manage_task_statuses'],
 	can_view_settings: [
 		'can_manage_settings',
 		'can_manage_ai_settings',
@@ -106,10 +109,6 @@ export function canAccessRouteForUser(
 	// Dashboard is intentionally visible to every authenticated user.
 	if (routeId === 'dashboard') {
 		return true
-	}
-
-	if (routeId === 'tasks') {
-		return hasRole(user, ['developer', 'admin', 'operator'])
 	}
 
 	const requiredPermission = ROUTE_REQUIRED_PERMISSIONS[routeId]

@@ -106,6 +106,10 @@ function mapBackendPermissionToken(token: string): PermissionCode[] {
 
     'statuses.view': ['can_view_statuses'],
     'statuses.manage': ['can_manage_statuses'],
+    'tasks.view': ['can_view_tasks'],
+    'tasks.manage': ['can_manage_tasks'],
+    'task_statuses.view': ['can_view_task_statuses'],
+    'task_statuses.manage': ['can_manage_task_statuses'],
 
     'products.view': ['can_view_products'],
     'products.manage': ['can_manage_products'],
