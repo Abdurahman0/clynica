@@ -102,11 +102,6 @@ function getBookingStatusLabel(status: string | undefined, isRu: boolean): strin
   return isRu ? 'Ожидает' : 'Kutilmoqda';
 }
 
-interface SummaryField {
-  label: string;
-  value: string;
-}
-
 function findJsonRange(value: string): { start: number; end: number } | null {
   const start = value.indexOf('{');
   if (start < 0) {
@@ -174,93 +169,36 @@ function stringifySummaryValue(value: unknown): string {
   return JSON.stringify(value);
 }
 
-function parseLabelValueSummary(value: string): SummaryField[] {
-  return value
-    .replace(/\s+/g, ' ')
-    .trim()
-    .split(/\.\s+(?=[^:]{1,80}:)/)
-    .map((part) => part.replace(/\.$/, '').trim())
-    .map((part) => {
-      const separatorIndex = part.indexOf(':');
-      if (separatorIndex <= 0) {
-        return null;
-      }
-
-      const label = part.slice(0, separatorIndex).trim();
-      const fieldValue = part.slice(separatorIndex + 1).trim();
-      if (!label || !fieldValue) {
-        return null;
-      }
-
-      return { label, value: fieldValue };
-    })
-    .filter((field): field is SummaryField => field !== null);
-}
-
-function parseAiSummary(value: string | undefined): {
-  fields: SummaryField[];
-  fallback: string;
-} {
+function formatAiSummaryText(value: string | undefined): string {
   const summary = String(value ?? '').trim();
   if (!summary) {
-    return { fields: [], fallback: '-' };
+    return '-';
   }
 
   const jsonRange = findJsonRange(summary);
   if (!jsonRange) {
-    const fields = parseLabelValueSummary(summary);
-    return { fields, fallback: fields.length ? '' : summary };
+    return summary;
   }
-
-  const beforeJson = summary
-    .slice(0, jsonRange.start)
-    .replace(/(?:^|\.\s*)[^.:\n]{1,80}:\s*$/, '')
-    .trim();
-  const afterJson = summary.slice(jsonRange.end).trim();
-  const fields = parseLabelValueSummary(`${beforeJson} ${afterJson}`.trim());
 
   try {
     const parsed = JSON.parse(summary.slice(jsonRange.start, jsonRange.end)) as Record<string, unknown>;
-    Object.entries(parsed).forEach(([key, fieldValue]) => {
-      fields.push({
-        label: formatSummaryKey(key),
-        value: stringifySummaryValue(fieldValue),
-      });
-    });
-  } catch {
-    return { fields: [], fallback: summary };
-  }
+    const jsonText = Object.entries(parsed)
+      .map(([key, fieldValue]) => `${formatSummaryKey(key)}: ${stringifySummaryValue(fieldValue)}`)
+      .join('\n');
 
-  return { fields, fallback: fields.length ? '' : summary };
+    const beforeJson = summary.slice(0, jsonRange.start).trim();
+    const afterJson = summary.slice(jsonRange.end).trim();
+    return [beforeJson, jsonText, afterJson].filter(Boolean).join('\n');
+  } catch {
+    return summary;
+  }
 }
 
 function AiSummaryView({ value }: { value: string | undefined }) {
-  const parsed = parseAiSummary(value);
-
-  if (!parsed.fields.length) {
-    return (
-      <p className="mt-1 text-sm leading-6 text-text-secondary [overflow-wrap:anywhere] whitespace-pre-wrap">
-        {parsed.fallback}
-      </p>
-    );
-  }
-
   return (
-    <div className="mt-2 grid gap-2 sm:grid-cols-2">
-      {parsed.fields.map((field, index) => (
-        <div
-          key={`${field.label}-${index}`}
-          className="rounded-lg bg-surface-card/70 px-3 py-2 ring-1 ring-border-soft/35"
-        >
-          <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.1em] text-text-muted [overflow-wrap:anywhere]">
-            {field.label}
-          </p>
-          <p className="m-0 mt-1 text-sm leading-6 text-text-secondary [overflow-wrap:anywhere] whitespace-pre-wrap">
-            {field.value}
-          </p>
-        </div>
-      ))}
-    </div>
+    <p className="mt-1 text-sm leading-6 text-text-secondary [overflow-wrap:anywhere] whitespace-pre-wrap">
+      {formatAiSummaryText(value)}
+    </p>
   );
 }
 
