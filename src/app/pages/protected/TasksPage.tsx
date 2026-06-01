@@ -358,6 +358,21 @@ function TasksPage() {
 			})),
 		]
 	}, [assigneeOptionsFromApi, board.cards, currentUser, t])
+	const assigneeNameById = useMemo(() => {
+		const map = new Map<string, string>()
+		assigneeOptions.forEach(option => {
+			if (option.value) {
+				map.set(option.value, option.label)
+			}
+		})
+		return map
+	}, [assigneeOptions])
+	const selectedCardAssigneeLabel =
+		selectedCard?.assignedTo
+			? assigneeNameById.get(selectedCard.assignedTo) ||
+				selectedCard.assigneeName ||
+				selectedCard.assignedTo
+			: t('tasks.assignees.unassigned')
 	const listToneOptions = useMemo<SelectOption[]>(
 		() =>
 			toneCycle.map(tone => ({
@@ -859,9 +874,24 @@ function TasksPage() {
 																	{card.attachments}
 																</span>
 															) : null}
-															{card.assignee ? (
-																<span className='grid h-6 w-6 place-items-center rounded-full bg-primary/12 text-[10px] text-text-accent'>
-																	{card.assignee}
+															{card.assignedTo || card.assigneeName ? (
+																<span
+																	className='inline-flex max-w-[96px] items-center rounded-full bg-primary/12 px-2 py-1 text-[10px] text-text-accent'
+																	title={
+																		card.assignedTo
+																			? assigneeNameById.get(card.assignedTo) ||
+																				card.assigneeName ||
+																				card.assignedTo
+																			: card.assigneeName
+																	}
+																>
+																	<span className='truncate'>
+																		{card.assignedTo
+																			? assigneeNameById.get(card.assignedTo) ||
+																				card.assigneeName ||
+																				card.assignedTo
+																			: card.assigneeName}
+																	</span>
 																</span>
 															) : null}
 														</div>
@@ -1027,10 +1057,7 @@ function TasksPage() {
 									{t('tasks.modal.createTitle')}
 								</h2>
 								<p className='mt-1 text-sm font-semibold text-text-secondary'>
-									{
-										board.columns.find(column => column.id === draftColumnId)
-											?.title
-									}
+									{board.columns.find(column => column.id === draftColumnId)?.title}
 								</p>
 							</div>
 							<button
@@ -1175,6 +1202,9 @@ function TasksPage() {
 								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-text-primary'>
 									{t('tasks.modal.title')}
 								</h2>
+								<p className='mt-1 text-sm font-semibold text-text-secondary'>
+									{selectedCardAssigneeLabel}
+								</p>
 							</div>
 							<button
 								type='button'
