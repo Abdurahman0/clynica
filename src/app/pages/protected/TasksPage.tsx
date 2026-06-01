@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import {
 	FiCheckCircle,
 	FiClock,
-	FiMoreHorizontal,
+	FiEdit2,
 	FiPaperclip,
 	FiPlus,
 	FiTrash2,
@@ -103,7 +103,24 @@ const priorityClasses: Record<TaskPriority, string> = {
 
 const toneCycle: ColumnTone[] = ['blue', 'cyan', 'green', 'amber', 'rose']
 
-function formatDueDate(value: string, fallback: string): string {
+const taskDateMonths = {
+	uz: ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'],
+	ru: ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'],
+	en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+}
+
+function getTaskDateLanguage(locale: string): keyof typeof taskDateMonths {
+	const normalized = locale.toLowerCase()
+	if (normalized.startsWith('ru')) {
+		return 'ru'
+	}
+	if (normalized.startsWith('uz')) {
+		return 'uz'
+	}
+	return 'en'
+}
+
+function formatDueDate(value: string, fallback: string, locale: string): string {
 	if (!value) {
 		return fallback
 	}
@@ -112,13 +129,20 @@ function formatDueDate(value: string, fallback: string): string {
 	if (Number.isNaN(date.getTime())) {
 		return fallback
 	}
-	return new Intl.DateTimeFormat(undefined, {
-		day: '2-digit',
-		month: 'short',
-		year: 'numeric',
-		hour: value.includes('T') ? '2-digit' : undefined,
-		minute: value.includes('T') ? '2-digit' : undefined,
-	}).format(date)
+
+	const months = taskDateMonths[getTaskDateLanguage(locale)]
+	const day = String(date.getDate()).padStart(2, '0')
+	const month = months[date.getMonth()]
+	const year = date.getFullYear()
+	const dateText = `${day} ${month} ${year}`
+
+	if (!value.includes('T')) {
+		return dateText
+	}
+
+	const hours = String(date.getHours()).padStart(2, '0')
+	const minutes = String(date.getMinutes()).padStart(2, '0')
+	return `${dateText}, ${hours}:${minutes}`
 }
 
 function getInitials(value: string): string {
@@ -757,13 +781,6 @@ function TasksPage() {
 									{t('tasks.actions.newList')}
 								</button>
 							) : null}
-							<button
-								type='button'
-								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-card text-text-secondary shadow-sm ring-1 ring-border-soft/50 transition hover:bg-surface-subtle hover:text-text-primary'
-								aria-label={t('tasks.actions.boardMenu')}
-							>
-								<FiMoreHorizontal className='h-5 w-5' />
-							</button>
 						</div>
 					</div>
 				</div>
@@ -791,15 +808,16 @@ function TasksPage() {
 												{column.cardIds.length}
 											</span>
 										</div>
-										<button
-											type='button'
-											onClick={() => openStatusEditor(column)}
-											className='grid h-8 w-8 place-items-center rounded-xl bg-surface-subtle text-text-muted transition hover:bg-surface-muted hover:text-text-primary'
-											disabled={!canManageTaskStatuses}
-											aria-label={t('tasks.actions.listMenu')}
-										>
-											<FiMoreHorizontal className='h-4 w-4' />
-										</button>
+										{canManageTaskStatuses ? (
+											<button
+												type='button'
+												onClick={() => openStatusEditor(column)}
+												className='grid h-8 w-8 place-items-center rounded-xl bg-surface-subtle text-text-muted transition hover:bg-surface-muted hover:text-text-primary'
+												aria-label={t('common.edit')}
+											>
+												<FiEdit2 className='h-4 w-4' />
+											</button>
+										) : null}
 									</div>
 
 									<div className='grid gap-3 overflow-y-auto px-3 py-3 [scrollbar-color:rgba(255,255,255,0.28)_transparent]'>
@@ -856,6 +874,7 @@ function TasksPage() {
 																{formatDueDate(
 																	card.dueDate,
 																	t('tasks.noDueDate'),
+																	i18n.language,
 																)}
 															</span>
 														</div>
