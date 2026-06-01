@@ -50,6 +50,7 @@ export type AppIconName =
 	| 'payments'
 	| 'chat'
 	| 'chats'
+	| 'tasks'
 	| 'notifications'
 	| 'ai-settings'
 	| 'logs'
@@ -96,6 +97,7 @@ const ICON_MAP: Record<AppIconName, IconType> = {
 	payments: FiCreditCard,
 	chat: FiMessageSquare,
 	chats: FiMessageSquare,
+	tasks: FiCheckCircle,
 	notifications: FiBell,
 	'ai-settings': FiZap,
 	logs: FiPackage,

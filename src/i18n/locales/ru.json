@@ -56,6 +56,10 @@
       "title": "Клиенты",
       "description": "Список клиентов и профили."
     },
+    "tasks": {
+      "title": "Задачи",
+      "description": "Командные задачи и kanban-процесс."
+    },
     "products": {
       "title": "Товары",
       "description": "Управление каталогом, ценами и остатками."
@@ -132,6 +136,7 @@
       "leads": "Поток лидов",
       "customers": "Клиенты",
       "clients": "Клиенты",
+      "tasks": "Kanban",
       "products": "Каталог",
       "contracts": "Договоры",
       "orders": "Заказы",
@@ -232,6 +237,64 @@
       "access": "Доступ",
       "allowedRoles": "Разрешённые роли",
       "accessStrategy": "Стратегия доступа"
+    }
+  },
+  "tasks": {
+    "eyebrow": "Рабочая доска",
+    "title": "Задачи",
+    "subtitle": "Планируйте задачи, перемещайте работу между этапами и держите процессы клиники под контролем.",
+    "boardName": "Доска клиники",
+    "members": "Участники",
+    "noDueDate": "Без срока",
+    "stats": {
+      "lists": "Списки",
+      "tasks": "Задачи",
+      "done": "Готово"
+    },
+    "actions": {
+      "boardMenu": "Меню доски",
+      "listMenu": "Меню списка",
+      "newList": "Новый список",
+      "addTask": "Добавить задачу",
+      "deleteTask": "Удалить задачу"
+    },
+    "placeholders": {
+      "newList": "Название нового списка",
+      "taskTitle": "Название задачи"
+    },
+    "columns": {
+      "todo": "К выполнению",
+      "doing": "В работе",
+      "review": "На проверке",
+      "done": "Готово",
+      "blocked": "Заблокировано"
+    },
+    "priorities": {
+      "low": "Низкий",
+      "medium": "Средний",
+      "high": "Высокий",
+      "urgent": "Срочный"
+    },
+    "fields": {
+      "title": "Название",
+      "description": "Описание",
+      "priority": "Приоритет",
+      "assignee": "Ответственный",
+      "dueDate": "Срок"
+    },
+    "modal": {
+      "eyebrow": "Детали задачи",
+      "title": "Редактировать задачу"
+    },
+    "samples": {
+      "clientFlow": "Проверить поля профиля клиента",
+      "clientFlowDescription": "Проверить обязательные CRM-поля перед следующим релизом.",
+      "followUps": "QA расписания follow-up",
+      "followUpsDescription": "Проверить создание, редактирование, удаление и отображение времени.",
+      "statusColors": "Цвета статусов в таблице клиентов",
+      "statusColorsDescription": "Подтвердить, что цвета из backend отображаются в badge клиента.",
+      "dashboardChart": "Улучшить line chart dashboard",
+      "dashboardChartDescription": "Оставить только серии клиентов и чатов из daily stats."
     }
   },
   "dashboard": {

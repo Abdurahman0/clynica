@@ -41,6 +41,7 @@ const MODULE_PATH_BY_ROUTE_ID: Record<string, string> = {
 	dashboard: routePaths.dashboard,
 	clients: routePaths.clients,
 	chats: routePaths.chats,
+	tasks: routePaths.tasks,
 	users: routePaths.users,
 	integrations: routePaths.integrations,
 	'ai-settings': routePaths['ai-settings'],
@@ -105,6 +106,10 @@ export function canAccessRouteForUser(
 	// Dashboard is intentionally visible to every authenticated user.
 	if (routeId === 'dashboard') {
 		return true
+	}
+
+	if (routeId === 'tasks') {
+		return hasRole(user, ['developer', 'admin', 'operator'])
 	}
 
 	const requiredPermission = ROUTE_REQUIRED_PERMISSIONS[routeId]

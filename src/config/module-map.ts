@@ -79,12 +79,31 @@ export const moduleMap: AppModule[] = [
     notes: 'Real-time client messaging with WebSocket support.',
   },
   {
+    id: 'tasks',
+    label: 'Tasks',
+    description: 'Team tasks and kanban workflow.',
+    category: 'operational',
+    priority: 'medium',
+    priorityOrder: 4,
+    allowedRoles: ['developer', 'admin', 'operator'],
+    accessStrategy: 'static-role-based',
+    pages: [
+      {
+        id: 'tasks-board',
+        label: 'Tasks',
+        kind: 'list',
+        path: '/tasks',
+      },
+    ],
+    notes: 'Internal task board for operational work.',
+  },
+  {
     id: 'integrations',
     label: 'Integrations',
     description: 'Third-party integrations and API setup.',
     category: 'system',
     priority: 'low',
-    priorityOrder: 4,
+    priorityOrder: 5,
     allowedRoles: ['developer'],
     accessStrategy: 'static-role-based',
     pages: [
@@ -103,7 +122,7 @@ export const moduleMap: AppModule[] = [
     description: 'Team members, roles, and permissions management.',
     category: 'system',
     priority: 'low',
-    priorityOrder: 5,
+    priorityOrder: 6,
     allowedRoles: ['developer', 'admin'],
     accessStrategy: 'permission-based',
     pages: [
@@ -122,7 +141,7 @@ export const moduleMap: AppModule[] = [
     description: 'AI agent configuration and behavior.',
     category: 'intelligence',
     priority: 'low',
-    priorityOrder: 6,
+    priorityOrder: 7,
     allowedRoles: ['developer'],
     accessStrategy: 'static-role-based',
     pages: [

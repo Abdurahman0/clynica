@@ -56,6 +56,10 @@
       "title": "Mijozlar",
       "description": "Mijozlar ro'yxati va profillari."
     },
+    "tasks": {
+      "title": "Topshiriqlar",
+      "description": "Jamoa topshiriqlari va kanban jarayoni."
+    },
     "products": {
       "title": "Mahsulotlar",
       "description": "Katalog, narx va zaxira boshqaruvi."
@@ -132,6 +136,7 @@
       "leads": "Lid oqimi",
       "customers": "Mijozlar",
       "clients": "Mijozlar",
+      "tasks": "Kanban",
       "products": "Katalog",
       "contracts": "Shartnomalar",
       "orders": "Buyurtmalar",
@@ -232,6 +237,64 @@
       "access": "Kirish",
       "allowedRoles": "Ruxsat etilgan rollar",
       "accessStrategy": "Kirish strategiyasi"
+    }
+  },
+  "tasks": {
+    "eyebrow": "Ish doskasi",
+    "title": "Topshiriqlar",
+    "subtitle": "Topshiriqlarni rejalashtiring, jarayonlar orasida ko'chiring va klinika ishlarini aniq ko'ring.",
+    "boardName": "Klinika doskasi",
+    "members": "A'zolar",
+    "noDueDate": "Muddat yo'q",
+    "stats": {
+      "lists": "Ro'yxatlar",
+      "tasks": "Topshiriqlar",
+      "done": "Bajarilgan"
+    },
+    "actions": {
+      "boardMenu": "Doska menyusi",
+      "listMenu": "Ro'yxat menyusi",
+      "newList": "Yangi ro'yxat",
+      "addTask": "Topshiriq qo'shish",
+      "deleteTask": "Topshiriqni o'chirish"
+    },
+    "placeholders": {
+      "newList": "Yangi ro'yxat nomi",
+      "taskTitle": "Topshiriq nomi"
+    },
+    "columns": {
+      "todo": "Qilinadi",
+      "doing": "Jarayonda",
+      "review": "Tekshiruvda",
+      "done": "Bajarildi",
+      "blocked": "To'xtagan"
+    },
+    "priorities": {
+      "low": "Past",
+      "medium": "O'rta",
+      "high": "Yuqori",
+      "urgent": "Shoshilinch"
+    },
+    "fields": {
+      "title": "Nomi",
+      "description": "Tavsif",
+      "priority": "Muhimlik",
+      "assignee": "Mas'ul",
+      "dueDate": "Muddat"
+    },
+    "modal": {
+      "eyebrow": "Topshiriq tafsilotlari",
+      "title": "Topshiriqni tahrirlash"
+    },
+    "samples": {
+      "clientFlow": "Mijoz profili maydonlarini tekshirish",
+      "clientFlowDescription": "Keyingi relizdan oldin kerakli CRM maydonlarini tekshirish.",
+      "followUps": "Follow-up jadvalini QA qilish",
+      "followUpsDescription": "Yaratish, tahrirlash, o'chirish va vaqt ko'rinishini tekshirish.",
+      "statusColors": "Mijozlar jadvalidagi status ranglari",
+      "statusColorsDescription": "Backend rang qiymatlari mijoz badge'larida ko'rinishini tasdiqlash.",
+      "dashboardChart": "Dashboard line chartni yaxshilash",
+      "dashboardChartDescription": "Daily statsdan faqat mijozlar va chatlar seriyasini qoldirish."
     }
   },
   "dashboard": {

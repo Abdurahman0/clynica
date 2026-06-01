@@ -23,6 +23,7 @@ import ChatsPage from '../pages/protected/ChatsPage'
 import ClientsPage from '../pages/protected/ClientsPage'
 import DashboardPage from '../pages/protected/DashboardPage'
 import IntegrationsPage from '../pages/protected/IntegrationsPage'
+import TasksPage from '../pages/protected/TasksPage'
 import UsersPage from '../pages/protected/UsersPage'
 import LoginPage from '../pages/public/LoginPage'
 import NotFoundPage from '../pages/public/NotFoundPage'
@@ -36,6 +37,7 @@ const pageRegistry: Record<RoutedPageId, ComponentType> = {
 	clients: ClientsPage,
 	dashboard: DashboardPage,
 	integrations: IntegrationsPage,
+	tasks: TasksPage,
 	users: UsersPage,
 	login: LoginPage,
 	'not-found': NotFoundPage,

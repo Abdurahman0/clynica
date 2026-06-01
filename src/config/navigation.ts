@@ -7,6 +7,7 @@ export type NavigationIconKey =
   | 'dashboard'
   | 'clients'
   | 'chats'
+  | 'tasks'
   | 'users'
   | 'integrations'
   | 'ai-settings';
@@ -76,6 +77,16 @@ export const navigationConfig: NavigationGroupConfig[] = [
         iconKey: 'chats',
         group: 'operations',
         sortOrder: 1,
+        allowedRoles: ['developer', 'admin', 'operator'],
+      },
+      {
+        id: 'tasks',
+        label: 'Tasks',
+        path: '/tasks',
+        moduleId: 'tasks',
+        iconKey: 'tasks',
+        group: 'operations',
+        sortOrder: 2,
         allowedRoles: ['developer', 'admin', 'operator'],
       },
     ],

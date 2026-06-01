@@ -157,6 +157,56 @@ function formatSummaryKey(value: string): string {
     .replace(/^\w/, (char) => char.toUpperCase());
 }
 
+function getAiSummaryJsonLabel(key: string, isRu: boolean): string {
+  const labels: Record<string, { uz: string; ru: string }> = {
+    lead_type: { uz: 'Murojaat turi', ru: 'Тип обращения' },
+    city: { uz: 'Shahar', ru: 'Город' },
+    age: { uz: 'Yosh', ru: 'Возраст' },
+    concern: { uz: 'Murojaat sababi', ru: 'Запрос' },
+    desired_result: { uz: 'Kutilgan natija', ru: 'Желаемый результат' },
+    interested_operation: { uz: 'Qiziqqan operatsiya', ru: 'Интересующая операция' },
+    suggested_operation: { uz: 'Tavsiya qilingan operatsiya', ru: 'Рекомендованная операция' },
+    weight: { uz: 'Vazn', ru: 'Вес' },
+    height: { uz: 'Bo‘y', ru: 'Рост' },
+    bmi_range_hint: { uz: 'BMI oralig‘i', ru: 'Диапазон BMI' },
+    pregnancy_or_birth_history: { uz: 'Homiladorlik yoki tug‘ruq tarixi', ru: 'Беременность или роды в анамнезе' },
+    delivery_type: { uz: 'Tug‘ruq turi', ru: 'Тип родов' },
+    skin_sagging: { uz: 'Teri osilishi', ru: 'Провисание кожи' },
+    highest_weight: { uz: 'Eng yuqori vazn', ru: 'Максимальный вес' },
+    asymmetry: { uz: 'Asimmetriya', ru: 'Асимметрия' },
+    breastfeeding_history: { uz: 'Emizish tarixi', ru: 'История грудного вскармливания' },
+    notes: { uz: 'Izoh', ru: 'Примечание' },
+  };
+
+  const label = labels[key];
+  if (!label) {
+    return formatSummaryKey(key);
+  }
+
+  return isRu ? label.ru : label.uz;
+}
+
+function hasSummaryValue(value: unknown): boolean {
+  if (value === null || value === undefined) {
+    return false;
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim();
+    return trimmed.length > 0 && trimmed !== '-';
+  }
+
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  if (typeof value === 'object') {
+    return Object.keys(value).length > 0;
+  }
+
+  return true;
+}
+
 function stringifySummaryValue(value: unknown): string {
   if (value === null || value === undefined || value === '') {
     return '-';
@@ -169,7 +219,7 @@ function stringifySummaryValue(value: unknown): string {
   return JSON.stringify(value);
 }
 
-function formatAiSummaryText(value: string | undefined): string {
+function formatAiSummaryText(value: string | undefined, isRu: boolean): string {
   const summary = String(value ?? '').trim();
   if (!summary) {
     return '-';
@@ -183,7 +233,8 @@ function formatAiSummaryText(value: string | undefined): string {
   try {
     const parsed = JSON.parse(summary.slice(jsonRange.start, jsonRange.end)) as Record<string, unknown>;
     const jsonText = Object.entries(parsed)
-      .map(([key, fieldValue]) => `${formatSummaryKey(key)}: ${stringifySummaryValue(fieldValue)}`)
+      .filter(([, fieldValue]) => hasSummaryValue(fieldValue))
+      .map(([key, fieldValue]) => `${getAiSummaryJsonLabel(key, isRu)}: ${stringifySummaryValue(fieldValue)}`)
       .join('\n');
 
     const beforeJson = summary.slice(0, jsonRange.start).trim();
@@ -194,10 +245,10 @@ function formatAiSummaryText(value: string | undefined): string {
   }
 }
 
-function AiSummaryView({ value }: { value: string | undefined }) {
+function AiSummaryView({ value, isRu }: { value: string | undefined; isRu: boolean }) {
   return (
     <p className="mt-1 text-sm leading-6 text-text-secondary [overflow-wrap:anywhere] whitespace-pre-wrap">
-      {formatAiSummaryText(value)}
+      {formatAiSummaryText(value, isRu)}
     </p>
   );
 }
@@ -372,7 +423,7 @@ export function ClientsDetailPanel({
 
           <div className="rounded-lg bg-surface-subtle/80 p-3 sm:col-span-2">
             <p className={labelClassName}>{tx.fields.aiSummary}</p>
-            <AiSummaryView value={client.ai_summary} />
+            <AiSummaryView value={client.ai_summary} isRu={isRu} />
           </div>
 
           <div className="rounded-lg bg-surface-subtle/80 p-3 sm:col-span-2">
