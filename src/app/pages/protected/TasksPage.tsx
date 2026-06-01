@@ -50,36 +50,36 @@ const columnToneClasses: Record<
 > = {
 	blue: {
 		top: 'border-t-[#2563eb]',
-		badge: 'bg-[#2563eb]/15 text-[#93c5fd]',
-		add: 'hover:bg-[#2563eb]/10 hover:text-[#93c5fd]',
+		badge: 'bg-primary/12 text-text-accent',
+		add: 'hover:bg-primary/10 hover:text-text-accent',
 	},
 	cyan: {
 		top: 'border-t-[#06b6d4]',
-		badge: 'bg-[#06b6d4]/15 text-[#67e8f9]',
-		add: 'hover:bg-[#06b6d4]/10 hover:text-[#67e8f9]',
+		badge: 'bg-info-bg text-info',
+		add: 'hover:bg-info-bg hover:text-info',
 	},
 	green: {
 		top: 'border-t-[#22c55e]',
-		badge: 'bg-[#22c55e]/15 text-[#86efac]',
-		add: 'hover:bg-[#22c55e]/10 hover:text-[#86efac]',
+		badge: 'bg-success-bg text-success',
+		add: 'hover:bg-success-bg hover:text-success',
 	},
 	amber: {
 		top: 'border-t-[#f59e0b]',
-		badge: 'bg-[#f59e0b]/15 text-[#fcd34d]',
-		add: 'hover:bg-[#f59e0b]/10 hover:text-[#fcd34d]',
+		badge: 'bg-warning-bg text-warning',
+		add: 'hover:bg-warning-bg hover:text-warning',
 	},
 	rose: {
 		top: 'border-t-[#ef4444]',
-		badge: 'bg-[#ef4444]/15 text-[#fca5a5]',
-		add: 'hover:bg-[#ef4444]/10 hover:text-[#fca5a5]',
+		badge: 'bg-danger-bg text-danger',
+		add: 'hover:bg-danger-bg hover:text-danger',
 	},
 }
 
 const priorityClasses: Record<TaskPriority, string> = {
-	low: 'border-emerald-400/40 bg-emerald-400/10 text-emerald-200',
-	medium: 'border-sky-400/40 bg-sky-400/10 text-sky-200',
-	high: 'border-amber-400/40 bg-amber-400/10 text-amber-200',
-	urgent: 'border-rose-400/40 bg-rose-400/10 text-rose-200',
+	low: 'border-success/30 bg-success-bg text-success',
+	medium: 'border-info/30 bg-info-bg text-info',
+	high: 'border-warning/30 bg-warning-bg text-warning',
+	urgent: 'border-danger/30 bg-danger-bg text-danger',
 }
 
 const toneCycle: ColumnTone[] = ['blue', 'cyan', 'green', 'amber', 'rose']
@@ -222,7 +222,13 @@ function TasksPage() {
 	const initialBoard = useMemo(() => createInitialBoard(t), [t])
 	const [board, setBoard] = useState<TaskBoard>(() => readStoredBoard() ?? initialBoard)
 	const [draftColumnId, setDraftColumnId] = useState<string | null>(null)
-	const [draftTitle, setDraftTitle] = useState('')
+	const [createDraft, setCreateDraft] = useState({
+		title: '',
+		description: '',
+		priority: 'medium' as TaskPriority,
+		assignee: '',
+		dueDate: '',
+	})
 	const [newListTitle, setNewListTitle] = useState('')
 	const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
 	const [editDraft, setEditDraft] = useState({
@@ -335,9 +341,20 @@ function TasksPage() {
 		handleDragEnd()
 	}
 
+	const closeCreateModal = () => {
+		setDraftColumnId(null)
+		setCreateDraft({
+			title: '',
+			description: '',
+			priority: 'medium',
+			assignee: '',
+			dueDate: '',
+		})
+	}
+
 	const handleAddTask = (event: FormEvent<HTMLFormElement>, columnId: string) => {
 		event.preventDefault()
-		const title = draftTitle.trim()
+		const title = createDraft.title.trim()
 		if (!title) {
 			return
 		}
@@ -346,10 +363,10 @@ function TasksPage() {
 		const card: TaskCard = {
 			id: cardId,
 			title,
-			description: '',
-			priority: 'medium',
-			assignee: '',
-			dueDate: '',
+			description: createDraft.description.trim(),
+			priority: createDraft.priority,
+			assignee: createDraft.assignee.trim().toUpperCase(),
+			dueDate: createDraft.dueDate,
 			attachments: 0,
 			comments: 0,
 			createdAt: new Date().toISOString(),
@@ -366,8 +383,7 @@ function TasksPage() {
 					: column,
 			),
 		}))
-		setDraftTitle('')
-		setDraftColumnId(null)
+		closeCreateModal()
 	}
 
 	const handleAddList = (event: FormEvent<HTMLFormElement>) => {
@@ -455,41 +471,41 @@ function TasksPage() {
 
 	return (
 		<PageLayout>
-			<section className='overflow-hidden rounded-[28px] border border-white/10 bg-[#0c0f16] text-white shadow-[0_28px_80px_rgba(0,0,0,0.32)]'>
-				<div className='relative overflow-hidden border-b border-white/10 bg-[radial-gradient(circle_at_18%_0%,rgba(37,99,235,0.26),transparent_34%),linear-gradient(135deg,#111827_0%,#151923_52%,#101117_100%)] px-5 py-5 sm:px-8 sm:py-7'>
+			<section className='overflow-hidden rounded-[28px] bg-surface-card text-text-primary shadow-sm ring-1 ring-border-soft/50'>
+				<div className='relative overflow-hidden border-b border-border-soft/50 bg-[radial-gradient(circle_at_18%_0%,rgb(var(--color-primary)/0.18),transparent_34%),linear-gradient(135deg,rgb(var(--color-surface-card))_0%,rgb(var(--color-surface-subtle))_55%,rgb(var(--color-background-subtle))_100%)] px-5 py-5 sm:px-8 sm:py-7'>
 					<div className='absolute right-0 top-0 h-32 w-72 rounded-full bg-primary/10 blur-3xl' />
 					<div className='relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between'>
 						<div className='flex min-w-0 items-start gap-4'>
-							<div className='grid h-14 w-14 shrink-0 place-items-center rounded-2xl border border-white/15 bg-white/10 text-lg font-black shadow-inner'>
+							<div className='grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-primary text-lg font-black text-primary-foreground shadow-sm ring-1 ring-primary/20'>
 								RC
 							</div>
 							<div className='min-w-0'>
-								<p className='mb-1 text-xs font-bold uppercase tracking-[0.28em] text-white/45'>
+								<p className='mb-1 text-xs font-bold uppercase tracking-[0.28em] text-text-muted'>
 									{t('tasks.eyebrow')}
 								</p>
-								<h1 className='truncate font-display text-2xl font-black tracking-[-0.04em] text-white sm:text-3xl'>
+								<h1 className='truncate font-display text-2xl font-black tracking-[-0.04em] text-text-primary sm:text-3xl'>
 									{t('tasks.title')}
 								</h1>
-								<p className='mt-2 max-w-3xl text-sm leading-6 text-white/62'>
+								<p className='mt-2 max-w-3xl text-sm leading-6 text-text-secondary'>
 									{t('tasks.subtitle')}
 								</p>
 							</div>
 						</div>
 
-						<div className='flex flex-wrap items-center gap-2 text-xs font-bold text-white/80'>
-							<span className='rounded-full border border-white/10 bg-white/10 px-3 py-2'>
+						<div className='flex flex-wrap items-center gap-2 text-xs font-bold text-text-secondary'>
+							<span className='rounded-full bg-surface-card px-3 py-2 shadow-sm ring-1 ring-border-soft/50'>
 								{t('tasks.stats.lists')}:{' '}
 								{board.columns.length}
 							</span>
-							<span className='rounded-full border border-white/10 bg-white/10 px-3 py-2'>
+							<span className='rounded-full bg-surface-card px-3 py-2 shadow-sm ring-1 ring-border-soft/50'>
 								{t('tasks.stats.tasks')}: {totalCards}
 							</span>
-							<span className='rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-emerald-100'>
+							<span className='rounded-full bg-success-bg px-3 py-2 text-success shadow-sm ring-1 ring-success/15'>
 								{t('tasks.stats.done')}: {completedCards}
 							</span>
 							<button
 								type='button'
-								className='grid h-10 w-10 place-items-center rounded-2xl border border-white/10 bg-white/5 text-white/80 transition hover:bg-white/10'
+								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-card text-text-secondary shadow-sm ring-1 ring-border-soft/50 transition hover:bg-surface-subtle hover:text-text-primary'
 								aria-label={t('tasks.actions.boardMenu')}
 							>
 								<FiMoreHorizontal className='h-5 w-5' />
@@ -498,22 +514,22 @@ function TasksPage() {
 					</div>
 				</div>
 
-				<div className='border-b border-white/10 bg-[#11141c]/95 px-5 py-4 sm:px-8'>
+				<div className='border-b border-border-soft/50 bg-surface-subtle/70 px-5 py-4 sm:px-8'>
 					<div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
 						<div className='flex flex-wrap items-center gap-3'>
-							<div className='rounded-2xl bg-primary px-5 py-3 text-sm font-black text-white shadow-[0_16px_36px_rgba(37,99,235,0.28)]'>
+							<div className='rounded-2xl bg-primary px-5 py-3 text-sm font-black text-primary-foreground shadow-sm'>
 								{t('tasks.boardName')}
 							</div>
-							<div className='h-8 w-px bg-white/10' />
+							<div className='h-8 w-px bg-border-soft' />
 							<div className='flex items-center gap-2'>
-								<span className='text-xs font-bold uppercase tracking-[0.22em] text-white/38'>
+								<span className='text-xs font-bold uppercase tracking-[0.22em] text-text-muted'>
 									{t('tasks.members')}
 								</span>
 								<div className='flex -space-x-2'>
 									{['AR', 'MK', 'SA'].map(member => (
 										<span
 											key={member}
-											className='grid h-8 w-8 place-items-center rounded-full border-2 border-[#11141c] bg-gradient-to-br from-primary/90 to-rose-500/80 text-[10px] font-black text-white'
+											className='grid h-8 w-8 place-items-center rounded-full border-2 border-surface-subtle bg-gradient-to-br from-primary to-success text-[10px] font-black text-primary-foreground'
 										>
 											{member}
 										</span>
@@ -530,11 +546,11 @@ function TasksPage() {
 								value={newListTitle}
 								onChange={event => setNewListTitle(event.target.value)}
 								placeholder={t('tasks.placeholders.newList')}
-								className='min-h-11 rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-white outline-none transition placeholder:text-white/32 focus:border-primary/60 focus:bg-white/[0.07]'
+								className='min-h-11 rounded-2xl border border-border-soft/60 bg-surface-card px-4 text-sm font-semibold text-text-primary outline-none transition placeholder:text-text-muted focus:border-primary/50 focus:ring-2 focus:ring-primary/20'
 							/>
 							<button
 								type='submit'
-								className='inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 text-sm font-black text-white transition hover:bg-white/15'
+								className='inline-flex min-h-11 items-center justify-center gap-2 rounded-2xl bg-surface-card px-4 text-sm font-black text-text-primary shadow-sm ring-1 ring-border-soft/50 transition hover:bg-surface-muted'
 							>
 								<FiPlus className='h-4 w-4' />
 								{t('tasks.actions.newList')}
@@ -543,7 +559,7 @@ function TasksPage() {
 					</div>
 				</div>
 
-				<div className='overflow-x-auto bg-[#0c0d13] p-5 [scrollbar-color:rgba(255,255,255,0.34)_rgba(255,255,255,0.05)] sm:p-7'>
+				<div className='overflow-x-auto bg-background-subtle p-5 sm:p-7'>
 					<div className='flex min-h-[520px] w-max gap-4 pb-3'>
 						{board.columns.map(column => {
 							const tone = columnToneClasses[column.tone]
@@ -553,11 +569,11 @@ function TasksPage() {
 									key={column.id}
 									onDragOver={event => event.preventDefault()}
 									onDrop={event => handleColumnDrop(event, column.id)}
-									className={`flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-white/10 border-t-4 ${tone.top} bg-[#17181f]/94 shadow-[0_18px_44px_rgba(0,0,0,0.24)] sm:w-[320px]`}
+									className={`flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 ${tone.top} bg-surface-card shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]`}
 								>
-									<div className='flex items-center justify-between gap-3 border-b border-white/8 px-4 py-4'>
+									<div className='flex items-center justify-between gap-3 border-b border-border-soft/45 px-4 py-4'>
 										<div className='flex min-w-0 items-center gap-2'>
-											<h2 className='truncate text-sm font-black text-white'>
+											<h2 className='truncate text-sm font-black text-text-primary'>
 												{column.title}
 											</h2>
 											<span
@@ -568,7 +584,7 @@ function TasksPage() {
 										</div>
 										<button
 											type='button'
-											className='grid h-8 w-8 place-items-center rounded-xl border border-white/10 bg-white/[0.03] text-white/55 transition hover:bg-white/10 hover:text-white'
+											className='grid h-8 w-8 place-items-center rounded-xl bg-surface-subtle text-text-muted transition hover:bg-surface-muted hover:text-text-primary'
 											aria-label={t('tasks.actions.listMenu')}
 										>
 											<FiMoreHorizontal className='h-4 w-4' />
@@ -593,7 +609,7 @@ function TasksPage() {
 													onDragEnd={handleDragEnd}
 													onDragOver={event => event.preventDefault()}
 													onDrop={event => handleCardDrop(event, column, card.id)}
-													className={`cursor-grab rounded-2xl border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] p-3 text-left shadow-[0_14px_32px_rgba(0,0,0,0.18)] transition hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/[0.075] active:cursor-grabbing ${
+													className={`cursor-grab rounded-2xl bg-surface-subtle/75 p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-card hover:ring-border-soft/80 active:cursor-grabbing ${
 														draggingCardId === card.id
 															? 'scale-[0.98] opacity-45 ring-2 ring-primary/50'
 															: ''
@@ -604,15 +620,15 @@ function TasksPage() {
 													>
 														{t(`tasks.priorities.${card.priority}`)}
 													</div>
-													<h3 className='line-clamp-3 text-sm font-black leading-5 text-white'>
+													<h3 className='line-clamp-3 text-sm font-black leading-5 text-text-primary'>
 														{card.title}
 													</h3>
 													{card.description ? (
-														<p className='mt-2 line-clamp-2 text-xs leading-5 text-white/48'>
+														<p className='mt-2 line-clamp-2 text-xs leading-5 text-text-secondary'>
 															{card.description}
 														</p>
 													) : null}
-													<div className='mt-4 flex items-center justify-between border-t border-white/8 pt-3 text-[11px] font-bold text-white/45'>
+													<div className='mt-4 flex items-center justify-between border-t border-border-soft/45 pt-3 text-[11px] font-bold text-text-muted'>
 														<div className='flex items-center gap-2'>
 															<span className='inline-flex items-center gap-1'>
 																<FiClock className='h-3.5 w-3.5' />
@@ -630,7 +646,7 @@ function TasksPage() {
 																</span>
 															) : null}
 															{card.assignee ? (
-																<span className='grid h-6 w-6 place-items-center rounded-full bg-white/10 text-[10px] text-white'>
+																<span className='grid h-6 w-6 place-items-center rounded-full bg-primary/12 text-[10px] text-text-accent'>
 																	{card.assignee}
 																</span>
 															) : null}
@@ -641,50 +657,15 @@ function TasksPage() {
 										})}
 									</div>
 
-									<div className='mt-auto border-t border-white/8 p-3'>
-										{draftColumnId === column.id ? (
-											<form
-												onSubmit={event => handleAddTask(event, column.id)}
-												className='grid gap-2'
-											>
-												<textarea
-													value={draftTitle}
-													onChange={event => setDraftTitle(event.target.value)}
-													placeholder={t('tasks.placeholders.taskTitle')}
-													rows={3}
-													autoFocus
-													className='resize-none rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-white/32 focus:border-primary/60 focus:bg-white/[0.07]'
-												/>
-												<div className='flex gap-2'>
-													<button
-														type='submit'
-														className='inline-flex h-10 flex-1 items-center justify-center rounded-xl bg-primary px-3 text-xs font-black text-white transition hover:bg-primary-hover'
-													>
-														{t('tasks.actions.addTask')}
-													</button>
-													<button
-														type='button'
-														onClick={() => {
-															setDraftColumnId(null)
-															setDraftTitle('')
-														}}
-														className='grid h-10 w-10 place-items-center rounded-xl border border-white/10 text-white/60 transition hover:bg-white/10 hover:text-white'
-														aria-label={t('common.cancel')}
-													>
-														<FiX className='h-4 w-4' />
-													</button>
-												</div>
-											</form>
-										) : (
-											<button
-												type='button'
-												onClick={() => setDraftColumnId(column.id)}
-												className={`inline-flex h-11 w-full items-center gap-2 rounded-2xl px-3 text-sm font-bold text-white/52 transition ${tone.add}`}
-											>
-												<FiPlus className='h-4 w-4' />
-												{t('tasks.actions.addTask')}
-											</button>
-										)}
+									<div className='mt-auto border-t border-border-soft/50 p-3'>
+										<button
+											type='button'
+											onClick={() => setDraftColumnId(column.id)}
+											className={`inline-flex h-11 w-full items-center gap-2 rounded-2xl px-3 text-sm font-bold text-text-secondary transition ${tone.add}`}
+										>
+											<FiPlus className='h-4 w-4' />
+											{t('tasks.actions.addTask')}
+										</button>
 									</div>
 								</div>
 							)
@@ -693,32 +674,38 @@ function TasksPage() {
 				</div>
 			</section>
 
-			{selectedCard ? (
+			{draftColumnId ? (
 				<div
-					className='fixed inset-0 z-[900] flex items-end bg-black/55 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
 					onMouseDown={event => {
 						if (event.target === event.currentTarget) {
-							closeCard()
+							closeCreateModal()
 						}
 					}}
 				>
 					<form
-						onSubmit={handleSaveCard}
-						className='w-full max-w-xl rounded-[28px] border border-white/12 bg-[#11141c] p-5 text-white shadow-[0_30px_90px_rgba(0,0,0,0.42)] sm:p-6'
+						onSubmit={event => handleAddTask(event, draftColumnId)}
+						className='w-full max-w-xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
 								<p className='text-xs font-black uppercase tracking-[0.22em] text-primary'>
-									{t('tasks.modal.eyebrow')}
+									{t('tasks.modal.createEyebrow')}
 								</p>
-								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-white'>
-									{t('tasks.modal.title')}
+								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-text-primary'>
+									{t('tasks.modal.createTitle')}
 								</h2>
+								<p className='mt-1 text-sm font-semibold text-text-secondary'>
+									{
+										board.columns.find(column => column.id === draftColumnId)
+											?.title
+									}
+								</p>
 							</div>
 							<button
 								type='button'
-								onClick={closeCard}
-								className='grid h-10 w-10 place-items-center rounded-2xl border border-white/10 text-white/60 transition hover:bg-white/10 hover:text-white'
+								onClick={closeCreateModal}
+								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-subtle text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
 								aria-label={t('common.cancel')}
 							>
 								<FiX className='h-5 w-5' />
@@ -727,52 +714,55 @@ function TasksPage() {
 
 						<div className='grid gap-3'>
 							<label className='grid gap-1.5'>
-								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-white/42'>
+								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 									{t('tasks.fields.title')}
 								</span>
 								<input
-									value={editDraft.title}
+									value={createDraft.title}
 									onChange={event =>
-										setEditDraft(current => ({
+										setCreateDraft(current => ({
 											...current,
 											title: event.target.value,
 										}))
 									}
-									className='min-h-12 rounded-2xl border border-white/10 bg-white/[0.04] px-4 text-sm font-semibold text-white outline-none transition focus:border-primary/60 focus:bg-white/[0.07]'
+									autoFocus
+									placeholder={t('tasks.placeholders.taskTitle')}
+									className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition placeholder:text-text-muted focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
 								/>
 							</label>
 
 							<label className='grid gap-1.5'>
-								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-white/42'>
+								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 									{t('tasks.fields.description')}
 								</span>
 								<textarea
-									value={editDraft.description}
+									value={createDraft.description}
 									onChange={event =>
-										setEditDraft(current => ({
+										setCreateDraft(current => ({
 											...current,
 											description: event.target.value,
 										}))
 									}
 									rows={4}
-									className='resize-none rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-semibold text-white outline-none transition focus:border-primary/60 focus:bg-white/[0.07]'
+									placeholder={t('tasks.placeholders.description')}
+									className='resize-none rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 py-3 text-sm font-semibold text-text-primary outline-none transition placeholder:text-text-muted focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
 								/>
 							</label>
 
 							<div className='grid gap-3 sm:grid-cols-3'>
 								<label className='grid gap-1.5'>
-									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-white/42'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
 									</span>
 									<select
-										value={editDraft.priority}
+										value={createDraft.priority}
 										onChange={event =>
-											setEditDraft(current => ({
+											setCreateDraft(current => ({
 												...current,
 												priority: event.target.value as TaskPriority,
 											}))
 										}
-										className='min-h-12 rounded-2xl border border-white/10 bg-[#151923] px-4 text-sm font-semibold text-white outline-none transition focus:border-primary/60'
+										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
 									>
 										{(['low', 'medium', 'high', 'urgent'] as TaskPriority[]).map(
 											priority => (
@@ -785,11 +775,161 @@ function TasksPage() {
 								</label>
 
 								<label className='grid gap-1.5'>
-									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-white/42'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.assignee')}
 									</span>
 									<div className='relative'>
-										<FiUser className='pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35' />
+										<FiUser className='pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted' />
+										<input
+											value={createDraft.assignee}
+											onChange={event =>
+												setCreateDraft(current => ({
+													...current,
+													assignee: event.target.value,
+												}))
+											}
+											maxLength={3}
+											className='min-h-12 w-full rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 pl-10 text-sm font-semibold uppercase text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+										/>
+									</div>
+								</label>
+
+								<label className='grid gap-1.5'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+										{t('tasks.fields.dueDate')}
+									</span>
+									<input
+										type='date'
+										value={createDraft.dueDate}
+										onChange={event =>
+											setCreateDraft(current => ({
+												...current,
+												dueDate: event.target.value,
+											}))
+										}
+										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+									/>
+								</label>
+							</div>
+						</div>
+
+						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+							<button
+								type='button'
+								onClick={closeCreateModal}
+								className='inline-flex h-11 items-center justify-center rounded-2xl bg-surface-subtle px-4 text-sm font-black text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
+							>
+								{t('common.cancel')}
+							</button>
+							<button
+								type='submit'
+								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
+							>
+								<FiPlus className='h-4 w-4' />
+								{t('tasks.actions.addTask')}
+							</button>
+						</div>
+					</form>
+				</div>
+			) : null}
+
+			{selectedCard ? (
+				<div
+					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					onMouseDown={event => {
+						if (event.target === event.currentTarget) {
+							closeCard()
+						}
+					}}
+				>
+					<form
+						onSubmit={handleSaveCard}
+						className='w-full max-w-xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+					>
+						<div className='mb-5 flex items-start justify-between gap-4'>
+							<div>
+								<p className='text-xs font-black uppercase tracking-[0.22em] text-primary'>
+									{t('tasks.modal.eyebrow')}
+								</p>
+								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-text-primary'>
+									{t('tasks.modal.title')}
+								</h2>
+							</div>
+							<button
+								type='button'
+								onClick={closeCard}
+								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-subtle text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
+								aria-label={t('common.cancel')}
+							>
+								<FiX className='h-5 w-5' />
+							</button>
+						</div>
+
+						<div className='grid gap-3'>
+							<label className='grid gap-1.5'>
+								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+									{t('tasks.fields.title')}
+								</span>
+								<input
+									value={editDraft.title}
+									onChange={event =>
+										setEditDraft(current => ({
+											...current,
+											title: event.target.value,
+										}))
+									}
+									className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+								/>
+							</label>
+
+							<label className='grid gap-1.5'>
+								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+									{t('tasks.fields.description')}
+								</span>
+								<textarea
+									value={editDraft.description}
+									onChange={event =>
+										setEditDraft(current => ({
+											...current,
+											description: event.target.value,
+										}))
+									}
+									rows={4}
+									className='resize-none rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 py-3 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+								/>
+							</label>
+
+							<div className='grid gap-3 sm:grid-cols-3'>
+								<label className='grid gap-1.5'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+										{t('tasks.fields.priority')}
+									</span>
+									<select
+										value={editDraft.priority}
+										onChange={event =>
+											setEditDraft(current => ({
+												...current,
+												priority: event.target.value as TaskPriority,
+											}))
+										}
+										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
+									>
+										{(['low', 'medium', 'high', 'urgent'] as TaskPriority[]).map(
+											priority => (
+												<option key={priority} value={priority}>
+													{t(`tasks.priorities.${priority}`)}
+												</option>
+											),
+										)}
+									</select>
+								</label>
+
+								<label className='grid gap-1.5'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+										{t('tasks.fields.assignee')}
+									</span>
+									<div className='relative'>
+										<FiUser className='pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted' />
 										<input
 											value={editDraft.assignee}
 											onChange={event =>
@@ -799,13 +939,13 @@ function TasksPage() {
 												}))
 											}
 											maxLength={3}
-											className='min-h-12 w-full rounded-2xl border border-white/10 bg-white/[0.04] px-4 pl-10 text-sm font-semibold uppercase text-white outline-none transition focus:border-primary/60 focus:bg-white/[0.07]'
+											className='min-h-12 w-full rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 pl-10 text-sm font-semibold uppercase text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
 										/>
 									</div>
 								</label>
 
 								<label className='grid gap-1.5'>
-									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-white/42'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.dueDate')}
 									</span>
 									<input
@@ -817,7 +957,7 @@ function TasksPage() {
 												dueDate: event.target.value,
 											}))
 										}
-										className='min-h-12 rounded-2xl border border-white/10 bg-[#151923] px-4 text-sm font-semibold text-white outline-none transition focus:border-primary/60'
+										className='min-h-12 rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 text-sm font-semibold text-text-primary outline-none transition focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
 									/>
 								</label>
 							</div>
@@ -827,14 +967,14 @@ function TasksPage() {
 							<button
 								type='button'
 								onClick={handleDeleteCard}
-								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl border border-rose-400/25 bg-rose-400/10 px-4 text-sm font-black text-rose-100 transition hover:bg-rose-400/18'
+								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-danger-bg px-4 text-sm font-black text-danger transition hover:brightness-95'
 							>
 								<FiTrash2 className='h-4 w-4' />
 								{t('tasks.actions.deleteTask')}
 							</button>
 							<button
 								type='submit'
-								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-white transition hover:bg-primary-hover'
+								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
 							>
 								<FiCheckCircle className='h-4 w-4' />
 								{t('common.save')}

@@ -260,7 +260,8 @@
     },
     "placeholders": {
       "newList": "Yangi ro'yxat nomi",
-      "taskTitle": "Topshiriq nomi"
+      "taskTitle": "Topshiriq nomi",
+      "description": "Topshiriq haqida qisqa izoh"
     },
     "columns": {
       "todo": "Qilinadi",
@@ -283,6 +284,8 @@
       "dueDate": "Muddat"
     },
     "modal": {
+      "createEyebrow": "Yangi topshiriq",
+      "createTitle": "Topshiriq qo'shish",
       "eyebrow": "Topshiriq tafsilotlari",
       "title": "Topshiriqni tahrirlash"
     },
