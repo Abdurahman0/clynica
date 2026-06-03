@@ -45,9 +45,11 @@ interface TaskCard {
 	assignedTo: string
 	assigneeName: string
 	dueDate: string
+	clientId: string
 	clientName: string
 	clientPhone: string
 	kind: string
+	bookingId: string
 	bookingScheduledFor: string
 	attachments: number
 	comments: number
@@ -215,9 +217,11 @@ function toCard(task: CrmTask): TaskCard {
 		assigneeName,
 		assignee: getInitials(assigneeName),
 		dueDate: task.due_at,
+		clientId: task.client ? String(task.client) : '',
 		clientName: task.client_name,
 		clientPhone: task.client_phone,
 		kind: task.kind,
+		bookingId: task.booking ? String(task.booking) : '',
 		bookingScheduledFor: task.booking_scheduled_for,
 		attachments: task.booking ? 1 : 0,
 		comments: task.client ? 1 : 0,
@@ -277,12 +281,15 @@ function TasksPage() {
 	const [assigneeOptionsFromApi, setAssigneeOptionsFromApi] = useState<SelectOption[]>([])
 	const [clientOptionsFromApi, setClientOptionsFromApi] = useState<SelectOption[]>([])
 	const [bookingOptionsFromApi, setBookingOptionsFromApi] = useState<SelectOption[]>([])
+	const [editBookingOptionsFromApi, setEditBookingOptionsFromApi] = useState<SelectOption[]>([])
 	const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
 	const [editDraft, setEditDraft] = useState({
 		title: '',
 		description: '',
 		priority: 'medium' as TaskPriority,
 		assignee: '',
+		client: '',
+		booking: '',
 		dueDate: '',
 	})
 	const draggingRef = useRef<{ cardId: string; fromColumnId: string } | null>(
@@ -463,6 +470,51 @@ function TasksPage() {
 		}
 	}, [canViewBookings, createDraft.client, i18n.language, t])
 
+	useEffect(() => {
+		let isMounted = true
+		const clientId = editDraft.client
+
+		async function loadEditBookings() {
+			if (!clientId || !canViewBookings || !services.clients.listClientBookings) {
+				setEditBookingOptionsFromApi([])
+				return
+			}
+
+			try {
+				const bookings = await services.clients.listClientBookings(clientId)
+				if (!isMounted) {
+					return
+				}
+				setEditBookingOptionsFromApi(
+					bookings.map((booking: ClientBookingItem) => {
+						const dateLabel = formatDueDate(
+							booking.scheduled_for || '',
+							t('tasks.bookings.noDate'),
+							i18n.language,
+						)
+						const statusLabel = t(
+							`tasks.bookingStatuses.${getBookingStatusKey(booking.status)}`,
+						)
+						return {
+							value: String(booking.id),
+							label: `${dateLabel} - ${statusLabel}`,
+						}
+					}),
+				)
+			} catch {
+				if (isMounted) {
+					setEditBookingOptionsFromApi([])
+				}
+			}
+		}
+
+		void loadEditBookings()
+
+		return () => {
+			isMounted = false
+		}
+	}, [canViewBookings, editDraft.client, i18n.language, t])
+
 	const totalCards = Object.keys(board.cards).length
 	const completedCards =
 		board.columns.find(column => column.id === 'done')?.cardIds.length ?? 0
@@ -520,6 +572,13 @@ function TasksPage() {
 			...bookingOptionsFromApi,
 		],
 		[bookingOptionsFromApi, t],
+	)
+	const editBookingOptions = useMemo<SelectOption[]>(
+		() => [
+			{ value: '', label: t('tasks.bookings.none') },
+			...editBookingOptionsFromApi,
+		],
+		[editBookingOptionsFromApi, t],
 	)
 	const selectedCardAssigneeLabel =
 		selectedCard?.assignedTo
@@ -748,6 +807,8 @@ function TasksPage() {
 			description: card.description,
 			priority: card.priority,
 			assignee: card.assignedTo,
+			client: card.clientId,
+			booking: card.bookingId,
 			dueDate: card.dueDate,
 		})
 	}
@@ -786,6 +847,8 @@ function TasksPage() {
 			status: Number(selectedCard.statusId),
 			priority: editDraft.priority,
 			due_at: toApiDateTime(editDraft.dueDate),
+			client: editDraft.client ? Number(editDraft.client) : null,
+			booking: editDraft.booking ? Number(editDraft.booking) : null,
 			assigned_to: editDraft.assignee ? Number(editDraft.assignee) : null,
 		})
 			.then(task => {
@@ -984,6 +1047,18 @@ function TasksPage() {
 															{card.clientPhone ? (
 																<p className='m-0 mt-0.5 truncate'>{card.clientPhone}</p>
 															) : null}
+														</div>
+													) : null}
+													{card.bookingScheduledFor ? (
+														<div className='mt-2 rounded-xl bg-primary/10 px-3 py-2 text-xs font-bold text-text-accent ring-1 ring-primary/15'>
+															<span className='text-text-muted'>
+																{t('tasks.fields.booking')}:{' '}
+															</span>
+															{formatDueDate(
+																card.bookingScheduledFor,
+																t('tasks.bookings.noDate'),
+																i18n.language,
+															)}
 														</div>
 													) : null}
 													<div className='mt-4 flex items-center justify-between border-t border-border-soft/45 pt-3 text-[11px] font-bold text-text-muted'>
@@ -1379,7 +1454,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleSaveCard}
-						className='w-full max-w-xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						className='w-full max-w-3xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1437,7 +1512,7 @@ function TasksPage() {
 								/>
 							</label>
 
-							<div className='grid gap-3 sm:grid-cols-3'>
+							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-5'>
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
@@ -1453,6 +1528,43 @@ function TasksPage() {
 										options={priorityOptions}
 									/>
 								</label>
+
+								{canViewClients ? (
+									<label className='grid gap-1.5'>
+										<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+											{t('tasks.fields.client')}
+										</span>
+										<FilterSelect
+											value={editDraft.client}
+											onChange={value =>
+												setEditDraft(current => ({
+													...current,
+													client: value,
+													booking: '',
+												}))
+											}
+											options={clientOptions}
+										/>
+									</label>
+								) : null}
+
+								{canViewBookings && editDraft.client ? (
+									<label className='grid gap-1.5'>
+										<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+											{t('tasks.fields.booking')}
+										</span>
+										<FilterSelect
+											value={editDraft.booking}
+											onChange={value =>
+												setEditDraft(current => ({
+													...current,
+													booking: value,
+												}))
+											}
+											options={editBookingOptions}
+										/>
+									</label>
+								) : null}
 
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
