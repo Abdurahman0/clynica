@@ -59,7 +59,7 @@ function ConfirmDialog({
           ) : null}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
           <button
             type="button"
             className="inline-flex min-h-10 items-center justify-center rounded-lg bg-surface-subtle px-4 text-sm font-semibold text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60"

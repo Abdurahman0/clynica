@@ -1234,7 +1234,29 @@ function TasksPage() {
 							</div>
 						</div>
 
-						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between'>
+							<div className='flex flex-col-reverse gap-2 sm:flex-row'>
+								<button
+									type='button'
+									onClick={closeListModal}
+									disabled={isSaving}
+									className='inline-flex h-11 items-center justify-center rounded-2xl bg-surface-subtle px-4 text-sm font-black text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
+								>
+									{t('common.cancel')}
+								</button>
+								<button
+									type='submit'
+									disabled={isSaving}
+									className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
+								>
+									{isEditingList ? (
+										<FiCheckCircle className='h-4 w-4' />
+									) : (
+										<FiPlus className='h-4 w-4' />
+									)}
+									{t(isEditingList ? 'tasks.actions.saveList' : 'tasks.actions.newList')}
+								</button>
+							</div>
 							{listDraft.id ? (
 								<button
 									type='button'
@@ -1246,26 +1268,6 @@ function TasksPage() {
 									{t('tasks.actions.deleteList')}
 								</button>
 							) : null}
-							<button
-								type='button'
-								onClick={closeListModal}
-								disabled={isSaving}
-								className='inline-flex h-11 items-center justify-center rounded-2xl bg-surface-subtle px-4 text-sm font-black text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
-							>
-								{t('common.cancel')}
-							</button>
-							<button
-								type='submit'
-								disabled={isSaving}
-								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
-							>
-								{isEditingList ? (
-									<FiCheckCircle className='h-4 w-4' />
-								) : (
-									<FiPlus className='h-4 w-4' />
-								)}
-								{t(isEditingList ? 'tasks.actions.saveList' : 'tasks.actions.newList')}
-							</button>
 						</div>
 					</form>
 				</div>
@@ -1612,7 +1614,15 @@ function TasksPage() {
 							</div>
 						</div>
 
-						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between'>
+							<button
+								type='submit'
+								disabled={isSaving}
+								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
+							>
+								<FiCheckCircle className='h-4 w-4' />
+								{t('common.save')}
+							</button>
 							<button
 								type='button'
 								onClick={() => {
@@ -1625,14 +1635,6 @@ function TasksPage() {
 							>
 								<FiTrash2 className='h-4 w-4' />
 								{t('tasks.actions.deleteTask')}
-							</button>
-							<button
-								type='submit'
-								disabled={isSaving}
-								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-primary px-5 text-sm font-black text-primary-foreground transition hover:bg-primary-accent'
-							>
-								<FiCheckCircle className='h-4 w-4' />
-								{t('common.save')}
 							</button>
 						</div>
 					</form>
