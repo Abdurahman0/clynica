@@ -301,6 +301,12 @@
       "eyebrow": "Topshiriq tafsilotlari",
       "title": "Topshiriqni tahrirlash"
     },
+    "deleteDialog": {
+      "eyebrow": "O'chirishni tasdiqlash",
+      "title": "\"{{title}}\" topshirig'ini o'chirasizmi?",
+      "description": "Bu amalni bekor qilib bo'lmaydi.",
+      "ariaLabel": "Topshiriqni o'chirishni tasdiqlash"
+    },
     "assignees": {
       "unassigned": "Biriktirilmagan"
     },

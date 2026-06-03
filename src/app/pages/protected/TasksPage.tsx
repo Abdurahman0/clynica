@@ -10,6 +10,7 @@ import {
 	FiTrash2,
 	FiX,
 } from 'react-icons/fi'
+import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog'
 import { PageLayout } from '../../../components/shared/page'
 import { FilterSelect } from '../../../components/shared/data'
 import { HandmadeDateTimePicker } from '../../../features/clients/components/HandmadeDatePickers'
@@ -283,6 +284,7 @@ function TasksPage() {
 	const [bookingOptionsFromApi, setBookingOptionsFromApi] = useState<SelectOption[]>([])
 	const [editBookingOptionsFromApi, setEditBookingOptionsFromApi] = useState<SelectOption[]>([])
 	const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
+	const [pendingDeleteCardId, setPendingDeleteCardId] = useState<string | null>(null)
 	const [editDraft, setEditDraft] = useState({
 		title: '',
 		description: '',
@@ -519,6 +521,7 @@ function TasksPage() {
 	const completedCards =
 		board.columns.find(column => column.id === 'done')?.cardIds.length ?? 0
 	const selectedCard = selectedCardId ? board.cards[selectedCardId] : null
+	const pendingDeleteCard = pendingDeleteCardId ? board.cards[pendingDeleteCardId] : null
 	const priorityOptions = useMemo<SelectOption[]>(
 		() =>
 			(['low', 'medium', 'high'] as TaskPriority[]).map(priority => ({
@@ -826,6 +829,7 @@ function TasksPage() {
 	}
 
 	const closeCard = () => {
+		setPendingDeleteCardId(null)
 		setSelectedCardId(null)
 	}
 
@@ -889,19 +893,20 @@ function TasksPage() {
 	}
 
 	const handleDeleteCard = () => {
-		if (!selectedCard || !canManageManualTasks) {
+		if (!pendingDeleteCard || !canManageManualTasks) {
 			return
 		}
+		const cardId = pendingDeleteCard.id
 		setIsSaving(true)
-		void deleteTask(Number(selectedCard.id))
+		void deleteTask(Number(cardId))
 			.then(() => {
 				setBoard(current => {
-					const { [selectedCard.id]: _removed, ...nextCards } = current.cards
+					const { [cardId]: _removed, ...nextCards } = current.cards
 					return {
 						cards: nextCards,
 						columns: current.columns.map(column => ({
 							...column,
-							cardIds: column.cardIds.filter(id => id !== selectedCard.id),
+							cardIds: column.cardIds.filter(id => id !== cardId),
 						})),
 					}
 				})
@@ -912,7 +917,10 @@ function TasksPage() {
 					error instanceof Error ? error.message : t('tasks.errors.deleteFailed'),
 				)
 			})
-			.finally(() => setIsSaving(false))
+			.finally(() => {
+				setPendingDeleteCardId(null)
+				setIsSaving(false)
+			})
 	}
 
 	return (
@@ -937,8 +945,13 @@ function TasksPage() {
 				<div className='border-b border-border-soft/50 bg-surface-subtle/70 px-5 py-4 sm:px-8'>
 					<div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
 						<div className='flex flex-wrap items-center gap-3'>
-							<div className='rounded-2xl bg-primary px-5 py-3 text-sm font-black text-primary-foreground shadow-sm'>
-								{t('tasks.boardName')}
+							<div className='border-l-4 border-primary pl-4'>
+								<p className='m-0 text-[11px] font-black uppercase tracking-[0.22em] text-text-muted'>
+									{t('tasks.eyebrow')}
+								</p>
+								<h2 className='m-0 mt-1 text-lg font-black tracking-[-0.03em] text-text-primary'>
+									{t('tasks.boardName')}
+								</h2>
 							</div>
 						</div>
 
@@ -1221,7 +1234,7 @@ function TasksPage() {
 							</div>
 						</div>
 
-						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between'>
+						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
 							{listDraft.id ? (
 								<button
 									type='button'
@@ -1232,8 +1245,7 @@ function TasksPage() {
 									<FiTrash2 className='h-4 w-4' />
 									{t('tasks.actions.deleteList')}
 								</button>
-							) : <span />}
-							<div className='flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
+							) : null}
 							<button
 								type='button'
 								onClick={closeListModal}
@@ -1254,7 +1266,6 @@ function TasksPage() {
 								)}
 								{t(isEditingList ? 'tasks.actions.saveList' : 'tasks.actions.newList')}
 							</button>
-							</div>
 						</div>
 					</form>
 				</div>
@@ -1601,10 +1612,14 @@ function TasksPage() {
 							</div>
 						</div>
 
-						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-between'>
+						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
 							<button
 								type='button'
-								onClick={handleDeleteCard}
+								onClick={() => {
+									if (selectedCard) {
+										setPendingDeleteCardId(selectedCard.id)
+									}
+								}}
 								disabled={isSaving}
 								className='inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-danger-bg px-4 text-sm font-black text-danger transition hover:brightness-95'
 							>
@@ -1622,6 +1637,27 @@ function TasksPage() {
 						</div>
 					</form>
 				</div>
+			) : null}
+
+			{pendingDeleteCard ? (
+				<ConfirmDialog
+					eyebrow={t('tasks.deleteDialog.eyebrow')}
+					title={t('tasks.deleteDialog.title', {
+						title: pendingDeleteCard.title,
+					})}
+					description={t('tasks.deleteDialog.description')}
+					cancelLabel={t('common.cancel')}
+					confirmLabel={t('tasks.actions.deleteTask')}
+					confirmTone='danger'
+					isBusy={isSaving}
+					onCancel={() => {
+						if (!isSaving) {
+							setPendingDeleteCardId(null)
+						}
+					}}
+					onConfirm={handleDeleteCard}
+					ariaLabel={t('tasks.deleteDialog.ariaLabel')}
+				/>
 			) : null}
 		</PageLayout>
 	)
