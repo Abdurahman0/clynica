@@ -15,6 +15,8 @@ import { FilterSelect } from '../../../components/shared/data'
 import { HandmadeDateTimePicker } from '../../../features/clients/components/HandmadeDatePickers'
 import type { SelectOption } from '../../../types/common'
 import { useAuth } from '../../../auth'
+import { services } from '../../../services'
+import type { Client, ClientBookingItem } from '../../../services/contracts'
 import { listUsers } from '../../../services/api/users.service'
 import {
 	createTask,
@@ -145,6 +147,22 @@ function formatDueDate(value: string, fallback: string, locale: string): string 
 	return `${dateText}, ${hours}:${minutes}`
 }
 
+function getBookingStatusKey(status: string | undefined): string {
+	switch (status) {
+		case 'confirmed':
+			return 'confirmed'
+		case 'came':
+			return 'came'
+		case 'no_show':
+			return 'noShow'
+		case 'cancelled':
+			return 'cancelled'
+		case 'pending':
+		default:
+			return 'pending'
+	}
+}
+
 function getInitials(value: string): string {
 	const normalized = value.trim()
 	if (!normalized) {
@@ -232,6 +250,8 @@ function TasksPage() {
 		hasPermission('can_manage_tasks') && currentUser?.role !== 'operator'
 	const canManageTaskStatuses =
 		hasPermission('can_manage_task_statuses') && currentUser?.role !== 'operator'
+	const canViewClients = hasPermission('can_view_clients')
+	const canViewBookings = hasPermission('can_view_bookings')
 	const [board, setBoard] = useState<TaskBoard>({ columns: [], cards: {} })
 	const [statuses, setStatuses] = useState<CrmTaskStatus[]>([])
 	const [isLoading, setIsLoading] = useState(true)
@@ -244,6 +264,8 @@ function TasksPage() {
 		description: '',
 		priority: 'medium' as TaskPriority,
 		assignee: '',
+		client: '',
+		booking: '',
 		dueDate: '',
 	})
 	const [isListModalOpen, setIsListModalOpen] = useState(false)
@@ -253,6 +275,8 @@ function TasksPage() {
 		tone: 'blue' as ColumnTone,
 	})
 	const [assigneeOptionsFromApi, setAssigneeOptionsFromApi] = useState<SelectOption[]>([])
+	const [clientOptionsFromApi, setClientOptionsFromApi] = useState<SelectOption[]>([])
+	const [bookingOptionsFromApi, setBookingOptionsFromApi] = useState<SelectOption[]>([])
 	const [selectedCardId, setSelectedCardId] = useState<string | null>(null)
 	const [editDraft, setEditDraft] = useState({
 		title: '',
@@ -347,6 +371,98 @@ function TasksPage() {
 		}
 	}, [])
 
+	useEffect(() => {
+		let isMounted = true
+
+		async function loadClients() {
+			if (!canViewClients) {
+				setClientOptionsFromApi([])
+				return
+			}
+
+			try {
+				const result = await services.clients.listClients({
+					page: 1,
+					page_size: 200,
+					ordering: '-created_at',
+				})
+				if (!isMounted) {
+					return
+				}
+				setClientOptionsFromApi(
+					result.items.map((client: Client) => ({
+						value: String(client.id),
+						label: [
+							client.full_name || client.phone || String(client.id),
+							client.phone && client.full_name ? client.phone : '',
+						]
+							.filter(Boolean)
+							.join(' - '),
+					})),
+				)
+			} catch {
+				if (isMounted) {
+					setClientOptionsFromApi([])
+				}
+			}
+		}
+
+		void loadClients()
+
+		return () => {
+			isMounted = false
+		}
+	}, [canViewClients])
+
+	useEffect(() => {
+		let isMounted = true
+		const clientId = createDraft.client
+
+		setCreateDraft(current =>
+			current.booking ? { ...current, booking: '' } : current,
+		)
+
+		async function loadBookings() {
+			if (!clientId || !canViewBookings || !services.clients.listClientBookings) {
+				setBookingOptionsFromApi([])
+				return
+			}
+
+			try {
+				const bookings = await services.clients.listClientBookings(clientId)
+				if (!isMounted) {
+					return
+				}
+				setBookingOptionsFromApi(
+					bookings.map((booking: ClientBookingItem) => {
+						const dateLabel = formatDueDate(
+							booking.scheduled_for || '',
+							t('tasks.bookings.noDate'),
+							i18n.language,
+						)
+						const statusLabel = t(
+							`tasks.bookingStatuses.${getBookingStatusKey(booking.status)}`,
+						)
+						return {
+							value: String(booking.id),
+							label: `${dateLabel} - ${statusLabel}`,
+						}
+					}),
+				)
+			} catch {
+				if (isMounted) {
+					setBookingOptionsFromApi([])
+				}
+			}
+		}
+
+		void loadBookings()
+
+		return () => {
+			isMounted = false
+		}
+	}, [canViewBookings, createDraft.client, i18n.language, t])
+
 	const totalCards = Object.keys(board.cards).length
 	const completedCards =
 		board.columns.find(column => column.id === 'done')?.cardIds.length ?? 0
@@ -391,6 +507,20 @@ function TasksPage() {
 		})
 		return map
 	}, [assigneeOptions])
+	const clientOptions = useMemo<SelectOption[]>(
+		() => [
+			{ value: '', label: t('tasks.clients.none') },
+			...clientOptionsFromApi,
+		],
+		[clientOptionsFromApi, t],
+	)
+	const bookingOptions = useMemo<SelectOption[]>(
+		() => [
+			{ value: '', label: t('tasks.bookings.none') },
+			...bookingOptionsFromApi,
+		],
+		[bookingOptionsFromApi, t],
+	)
 	const selectedCardAssigneeLabel =
 		selectedCard?.assignedTo
 			? assigneeNameById.get(selectedCard.assignedTo) ||
@@ -517,6 +647,8 @@ function TasksPage() {
 			description: '',
 			priority: 'medium',
 			assignee: '',
+			client: '',
+			booking: '',
 			dueDate: '',
 		})
 	}
@@ -535,6 +667,8 @@ function TasksPage() {
 			status: Number(columnId),
 			priority: createDraft.priority,
 			due_at: toApiDateTime(createDraft.dueDate),
+			client: createDraft.client ? Number(createDraft.client) : null,
+			booking: createDraft.booking ? Number(createDraft.booking) : null,
 			assigned_to: createDraft.assignee ? Number(createDraft.assignee) : null,
 		})
 			.then(task => {
@@ -1062,7 +1196,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={event => handleAddTask(event, draftColumnId)}
-						className='w-full max-w-xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						className='w-full max-w-3xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1123,7 +1257,7 @@ function TasksPage() {
 								/>
 							</label>
 
-							<div className='grid gap-3 sm:grid-cols-3'>
+							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-5'>
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
@@ -1139,6 +1273,43 @@ function TasksPage() {
 										options={priorityOptions}
 									/>
 								</label>
+
+								{canViewClients ? (
+									<label className='grid gap-1.5'>
+										<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+											{t('tasks.fields.client')}
+										</span>
+										<FilterSelect
+											value={createDraft.client}
+											onChange={value =>
+											setCreateDraft(current => ({
+												...current,
+												client: value,
+												booking: '',
+											}))
+										}
+										options={clientOptions}
+									/>
+								</label>
+							) : null}
+
+								{canViewBookings && createDraft.client ? (
+									<label className='grid gap-1.5'>
+										<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+											{t('tasks.fields.booking')}
+										</span>
+										<FilterSelect
+											value={createDraft.booking}
+											onChange={value =>
+												setCreateDraft(current => ({
+													...current,
+													booking: value,
+												}))
+											}
+											options={bookingOptions}
+										/>
+									</label>
+								) : null}
 
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>

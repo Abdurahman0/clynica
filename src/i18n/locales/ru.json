@@ -285,6 +285,8 @@
       "listTitle": "Название списка",
       "description": "Описание",
       "priority": "Приоритет",
+      "client": "Клиент",
+      "booking": "Бронь",
       "assignee": "Ответственный",
       "dueDate": "Срок",
       "color": "Цвет"
@@ -301,6 +303,20 @@
     },
     "assignees": {
       "unassigned": "Не назначено"
+    },
+    "clients": {
+      "none": "Клиент не выбран"
+    },
+    "bookings": {
+      "none": "Бронь не выбрана",
+      "noDate": "Дата не указана"
+    },
+    "bookingStatuses": {
+      "pending": "Ожидает",
+      "confirmed": "Подтверждено",
+      "came": "Пришел",
+      "noShow": "Не пришел",
+      "cancelled": "Отменено"
     },
     "colors": {
       "blue": "Синий",

@@ -285,6 +285,8 @@
       "listTitle": "Ro'yxat nomi",
       "description": "Tavsif",
       "priority": "Muhimlik",
+      "client": "Mijoz",
+      "booking": "Bron",
       "assignee": "Mas'ul",
       "dueDate": "Muddat",
       "color": "Rang"
@@ -301,6 +303,20 @@
     },
     "assignees": {
       "unassigned": "Biriktirilmagan"
+    },
+    "clients": {
+      "none": "Mijoz biriktirilmagan"
+    },
+    "bookings": {
+      "none": "Bron biriktirilmagan",
+      "noDate": "Sana yo'q"
+    },
+    "bookingStatuses": {
+      "pending": "Kutilmoqda",
+      "confirmed": "Tasdiqlangan",
+      "came": "Kelgan",
+      "noShow": "Kelmagan",
+      "cancelled": "Bekor qilingan"
     },
     "colors": {
       "blue": "Ko'k",
