@@ -288,6 +288,7 @@ function TasksPage() {
 	const [editDraft, setEditDraft] = useState({
 		title: '',
 		description: '',
+		status: '',
 		priority: 'medium' as TaskPriority,
 		assignee: '',
 		client: '',
@@ -583,6 +584,14 @@ function TasksPage() {
 		],
 		[editBookingOptionsFromApi, t],
 	)
+	const statusOptions = useMemo<SelectOption[]>(
+		() =>
+			board.columns.map(column => ({
+				value: column.id,
+				label: column.title,
+			})),
+		[board.columns],
+	)
 	const selectedCardAssigneeLabel =
 		selectedCard?.assignedTo
 			? assigneeNameById.get(selectedCard.assignedTo) ||
@@ -627,6 +636,13 @@ function TasksPage() {
 				return {
 					...current,
 					columns: nextColumns,
+					cards: {
+						...current.cards,
+						[cardId]: {
+							...current.cards[cardId],
+							statusId: targetColumnId,
+						},
+					},
 				}
 			})
 			void moveTask(Number(cardId), Number(targetColumnId))
@@ -805,6 +821,7 @@ function TasksPage() {
 		setEditDraft({
 			title: card.title,
 			description: card.description,
+			status: card.statusId,
 			priority: card.priority,
 			assignee: card.assignedTo,
 			client: card.clientId,
@@ -845,7 +862,7 @@ function TasksPage() {
 		void updateTask(Number(selectedCard.id), {
 			title,
 			description: editDraft.description.trim(),
-			status: Number(selectedCard.statusId),
+			status: Number(editDraft.status),
 			priority: editDraft.priority,
 			due_at: toApiDateTime(editDraft.dueDate),
 			client: editDraft.client ? Number(editDraft.client) : null,
@@ -1507,14 +1524,33 @@ function TasksPage() {
 								</p>
 							</div>
 
+							{canManageTaskMoves ? (
+								<label className='grid gap-1.5 rounded-2xl bg-surface-subtle p-4 ring-1 ring-border-soft/45'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+										{t('tasks.fields.status')}
+									</span>
+									<FilterSelect
+										value={selectedCard.statusId}
+										onChange={value => moveCard(selectedCard.id, value)}
+										options={statusOptions}
+										disabled={isSaving}
+									/>
+								</label>
+							) : null}
+
 							<div className='grid gap-3 sm:grid-cols-2'>
 								{[
-									{
-										label: t('tasks.fields.status'),
-										value:
-											board.columns.find(column => column.id === selectedCard.statusId)
-												?.title || t('common.na'),
-									},
+									...(!canManageTaskMoves
+										? [
+												{
+													label: t('tasks.fields.status'),
+													value:
+														board.columns.find(
+															column => column.id === selectedCard.statusId,
+														)?.title || t('common.na'),
+												},
+											]
+										: []),
 									{
 										label: t('tasks.fields.priority'),
 										value: t(`tasks.priorities.${selectedCard.priority}`),
@@ -1655,7 +1691,25 @@ function TasksPage() {
 								/>
 							</label>
 
-							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-5'>
+							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-6'>
+								<label className='grid gap-1.5'>
+									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+										{t('tasks.fields.status')}
+									</span>
+									<FilterSelect
+										value={editDraft.status}
+										onChange={value => {
+											setEditDraft(current => ({
+												...current,
+												status: value,
+											}))
+											moveCard(selectedCard.id, value)
+										}}
+										options={statusOptions}
+										disabled={isSaving}
+									/>
+								</label>
+
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
