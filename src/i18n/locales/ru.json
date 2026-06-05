@@ -289,6 +289,10 @@
       "booking": "Бронь",
       "assignee": "Ответственный",
       "dueDate": "Срок",
+      "status": "Статус",
+      "clientPhone": "Телефон клиента",
+      "kind": "Тип задачи",
+      "createdAt": "Дата создания",
       "color": "Цвет"
     },
     "modal": {
@@ -299,6 +303,7 @@
       "createEyebrow": "Новая задача",
       "createTitle": "Добавить задачу",
       "eyebrow": "Детали задачи",
+      "viewTitle": "Просмотр задачи",
       "title": "Редактировать задачу"
     },
     "deleteDialog": {

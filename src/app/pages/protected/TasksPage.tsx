@@ -801,9 +801,6 @@ function TasksPage() {
 	}
 
 	const openCard = (card: TaskCard) => {
-		if (!canManageManualTasks) {
-			return
-		}
 		setSelectedCardId(card.id)
 		setEditDraft({
 			title: card.title,
@@ -1033,7 +1030,7 @@ function TasksPage() {
 													onDragEnd={handleDragEnd}
 													onDragOver={event => event.preventDefault()}
 													onDrop={event => handleCardDrop(event, column, card.id)}
-													className={`cursor-grab rounded-2xl bg-surface-subtle/75 p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-card hover:ring-border-soft/80 active:cursor-grabbing ${
+													className={`${canManageTaskMoves ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} rounded-2xl bg-surface-subtle/75 p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-card hover:ring-border-soft/80 ${
 														draggingCardId === card.id
 															? 'scale-[0.98] opacity-45 ring-2 ring-primary/50'
 															: ''
@@ -1456,7 +1453,140 @@ function TasksPage() {
 				</div>
 			) : null}
 
-			{selectedCard ? (
+			{selectedCard && !canManageManualTasks ? (
+				<div
+					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					onMouseDown={event => {
+						if (event.target === event.currentTarget) {
+							closeCard()
+						}
+					}}
+				>
+					<section
+						className='w-full max-w-2xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						aria-label={t('tasks.modal.viewTitle')}
+					>
+						<div className='mb-5 flex items-start justify-between gap-4'>
+							<div>
+								<p className='text-xs font-black uppercase tracking-[0.22em] text-primary'>
+									{t('tasks.modal.eyebrow')}
+								</p>
+								<h2 className='mt-1 text-xl font-black tracking-[-0.03em] text-text-primary'>
+									{t('tasks.modal.viewTitle')}
+								</h2>
+								<p className='mt-1 text-sm font-semibold text-text-secondary'>
+									{selectedCardAssigneeLabel}
+								</p>
+							</div>
+							<button
+								type='button'
+								onClick={closeCard}
+								className='grid h-10 w-10 place-items-center rounded-2xl bg-surface-subtle text-text-secondary transition hover:bg-surface-muted hover:text-text-primary'
+								aria-label={t('common.cancel')}
+							>
+								<FiX className='h-5 w-5' />
+							</button>
+						</div>
+
+						<div className='grid gap-3'>
+							<div className='rounded-2xl bg-surface-subtle p-4 ring-1 ring-border-soft/45'>
+								<p className='m-0 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+									{t('tasks.fields.title')}
+								</p>
+								<p className='m-0 mt-2 text-base font-black text-text-primary'>
+									{selectedCard.title || t('common.na')}
+								</p>
+							</div>
+
+							<div className='rounded-2xl bg-surface-subtle p-4 ring-1 ring-border-soft/45'>
+								<p className='m-0 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+									{t('tasks.fields.description')}
+								</p>
+								<p className='m-0 mt-2 whitespace-pre-wrap text-sm font-semibold leading-6 text-text-secondary'>
+									{selectedCard.description || t('common.na')}
+								</p>
+							</div>
+
+							<div className='grid gap-3 sm:grid-cols-2'>
+								{[
+									{
+										label: t('tasks.fields.status'),
+										value:
+											board.columns.find(column => column.id === selectedCard.statusId)
+												?.title || t('common.na'),
+									},
+									{
+										label: t('tasks.fields.priority'),
+										value: t(`tasks.priorities.${selectedCard.priority}`),
+									},
+									{
+										label: t('tasks.fields.assignee'),
+										value: selectedCardAssigneeLabel,
+									},
+									{
+										label: t('tasks.fields.dueDate'),
+										value: formatDueDate(
+											selectedCard.dueDate,
+											t('tasks.noDueDate'),
+											i18n.language,
+										),
+									},
+									{
+										label: t('tasks.fields.client'),
+										value:
+											selectedCard.clientName ||
+											selectedCard.clientPhone ||
+											t('common.na'),
+									},
+									{
+										label: t('tasks.fields.clientPhone'),
+										value: selectedCard.clientPhone || t('common.na'),
+									},
+									{
+										label: t('tasks.fields.booking'),
+										value: selectedCard.bookingScheduledFor
+											? formatDueDate(
+													selectedCard.bookingScheduledFor,
+													t('tasks.bookings.noDate'),
+													i18n.language,
+												)
+											: t('common.na'),
+									},
+									{
+										label: t('tasks.fields.kind'),
+										value: t([
+											`tasks.kinds.${selectedCard.kind}`,
+											'tasks.kinds.unknown',
+										]),
+									},
+									{
+										label: t('tasks.fields.createdAt'),
+										value: formatDueDate(
+											selectedCard.createdAt,
+											t('common.na'),
+											i18n.language,
+										),
+									},
+								].map(item => (
+									<div
+										key={item.label}
+										className='rounded-2xl bg-surface-subtle px-4 py-3 ring-1 ring-border-soft/45'
+									>
+										<p className='m-0 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
+											{item.label}
+										</p>
+										<p className='m-0 mt-1 break-words text-sm font-bold text-text-primary'>
+											{item.value}
+										</p>
+									</div>
+								))}
+							</div>
+						</div>
+					</section>
+				</div>
+			) : null}
+
+			{selectedCard && canManageManualTasks ? (
 				<div
 					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
 					onMouseDown={event => {

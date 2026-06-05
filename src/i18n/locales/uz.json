@@ -288,6 +288,10 @@
       "client": "Mijoz",
       "booking": "Bron",
       "assignee": "Mas'ul",
+      "status": "Holat",
+      "clientPhone": "Mijoz telefoni",
+      "kind": "Topshiriq turi",
+      "createdAt": "Yaratilgan sana",
       "dueDate": "Muddat",
       "color": "Rang"
     },
@@ -299,6 +303,7 @@
       "createEyebrow": "Yangi topshiriq",
       "createTitle": "Topshiriq qo'shish",
       "eyebrow": "Topshiriq tafsilotlari",
+      "viewTitle": "Topshiriqni ko'rish",
       "title": "Topshiriqni tahrirlash"
     },
     "deleteDialog": {
