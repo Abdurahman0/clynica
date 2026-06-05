@@ -105,8 +105,17 @@ function FilterSelect({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >
-        <span className="block min-w-0 flex-1 truncate pr-1">
-          {selectedOption?.label ?? t('shared.filterSelect.select')}
+        <span className="flex min-w-0 flex-1 items-center gap-2 pr-1">
+          {selectedOption?.color ? (
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-border-soft/60"
+              style={{ backgroundColor: selectedOption.color }}
+              aria-hidden="true"
+            />
+          ) : null}
+          <span className="block min-w-0 flex-1 truncate">
+            {selectedOption?.label ?? t('shared.filterSelect.select')}
+          </span>
         </span>
         <AppIcon
           name="chevron-down"
@@ -154,7 +163,16 @@ function FilterSelect({
                   aria-disabled={isDisabled}
                   disabled={isDisabled}
                 >
-                  <span className="block min-w-0 flex-1 truncate">{option.label}</span>
+                  <span className="flex min-w-0 flex-1 items-center gap-2">
+                    {option.color ? (
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-border-soft/60"
+                        style={{ backgroundColor: option.color }}
+                        aria-hidden="true"
+                      />
+                    ) : null}
+                    <span className="block min-w-0 flex-1 truncate">{option.label}</span>
+                  </span>
                   {isSelected ? (
                     <span className="inline-flex h-2 w-2 shrink-0 rounded-full bg-primary" />
                   ) : null}

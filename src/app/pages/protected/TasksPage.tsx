@@ -60,6 +60,7 @@ interface TaskCard {
 interface TaskColumn {
 	id: string
 	title: string
+	color: string
 	tone: ColumnTone
 	cardIds: string[]
 }
@@ -199,6 +200,7 @@ function toColumn(status: CrmTaskStatus, tasks: CrmTask[]): TaskColumn {
 	return {
 		id: String(status.id),
 		title: status.name,
+		color: status.color,
 		tone: resolveToneFromColor(status.color),
 		cardIds: tasks
 			.filter(task => task.status === status.id)
@@ -589,6 +591,7 @@ function TasksPage() {
 			board.columns.map(column => ({
 				value: column.id,
 				label: column.title,
+				color: column.color,
 			})),
 		[board.columns],
 	)
@@ -604,6 +607,13 @@ function TasksPage() {
 			toneCycle.map(tone => ({
 				value: tone,
 				label: t(`tasks.colors.${tone}`),
+				color: {
+					blue: '#2563eb',
+					cyan: '#06b6d4',
+					green: '#16a34a',
+					amber: '#f59e0b',
+					rose: '#ef4444',
+				}[tone],
 			})),
 		[t],
 	)
@@ -1004,10 +1014,16 @@ function TasksPage() {
 									key={column.id}
 									onDragOver={event => event.preventDefault()}
 									onDrop={event => handleColumnDrop(event, column.id)}
-									className={`flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 ${tone.top} bg-surface-card shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]`}
+									className='flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 bg-surface-card shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]'
+									style={{ borderTopColor: column.color }}
 								>
 									<div className='flex items-center justify-between gap-3 border-b border-border-soft/45 px-4 py-4'>
 										<div className='flex min-w-0 items-center gap-2'>
+											<span
+												className='h-3 w-3 shrink-0 rounded-full ring-4 ring-border-soft/35'
+												style={{ backgroundColor: column.color }}
+												aria-hidden='true'
+											/>
 											<h2 className='truncate text-sm font-black text-text-primary'>
 												{column.title}
 											</h2>
@@ -1172,7 +1188,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleAddList}
-						className='w-full max-w-lg rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1298,7 +1314,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={event => handleAddTask(event, draftColumnId)}
-						className='w-full max-w-3xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1480,7 +1496,7 @@ function TasksPage() {
 					}}
 				>
 					<section
-						className='w-full max-w-2xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 						aria-label={t('tasks.modal.viewTitle')}
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
@@ -1548,6 +1564,9 @@ function TasksPage() {
 														board.columns.find(
 															column => column.id === selectedCard.statusId,
 														)?.title || t('common.na'),
+													color: board.columns.find(
+														column => column.id === selectedCard.statusId,
+													)?.color,
 												},
 											]
 										: []),
@@ -1611,9 +1630,18 @@ function TasksPage() {
 										<p className='m-0 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 											{item.label}
 										</p>
-										<p className='m-0 mt-1 break-words text-sm font-bold text-text-primary'>
-											{item.value}
-										</p>
+										<div className='mt-1 flex items-center gap-2'>
+											{'color' in item && item.color ? (
+												<span
+													className='h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-border-soft/60'
+													style={{ backgroundColor: item.color }}
+													aria-hidden='true'
+												/>
+											) : null}
+											<p className='m-0 break-words text-sm font-bold text-text-primary'>
+												{item.value}
+											</p>
+										</div>
 									</div>
 								))}
 							</div>
@@ -1633,7 +1661,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleSaveCard}
-						className='w-full max-w-3xl rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:p-6'
+						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>

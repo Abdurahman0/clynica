@@ -29,6 +29,7 @@ export interface SelectOption {
   value: string;
   label: string;
   description?: string;
+  color?: string;
   disabled?: boolean;
 }
 
