@@ -46,6 +46,36 @@ export interface ClientBookingItem {
 	created_at?: string
 }
 
+export interface BookingClientSummary {
+	id: string
+	full_name: string
+	phone?: string
+	source?: string
+	status?: string
+	status_name?: string
+	address_or_region?: string
+	ai_summary?: string
+	notes?: string
+	created_at?: string
+	updated_at?: string
+}
+
+export interface BookingItem extends BaseEntity {
+	client_id?: string
+	client?: BookingClientSummary | null
+	requested_date?: string | null
+	scheduled_for?: string
+	duration_minutes?: number
+	ends_at?: string
+	status?: string
+	calendar_event_id?: string
+	confirmed_by_name?: string
+}
+
+export interface BookingsListParams extends ListParams {
+	client?: string
+}
+
 export interface CRMStatusItem {
 	id: string
 	name: string
@@ -138,6 +168,9 @@ export interface IClientsService {
 	createStatus?(input: CreateCRMStatusInput): Promise<CRMStatusItem>
 	updateStatus?(id: string, input: UpdateCRMStatusInput): Promise<CRMStatusItem>
 	deleteStatus?(id: string): Promise<void>
+	listBookings?(
+		params?: BookingsListParams,
+	): Promise<PaginatedResponse<BookingItem>>
 	listClientBookings?(clientId: string): Promise<ClientBookingItem[]>
 	createClientBooking?(
 		clientId: string,

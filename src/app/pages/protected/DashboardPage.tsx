@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ru, uz } from 'date-fns/locale'
 import { type DateRange } from 'react-day-picker'
+import { useNavigate } from 'react-router-dom'
 import AppIcon from '../../../components/shared/icons/AppIcon'
 import { PageLayout } from '../../../components/shared/page'
 import { Calendar } from '../../../components/ui/calendar'
@@ -21,6 +22,7 @@ import {
 	formatLocalizedDate,
 	formatUzMonthYear,
 } from '../../../i18n/date-format'
+import { routePaths } from '../../../config/routes'
 import { formatCurrencyAmount } from '../../../constants'
 import { services } from '../../../services'
 import type {
@@ -48,6 +50,7 @@ interface PieSlice extends DashboardBreakdownItem {
 const SOURCE_COLORS: Record<string, string> = {
 	telegram: '#2AABEE',
 	instagram: '#E1306C',
+	manual: '#16A34A',
 }
 
 const SOURCE_COLORS_FALLBACK = ['#0EA5E9', '#E1306C', '#10B981', '#F59E0B']
@@ -398,6 +401,7 @@ function DashboardIntervalDropdown({
 
 function DashboardPage() {
 	const { t, i18n } = useTranslation()
+	const navigate = useNavigate()
 	const locale = i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'
 	const calendarLocale = i18n.language === 'ru' ? ru : uz
 	const [overview, setOverview] = useState<DashboardOverview | null>(null)
@@ -592,7 +596,12 @@ function DashboardPage() {
 			]!,
 		share: (item.count / leadStatusTotal) * 100,
 	}))
-	const metricCards: Array<{ label: string; value: string; hint?: string }> = [
+	const metricCards: Array<{
+		label: string
+		value: string
+		hint?: string
+		path?: string
+	}> = [
 		{
 			label: t('dashboard.metrics.totalClients', {
 				defaultValue: t('dashboard.metrics.customers'),
@@ -601,6 +610,7 @@ function DashboardPage() {
 				(overview as any)?.crm_metrics?.total_clients ?? overview.clients ?? 0,
 				locale,
 			),
+			path: routePaths.clients,
 		},
 		{
 			label: t('dashboard.metrics.activeBookings', { defaultValue: 'Active bookings' }),
@@ -608,6 +618,7 @@ function DashboardPage() {
 				(overview as any)?.crm_metrics?.active_bookings ?? overview.contracts ?? 0,
 				locale,
 			),
+			path: routePaths.bookings,
 		},
 		{
 			label: t('dashboard.metrics.cameCount', { defaultValue: 'Came' }),
@@ -670,7 +681,25 @@ function DashboardPage() {
 					{metricCards.map(card => (
 						<article
 							key={card.label}
-							className='min-w-0 overflow-hidden rounded-xl bg-surface-card p-4 shadow-sm ring-1 ring-border-soft/40 transition duration-base hover:shadow-md hover:ring-border-soft/60'
+							className={[
+								'min-w-0 overflow-hidden rounded-xl bg-surface-card p-4 shadow-sm ring-1 ring-border-soft/40 transform-gpu transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform',
+								card.path
+									? 'cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg hover:ring-primary/35'
+									: 'hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-md hover:ring-border-soft/60',
+							].join(' ')}
+							onClick={card.path ? () => navigate(card.path!) : undefined}
+							role={card.path ? 'button' : undefined}
+							tabIndex={card.path ? 0 : undefined}
+							onKeyDown={
+								card.path
+									? event => {
+											if (event.key === 'Enter' || event.key === ' ') {
+												event.preventDefault()
+												navigate(card.path!)
+											}
+										}
+									: undefined
+							}
 						>
 							<p className='text-[11px] font-semibold uppercase tracking-[0.14em] text-text-muted'>
 								{card.label}

@@ -54,12 +54,31 @@ export const moduleMap: AppModule[] = [
     notes: 'Client management (converted leads).',
   },
   {
+    id: 'bookings',
+    label: 'Bookings',
+    description: 'Daily consultation schedule and booking overview.',
+    category: 'operational',
+    priority: 'high',
+    priorityOrder: 3,
+    allowedRoles: ['developer', 'admin', 'operator'],
+    accessStrategy: 'permission-based',
+    pages: [
+      {
+        id: 'bookings-calendar',
+        label: 'Bookings',
+        kind: 'overview',
+        path: '/bookings',
+      },
+    ],
+    notes: 'Simple calendar-style booking schedule.',
+  },
+  {
     id: 'chats',
     label: 'Chats',
     description: 'Client communication and messaging.',
     category: 'operational',
     priority: 'medium',
-    priorityOrder: 3,
+    priorityOrder: 4,
     allowedRoles: ['developer', 'admin', 'operator'],
     accessStrategy: 'permission-based',
     pages: [
@@ -84,7 +103,7 @@ export const moduleMap: AppModule[] = [
     description: 'Team tasks and kanban workflow.',
     category: 'operational',
     priority: 'medium',
-    priorityOrder: 4,
+    priorityOrder: 5,
     allowedRoles: ['developer', 'admin', 'operator'],
     accessStrategy: 'permission-based',
     pages: [
@@ -103,7 +122,7 @@ export const moduleMap: AppModule[] = [
     description: 'Third-party integrations and API setup.',
     category: 'system',
     priority: 'low',
-    priorityOrder: 5,
+    priorityOrder: 6,
     allowedRoles: ['developer'],
     accessStrategy: 'static-role-based',
     pages: [
@@ -122,7 +141,7 @@ export const moduleMap: AppModule[] = [
     description: 'Team members, roles, and permissions management.',
     category: 'system',
     priority: 'low',
-    priorityOrder: 6,
+    priorityOrder: 7,
     allowedRoles: ['developer', 'admin'],
     accessStrategy: 'permission-based',
     pages: [
@@ -141,7 +160,7 @@ export const moduleMap: AppModule[] = [
     description: 'AI agent configuration and behavior.',
     category: 'intelligence',
     priority: 'low',
-    priorityOrder: 7,
+    priorityOrder: 8,
     allowedRoles: ['developer'],
     accessStrategy: 'static-role-based',
     pages: [

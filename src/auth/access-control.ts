@@ -7,6 +7,7 @@ import type { AuthenticatedUser, PermissionCode } from './types'
 const ROUTE_REQUIRED_PERMISSIONS: Partial<Record<AppRouteId, PermissionCode>> =
 	{
 		clients: 'can_view_clients',
+		bookings: 'can_view_bookings',
 		chats: 'can_access_chats',
 		tasks: 'can_view_tasks',
 		users: 'can_view_users',
@@ -43,6 +44,7 @@ const PUBLIC_ROUTE_IDS = new Set<AppRouteId>([
 const MODULE_PATH_BY_ROUTE_ID: Record<string, string> = {
 	dashboard: routePaths.dashboard,
 	clients: routePaths.clients,
+	bookings: routePaths.bookings,
 	chats: routePaths.chats,
 	tasks: routePaths.tasks,
 	users: routePaths.users,

@@ -19,6 +19,7 @@ import AppShell from '../../layout/AppShell'
 import RouteErrorBoundary from './RouteErrorBoundary'
 import AccessDeniedPage from '../pages/public/AccessDeniedPage'
 import AiSettingsPage from '../pages/protected/AiSettingsPage'
+import BookingsPage from '../pages/protected/BookingsPage'
 import ChatsPage from '../pages/protected/ChatsPage'
 import ClientsPage from '../pages/protected/ClientsPage'
 import DashboardPage from '../pages/protected/DashboardPage'
@@ -33,6 +34,7 @@ type RoutedPageId = Exclude<AppRouteId, 'home'>
 const pageRegistry: Record<RoutedPageId, ComponentType> = {
 	'access-denied': AccessDeniedPage,
 	'ai-settings': AiSettingsPage,
+	bookings: BookingsPage,
 	chats: ChatsPage,
 	clients: ClientsPage,
 	dashboard: DashboardPage,

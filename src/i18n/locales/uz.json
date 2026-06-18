@@ -56,6 +56,10 @@
       "title": "Mijozlar",
       "description": "Mijozlar ro'yxati va profillari."
     },
+    "bookings": {
+      "title": "Bronlar",
+      "description": "Konsultatsiyalar kunlik jadvali va bronlar ko'rinishi."
+    },
     "tasks": {
       "title": "Topshiriqlar",
       "description": "Jamoa topshiriqlari va kanban jarayoni."
@@ -136,6 +140,7 @@
       "leads": "Lid oqimi",
       "customers": "Mijozlar",
       "clients": "Mijozlar",
+      "bookings": "Kalendar",
       "tasks": "Kanban",
       "products": "Katalog",
       "contracts": "Shartnomalar",
@@ -356,6 +361,41 @@
       "statusColorsDescription": "Backend rang qiymatlari mijoz badge'larida ko'rinishini tasdiqlash.",
       "dashboardChart": "Dashboard line chartni yaxshilash",
       "dashboardChartDescription": "Daily statsdan faqat mijozlar va chatlar seriyasini qoldirish."
+    }
+  },
+  "bookings": {
+    "page": {
+      "eyebrow": "Kunlik jadval",
+      "title": "Bronlar",
+      "subtitle": "Google Calendar uslubidagi sodda kunlik bron ko'rinishi.",
+      "today": "Bugun",
+      "refresh": "Yangilash",
+      "loading": "Bronlar yuklanmoqda...",
+      "errorTitle": "Bronlarni yuklab bo'lmadi",
+      "errorDescription": "Bronlar jadvalini olishda xatolik yuz berdi.",
+      "errorInline": "Ma'lumotni yangilashda xatolik bo'ldi.",
+      "selectedDate": "Tanlangan sana",
+      "total": "bron",
+      "timelineEyebrow": "Kalendar",
+      "timelineTitle": "Kunlik jadval",
+      "emptyTitle": "Bu kunga bron yo'q",
+      "emptyDescription": "Boshqa sanani tanlang yoki ma'lumotni yangilang.",
+      "detailsEyebrow": "Tafsilot",
+      "detailsTitle": "Bron tafsiloti",
+      "noSelectionTitle": "Bron tanlanmagan",
+      "noSelectionDescription": "Jadvaldan bronni tanlasangiz, tafsilot shu yerda ko'rinadi.",
+      "openClient": "Mijozni ochish",
+      "calendarConnected": "Google Calendar bilan bog'langan",
+      "calendarPending": "Calendar hali ulanmagan",
+      "durationValue": "{{count}} daqiqa",
+      "fields": {
+        "phone": "Telefon",
+        "source": "Manba",
+        "requestedDate": "So'ralgan sana",
+        "duration": "Davomiyligi",
+        "calendar": "Calendar",
+        "summary": "Qisqa izoh"
+      }
     }
   },
   "dashboard": {

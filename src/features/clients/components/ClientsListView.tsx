@@ -156,6 +156,9 @@ export function ClientsListView({
   onStatusesCountChange,
 }: ClientsListViewProps) {
   const { t } = useTranslation();
+  const [isPhoneLayout, setIsPhoneLayout] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 640 : false,
+  );
 
   const tx = {
     searchPlaceholder: t('clients.list.searchPlaceholder'),
@@ -209,6 +212,18 @@ export function ClientsListView({
     page_size: 20,
     ordering: '-updated_at',
   });
+
+  useEffect(() => {
+    function handleResize() {
+      setIsPhoneLayout(window.innerWidth < 640);
+    }
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const fetcher = useCallback(
     (params?: ClientsListParams) => services.clients.listClients(params),
@@ -334,126 +349,147 @@ export function ClientsListView({
     });
   }, [statusCatalog]);
 
-  const columns = useMemo<DataTableColumn<Client>[]>(
-    () => [
-      {
-        key: 'full_name',
-        label: tx.columns.name,
-        render: (client) => (
-          <div className="grid gap-0.5">
-            <span className={tablePrimaryTextClassName}>{client.full_name}</span>
-            <span className={tableSecondaryTextClassName}>{client.notes || '-'}</span>
-          </div>
-        ),
-      },
-      {
-        key: 'phone',
-        label: tx.columns.phone,
-        render: (client) => <span className={tablePrimaryTextClassName}>{client.phone || '-'}</span>,
-      },
-      {
-        key: 'source_platform',
-        label: tx.columns.source,
-        render: (client) => (
-          <span className={tablePrimaryTextClassName}>
-            {client.source_platform === 'manual'
-              ? tx.sourceManual
-              : client.source_platform === 'telegram'
-              ? 'Telegram'
-              : client.source_platform === 'instagram'
-              ? 'Instagram'
-              : (client.source_platform_label || client.source_platform || '-')}
-          </span>
-        ),
-      },
-      {
-        key: 'status',
-        label: tx.columns.status,
-        render: (client) => {
-          const normalizedStatus = String(client.status ?? '').trim().toLowerCase();
-          const hasStatusValue =
-            normalizedStatus.length > 0 &&
-            normalizedStatus !== 'unknown' &&
-            normalizedStatus !== 'none' &&
-            normalizedStatus !== 'null' &&
-            normalizedStatus !== 'undefined' &&
-            normalizedStatus !== '-';
-          const hasStatusLabel = !isPlaceholderStatusText(client.status_label);
+  const columns = useMemo<DataTableColumn<Client>[]>(() => {
+    const nameColumn: DataTableColumn<Client> = {
+      key: 'full_name',
+      label: tx.columns.name,
+      render: (client) => (
+        <div className="grid gap-0.5">
+          <span className={tablePrimaryTextClassName}>{client.full_name}</span>
+          <span className={tableSecondaryTextClassName}>{client.notes || '-'}</span>
+        </div>
+      ),
+    };
 
-          const resolvedLabel =
-            (hasStatusLabel ? client.status_label : undefined) ||
-            (hasStatusValue ? statusLabelByValue.get(String(client.status)) : undefined) ||
-            (hasStatusValue ? String(client.status) : tx.noStatus);
-          const statusColor =
-            hasStatusValue && client.status
-              ? statusColorByValue.get(String(client.status))
-              : undefined;
-
-          if (statusColor) {
-            const normalizedColor =
-              /^#([0-9a-fA-F]{6})$/.test(statusColor) ? statusColor : '#9AA4AE';
-            const palette = getStatusBadgePalette(normalizedColor);
-            return (
-              <span
-                className="inline-flex min-h-6 items-center rounded-full px-2.5 text-[12px] font-semibold tracking-[0.02em]"
-                style={{
-                  backgroundColor: palette.background,
-                  color: palette.text,
-                  border: `1px solid ${palette.border}`,
+    const actionColumn: DataTableColumn<Client> | null = canManageClients
+      ? {
+          key: 'actions',
+          label: tx.columns.actions,
+          align: 'right',
+          render: (client: Client) => (
+            <div className="flex items-center justify-end gap-1.5">
+              <button
+                type="button"
+                className={actionButtonClassName}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onEditClient?.(client);
                 }}
+                aria-label={tx.edit}
               >
-                {resolvedLabel}
-              </span>
-            );
-          }
+                <FiEdit2 className="h-3.5 w-3.5" />
+              </button>
+              <button
+                type="button"
+                className={actionButtonClassName}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDeleteClient?.(client);
+                }}
+                aria-label={tx.delete}
+              >
+                <FiTrash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ),
+        }
+      : null;
 
+    const phoneColumn: DataTableColumn<Client> = {
+      key: 'phone',
+      label: tx.columns.phone,
+      render: (client) => <span className={tablePrimaryTextClassName}>{client.phone || '-'}</span>,
+    };
+
+    const sourceColumn: DataTableColumn<Client> = {
+      key: 'source_platform',
+      label: tx.columns.source,
+      render: (client) => (
+        <span className={tablePrimaryTextClassName}>
+          {client.source_platform === 'manual'
+            ? tx.sourceManual
+            : client.source_platform === 'telegram'
+            ? 'Telegram'
+            : client.source_platform === 'instagram'
+            ? 'Instagram'
+            : (client.source_platform_label || client.source_platform || '-')}
+        </span>
+      ),
+    };
+
+    const statusColumn: DataTableColumn<Client> = {
+      key: 'status',
+      label: tx.columns.status,
+      render: (client) => {
+        const normalizedStatus = String(client.status ?? '').trim().toLowerCase();
+        const hasStatusValue =
+          normalizedStatus.length > 0 &&
+          normalizedStatus !== 'unknown' &&
+          normalizedStatus !== 'none' &&
+          normalizedStatus !== 'null' &&
+          normalizedStatus !== 'undefined' &&
+          normalizedStatus !== '-';
+        const hasStatusLabel = !isPlaceholderStatusText(client.status_label);
+
+        const resolvedLabel =
+          (hasStatusLabel ? client.status_label : undefined) ||
+          (hasStatusValue ? statusLabelByValue.get(String(client.status)) : undefined) ||
+          (hasStatusValue ? String(client.status) : tx.noStatus);
+        const statusColor =
+          hasStatusValue && client.status
+            ? statusColorByValue.get(String(client.status))
+            : undefined;
+
+        if (statusColor) {
+          const normalizedColor =
+            /^#([0-9a-fA-F]{6})$/.test(statusColor) ? statusColor : '#9AA4AE';
+          const palette = getStatusBadgePalette(normalizedColor);
           return (
-            <StatusBadge
-              status={hasStatusValue ? String(client.status) : 'neutral'}
-              label={resolvedLabel}
-              tone={hasStatusValue ? getStatusTone(client.status, resolvedLabel) : 'neutral'}
-            />
+            <span
+              className="inline-flex min-h-6 items-center rounded-full px-2.5 text-[12px] font-semibold tracking-[0.02em]"
+              style={{
+                backgroundColor: palette.background,
+                color: palette.text,
+                border: `1px solid ${palette.border}`,
+              }}
+            >
+              {resolvedLabel}
+            </span>
           );
-        },
+        }
+
+        return (
+          <StatusBadge
+            status={hasStatusValue ? String(client.status) : 'neutral'}
+            label={resolvedLabel}
+            tone={hasStatusValue ? getStatusTone(client.status, resolvedLabel) : 'neutral'}
+          />
+        );
       },
-      ...(canManageClients
-        ? [
-            {
-              key: 'actions',
-              label: tx.columns.actions,
-              align: 'right' as const,
-              render: (client: Client) => (
-                <div className="flex items-center justify-end gap-1.5">
-                  <button
-                    type="button"
-                    className={actionButtonClassName}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onEditClient?.(client);
-                    }}
-                    aria-label={tx.edit}
-                  >
-                    <FiEdit2 className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    className={actionButtonClassName}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onDeleteClient?.(client);
-                    }}
-                    aria-label={tx.delete}
-                  >
-                    <FiTrash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              ),
-            },
-          ]
-        : []),
-    ],
-    [canManageClients, onDeleteClient, onEditClient, statusColorByValue, statusLabelByValue, tx],
-  );
+    };
+
+    const desktopColumns = [
+      nameColumn,
+      phoneColumn,
+      sourceColumn,
+      statusColumn,
+      ...(actionColumn ? [actionColumn] : []),
+    ];
+
+    if (!isPhoneLayout || !actionColumn) {
+      return desktopColumns;
+    }
+
+    return [nameColumn, actionColumn, phoneColumn, sourceColumn, statusColumn];
+  }, [
+    canManageClients,
+    isPhoneLayout,
+    onDeleteClient,
+    onEditClient,
+    statusColorByValue,
+    statusLabelByValue,
+    tx,
+  ]);
 
   const statusColumns = useMemo<DataTableColumn<CRMStatusItem>[]>(
     () => [

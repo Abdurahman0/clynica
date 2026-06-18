@@ -5,6 +5,9 @@
 import { BaseCrudAdapter } from './base-crud.adapter'
 import { ApiRequestor } from './api-requestor'
 import type {
+	BookingClientSummary,
+	BookingItem,
+	BookingsListParams,
 	Client,
 	ClientBookingItem,
 	ClientsListParams,
@@ -40,6 +43,21 @@ function mapSource(value: unknown): Client['source_platform'] {
 	return 'manual'
 }
 
+function asNumber(value: unknown): number | undefined {
+	if (typeof value === 'number' && Number.isFinite(value)) {
+		return value
+	}
+
+	if (typeof value === 'string') {
+		const parsed = Number(value)
+		if (Number.isFinite(parsed)) {
+			return parsed
+		}
+	}
+
+	return undefined
+}
+
 function mapStatusItem(dto: unknown): CRMStatusItem | null {
 	const record = asRecord(dto)
 	if (!record) {
@@ -59,6 +77,112 @@ function mapStatusItem(dto: unknown): CRMStatusItem | null {
 		position: typeof record.position === 'number' ? record.position : undefined,
 		is_active:
 			typeof record.is_active === 'boolean' ? record.is_active : undefined,
+	}
+}
+
+function mapBookingClient(dto: unknown): BookingClientSummary | null {
+	const record = asRecord(dto)
+	if (!record) {
+		return null
+	}
+
+	const id = asString(record.id)
+	const fullName = asString(record.full_name)
+	if (!id || !fullName) {
+		return null
+	}
+
+	return {
+		id,
+		full_name: fullName,
+		phone: asString(record.phone) || undefined,
+		source: asString(record.source) || undefined,
+		status: asString(record.status) || undefined,
+		status_name: asString(record.status_name) || undefined,
+		address_or_region: asString(record.address_or_region) || undefined,
+		ai_summary: asString(record.ai_summary) || undefined,
+		notes: asString(record.notes) || undefined,
+		created_at: asString(record.created_at) || undefined,
+		updated_at: asString(record.updated_at) || undefined,
+	}
+}
+
+function mapBookingItem(dto: unknown): BookingItem | null {
+	const record = asRecord(dto)
+	if (!record) {
+		return null
+	}
+
+	const id = asString(record.id)
+	const scheduledFor = asString(record.scheduled_for)
+	if (!id || !scheduledFor) {
+		return null
+	}
+
+	const clientRecord = mapBookingClient(record.client)
+	const clientId =
+		clientRecord?.id || asString(record.client) || asString(record.client_id)
+
+	return {
+		id,
+		client_id: clientId || undefined,
+		client: clientRecord,
+		requested_date: asString(record.requested_date) || null,
+		scheduled_for: scheduledFor,
+		duration_minutes: asNumber(record.duration_minutes),
+		ends_at: asString(record.ends_at) || undefined,
+		status: asString(record.status) || undefined,
+		calendar_event_id: asString(record.calendar_event_id) || undefined,
+		confirmed_by_name:
+			asString(record.confirmed_by_name) || undefined,
+		created_at: asString(record.created_at) || undefined,
+		updated_at: asString(record.updated_at) || undefined,
+	}
+}
+
+function mapBookingListResponse(
+	payload: unknown,
+): PaginatedResponse<BookingItem> {
+	const record = asRecord(payload) ?? {}
+	const rawItems = Array.isArray(record.items)
+		? record.items
+		: Array.isArray(record.results)
+			? record.results
+			: []
+	const items = rawItems
+		.map(mapBookingItem)
+		.filter((item): item is BookingItem => item !== null)
+	const total =
+		typeof record.total === 'number'
+			? record.total
+			: typeof record.count === 'number'
+				? record.count
+				: items.length
+
+	return {
+		items,
+		total,
+		page: typeof record.page === 'number' ? record.page : 1,
+		page_size:
+			typeof record.page_size === 'number'
+				? record.page_size
+				: typeof record.pageSize === 'number'
+					? (record.pageSize as number)
+					: items.length,
+		count: typeof record.count === 'number' ? record.count : total,
+		next: typeof record.next === 'string' ? record.next : null,
+		previous: typeof record.previous === 'string' ? record.previous : null,
+	}
+}
+
+function toClientBookingItem(booking: BookingItem): ClientBookingItem {
+	return {
+		id: booking.id,
+		requested_date: booking.requested_date ?? null,
+		scheduled_for: booking.scheduled_for,
+		status: booking.status,
+		confirmed_by_name: booking.confirmed_by_name,
+		created_at: booking.created_at,
 	}
 }
 
@@ -486,50 +610,47 @@ export class ClientsAdapter
 		await this.extraRequestor.delete(`/api/crm/statuses/${id}/`)
 	}
 
+	async listBookings(
+		params?: BookingsListParams,
+	): Promise<PaginatedResponse<BookingItem>> {
+		const response = await this.extraRequestor.get<unknown>(
+			'/api/crm/bookings/',
+			params,
+		)
+		return mapBookingListResponse(response)
+	}
+
 	async listClientBookings(clientId: string): Promise<ClientBookingItem[]> {
-		const response = await this.extraRequestor.get<unknown>('/api/crm/bookings/', {
+		const response = await this.listBookings({
 			client: clientId,
 			page: 1,
+			page_size: 100,
 		})
-		const record = asRecord(response) ?? {}
-		const rawItems = Array.isArray(record.items)
-			? record.items
-			: Array.isArray(record.results)
-				? record.results
-				: []
-		return rawItems
-			.map(item => asRecord(item))
-			.filter((item): item is UnknownRecord => item !== null)
-			.filter(item => asString(item.client) === clientId)
-			.map(item => ({
-				id: asString(item.id),
-				requested_date: asString(item.requested_date) || null,
-				scheduled_for: asString(item.scheduled_for) || undefined,
-				status: asString(item.status) || undefined,
-				confirmed_by_name: asString(item.confirmed_by_name) || undefined,
-				created_at: asString(item.created_at) || undefined,
-			}))
+		return response.items
+			.filter(item => item.client_id === clientId)
+			.map(toClientBookingItem)
 	}
 
 	async createClientBooking(
 		clientId: string,
 		input: { scheduled_for: string; status?: string; requested_date?: string },
 	): Promise<ClientBookingItem> {
+		const parsedClientId = Number(clientId)
+		const normalizedClientId = Number.isFinite(parsedClientId)
+			? parsedClientId
+			: clientId
+
 		const response = await this.extraRequestor.post<unknown>('/api/crm/bookings/', {
-			client: Number(clientId),
+			client_id: normalizedClientId,
 			scheduled_for: input.scheduled_for,
 			status: input.status || 'pending',
 			requested_date: input.requested_date || undefined,
 		})
-		const record = asRecord(response) ?? {}
-		return {
-			id: asString(record.id),
-			requested_date: asString(record.requested_date) || null,
-			scheduled_for: asString(record.scheduled_for) || undefined,
-			status: asString(record.status) || undefined,
-			confirmed_by_name: asString(record.confirmed_by_name) || undefined,
-			created_at: asString(record.created_at) || undefined,
+		const booking = mapBookingItem(response)
+		if (!booking) {
+			throw new Error('Failed to create booking')
 		}
+		return toClientBookingItem(booking)
 	}
 
 	async updateClientBooking(
@@ -554,15 +675,11 @@ export class ClientsAdapter
 			`/api/crm/bookings/${bookingId}/`,
 			payload,
 		)
-		const record = asRecord(response) ?? {}
-		return {
-			id: asString(record.id),
-			requested_date: asString(record.requested_date) || null,
-			scheduled_for: asString(record.scheduled_for) || undefined,
-			status: asString(record.status) || undefined,
-			confirmed_by_name: asString(record.confirmed_by_name) || undefined,
-			created_at: asString(record.created_at) || undefined,
+		const booking = mapBookingItem(response)
+		if (!booking) {
+			throw new Error('Failed to update booking')
 		}
+		return toClientBookingItem(booking)
 	}
 
 	async deleteClientBooking(bookingId: string): Promise<void> {

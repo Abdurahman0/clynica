@@ -6,6 +6,7 @@ export type NavigationGroupId = 'main' | 'operations' | 'system';
 export type NavigationIconKey =
   | 'dashboard'
   | 'clients'
+  | 'bookings'
   | 'chats'
   | 'tasks'
   | 'users'
@@ -60,6 +61,16 @@ export const navigationConfig: NavigationGroupConfig[] = [
         iconKey: 'clients',
         group: 'main',
         sortOrder: 2,
+        allowedRoles: ['developer', 'admin', 'operator'],
+      },
+      {
+        id: 'bookings',
+        label: 'Bookings',
+        path: '/bookings',
+        moduleId: 'bookings',
+        iconKey: 'bookings',
+        group: 'main',
+        sortOrder: 3,
         allowedRoles: ['developer', 'admin', 'operator'],
       },
     ],
