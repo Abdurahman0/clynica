@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Inter"', '"Segoe UI"', 'Tahoma', 'sans-serif'],
-        display: ['"Manrope"', '"Inter"', '"Segoe UI"', 'sans-serif'],
+        sans: ['var(--font-family-sans)', '"Segoe UI"', 'Tahoma', 'sans-serif'],
+        display: ['var(--font-family-display)', 'var(--font-family-sans)', '"Segoe UI"', 'sans-serif'],
         mono: ['"Consolas"', '"Courier New"', 'monospace'],
       },
       colors: {

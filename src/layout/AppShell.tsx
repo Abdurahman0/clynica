@@ -32,7 +32,7 @@ function AppShell() {
     currentRoute?.id === 'chats' || currentRoute?.id === 'dashboard';
 
   return (
-    <div className="relative flex h-dvh w-full overflow-hidden bg-background-default">
+    <div className="app-shell--nova relative flex h-dvh w-full overflow-hidden bg-background-default">
       <div
         className={[
           'fixed inset-0 z-40 bg-background-overlay transition-opacity duration-base min-[960px]:hidden',

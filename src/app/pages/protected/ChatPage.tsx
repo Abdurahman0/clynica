@@ -805,15 +805,15 @@ function ChatPage() {
 
   return (
     <>
-      <div className="grid h-full min-h-0 gap-0 min-[1024px]:h-[calc(100dvh-15vh)] min-[1024px]:max-h-[860px] min-[1024px]:items-start min-[1024px]:gap-3 min-[1024px]:grid-cols-[430px_minmax(0,1fr)] min-[1380px]:grid-cols-[470px_minmax(0,1fr)]">
+      <div className="chat-page--nova grid h-full min-h-0 gap-0 min-[1024px]:h-[calc(100dvh-15vh)] min-[1024px]:max-h-[860px] min-[1024px]:items-start min-[1024px]:gap-3 min-[1024px]:grid-cols-[430px_minmax(0,1fr)] min-[1380px]:grid-cols-[470px_minmax(0,1fr)]">
         <section
           className={[
-            'h-full min-h-0',
+            'chat-rail--nova h-full min-h-0',
             selectedSessionForModal ? 'max-[1023px]:hidden' : '',
           ].join(' ')}
           aria-hidden={Boolean(selectedSessionForModal)}
         >
-          <div className="grid h-full min-h-0 grid-rows-[auto_auto_1fr] gap-3 rounded-none bg-background-default p-3 min-[1024px]:rounded-xl min-[1024px]:bg-surface-card min-[1024px]:p-5 min-[1024px]:shadow-sm min-[1024px]:ring-1 min-[1024px]:ring-border-soft/40">
+          <div className="chat-rail-card--nova grid h-full min-h-0 grid-rows-[auto_auto_1fr] gap-3 rounded-none bg-background-default p-3 min-[1024px]:rounded-xl min-[1024px]:bg-surface-card min-[1024px]:p-5 min-[1024px]:shadow-sm min-[1024px]:ring-1 min-[1024px]:ring-border-soft/40">
             <div className="flex items-center justify-between gap-2">
               <h2 className="m-0 text-[1rem] font-semibold text-text-primary">
                 {copy.sessionsTitle}
@@ -849,8 +849,8 @@ function ChatPage() {
           </div>
         </section>
 
-        <section className="hidden h-full min-h-0 min-[1024px]:block">
-          <div className="h-full min-h-0 rounded-xl bg-surface-card p-5 shadow-sm ring-1 ring-border-soft/40">
+        <section className="chat-workspace-shell--nova hidden h-full min-h-0 min-[1024px]:block">
+          <div className="chat-workspace-card--nova h-full min-h-0 rounded-xl bg-surface-card p-5 shadow-sm ring-1 ring-border-soft/40">
             <ChatWorkspacePanel
               session={workspaceSession}
               messages={messages}
@@ -873,7 +873,7 @@ function ChatPage() {
       </div>
 
       {selectedSessionForModal ? (
-        <div className="fixed inset-0 z-[140] bg-background-default min-[1024px]:hidden">
+        <div className="chat-mobile-shell--nova fixed inset-0 z-[140] bg-background-default min-[1024px]:hidden">
           <button
             type="button"
             className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-surface-card/90 text-text-primary ring-1 ring-border-soft/60 transition duration-fast hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
@@ -956,6 +956,5 @@ function ChatPage() {
 }
 
 export default ChatPage;
-
 
 

@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import { initializeStoredDesignVariant } from './lib/design-system'
 import { initializeServices } from './services/registry'
 import './i18n'
 import './styles/tailwind.css'
@@ -28,6 +29,8 @@ try {
 } catch {
 	// Ignore storage access issues and fall back to the default theme.
 }
+
+initializeStoredDesignVariant()
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
 

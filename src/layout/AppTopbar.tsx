@@ -144,7 +144,7 @@ function AppTopbar({
 	}
 
 	return (
-		<header className='sticky top-0 z-30 flex min-h-topbar items-center justify-between gap-3 border-b border-border-soft/55 bg-background-default px-5 py-3 backdrop-blur-shell supports-[backdrop-filter]:bg-background-default/78 max-[640px]:flex-wrap min-[960px]:px-7'>
+		<header className='app-topbar--nova sticky top-0 z-30 flex min-h-topbar items-center justify-between gap-3 border-b border-border-soft/55 bg-background-default px-5 py-3 backdrop-blur-shell supports-[backdrop-filter]:bg-background-default/78 max-[640px]:flex-wrap min-[960px]:px-7'>
 			<div className='flex min-w-0 flex-1 items-center gap-3'>
 				<button
 					type='button'
@@ -280,4 +280,3 @@ function AppTopbar({
 }
 
 export default AppTopbar
-

@@ -169,7 +169,10 @@
   "auth": {
     "login": {
       "eyebrow": "Renaissance Clinic",
-      "subtitle": "CRM boshqaruv platformasi",
+      "title": "Renaissance Clinic",
+      "heroTitle": "Renaissance Clinic CRM",
+      "subtitle": "Klinika boshqaruvi uchun yagona CRM platformasi",
+      "designLabel": "Ish maydoni uslubi",
       "usernameLabel": "Foydalanuvchi nomi",
       "usernamePlaceholder": "developer",
       "passwordLabel": "Parol",
@@ -181,7 +184,22 @@
       "hidePassword": "Parolni yashirish",
       "showPassword": "Parolni ko'rsatish",
       "footerRights": "© 2026 Renaissance Clinic. Barcha huquqlar himoyalangan.",
-      "footerPowered": "Ishlab chiquvchi"
+      "footerPowered": "Ishlab chiquvchi",
+      "heroStats": {
+        "uptime": "barqaror CRM ishlashi",
+        "modules": "tayyor modul",
+        "workspace": "yagona ish maydoni"
+      },
+      "designOptions": {
+        "classic": {
+          "title": "Classic",
+          "description": "Hozirgi yashil, tanish ko'rinish."
+        },
+        "nova": {
+          "title": "Nova",
+          "description": "Yangi, yorqinroq va zamonaviy uslub."
+        }
+      }
     },
     "accessDenied": {
       "eyebrow": "Kirish nazorati",
@@ -2818,5 +2836,3 @@
     }
   }
 }
-
-

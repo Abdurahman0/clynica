@@ -15,7 +15,7 @@ function PageCard({
   return (
     <div
       className={[
-        'relative rounded-xl p-5 shadow-sm ring-1 ring-border-soft/40 transition duration-base max-[640px]:p-4 hover:shadow-md hover:ring-border-soft/60',
+        'app-card--nova relative rounded-xl p-5 shadow-sm ring-1 ring-border-soft/40 transition duration-base max-[640px]:p-4 hover:shadow-md hover:ring-border-soft/60',
         allowOverflow ? 'overflow-visible' : 'overflow-hidden',
         muted
           ? 'bg-surface-subtle/75'

@@ -1,11 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ru, uz } from 'date-fns/locale'
 import { type DateRange } from 'react-day-picker'
 import { useNavigate } from 'react-router-dom'
 import AppIcon from '../../../components/shared/icons/AppIcon'
 import { PageLayout } from '../../../components/shared/page'
-import { Calendar } from '../../../components/ui/calendar'
 import {
 	ChartContainer,
 	ChartTooltip,
@@ -96,6 +95,15 @@ interface DashboardIntervalDropdownProps {
 	options: Array<{ value: DashboardInterval; label: string }>
 	onChange: (value: DashboardInterval) => void
 	ariaLabel: string
+}
+
+interface DashboardDateRangePickerProps {
+	buttonLabel: string
+	isOpen: boolean
+	language: string
+	selectedDateRange: DateRange | undefined
+	onApply: (range: DateRange | undefined) => void
+	onOpenChange: (nextOpen: boolean) => void
 }
 
 const DASHBOARD_DEFAULT_DAYS = 30
@@ -195,6 +203,64 @@ function buildDateKeysInRange(
 	}
 
 	return keys
+}
+
+function buildPreviewRange(
+	from: Date | undefined,
+	hovered: Date | undefined,
+): DateRange | undefined {
+	if (!from || !hovered) {
+		return undefined
+	}
+
+	return from <= hovered
+		? { from, to: hovered }
+		: { from: hovered, to: from }
+}
+
+function isSameCalendarDay(left: Date | undefined, right: Date | undefined): boolean {
+	if (!left || !right) {
+		return false
+	}
+
+	return (
+		left.getFullYear() === right.getFullYear() &&
+		left.getMonth() === right.getMonth() &&
+		left.getDate() === right.getDate()
+	)
+}
+
+function getCalendarWeekdayLabels(language: string): string[] {
+	if (language === 'ru') {
+		return ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс']
+	}
+
+	return ['Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh', 'Ya']
+}
+
+function formatCalendarCaption(date: Date, language: string): string {
+	if (language === 'uz') {
+		return formatUzMonthYear(date, false)
+	}
+
+	return new Intl.DateTimeFormat('ru-RU', {
+		month: 'long',
+		year: 'numeric',
+	}).format(date)
+}
+
+function startOfCalendarGrid(month: Date): Date {
+	const first = new Date(month.getFullYear(), month.getMonth(), 1)
+	const weekday = (first.getDay() + 6) % 7
+	first.setDate(first.getDate() - weekday)
+	return first
+}
+
+function endOfCalendarGrid(month: Date): Date {
+	const last = new Date(month.getFullYear(), month.getMonth() + 1, 0)
+	const weekday = (last.getDay() + 6) % 7
+	last.setDate(last.getDate() + (6 - weekday))
+	return last
 }
 
 function buildDashboardQuery(
@@ -399,11 +465,273 @@ function DashboardIntervalDropdown({
 	)
 }
 
+const DashboardDateRangePicker = memo(function DashboardDateRangePicker({
+	buttonLabel,
+	isOpen,
+	language,
+	selectedDateRange,
+	onApply,
+	onOpenChange,
+}: DashboardDateRangePickerProps) {
+	const { t } = useTranslation()
+	const [draftDateRange, setDraftDateRange] = useState<DateRange | undefined>(undefined)
+	const [hoveredDraftDate, setHoveredDraftDate] = useState<Date | undefined>(undefined)
+	const [calendarMonth, setCalendarMonth] = useState<Date>(new Date())
+
+	const previewDateRange = useMemo(
+		() =>
+			draftDateRange?.from && !draftDateRange.to
+				? buildPreviewRange(draftDateRange.from, hoveredDraftDate)
+				: undefined,
+		[draftDateRange, hoveredDraftDate],
+	)
+	const calendarRangeState = useMemo(() => {
+		const activeRange =
+			draftDateRange?.from && draftDateRange.to
+				? draftDateRange
+				: previewDateRange
+
+		if (!activeRange?.from || !activeRange.to) {
+			return undefined
+		}
+
+		const rangeFromKey = toIsoDate(activeRange.from)
+		const rangeToKey = toIsoDate(activeRange.to)
+		const rangeKeys = new Set(buildDateKeysInRange(rangeFromKey, rangeToKey))
+
+		return {
+			rangeFromKey,
+			rangeToKey,
+			rangeKeys,
+		}
+	}, [draftDateRange, previewDateRange])
+	const calendarWeekdays = useMemo(
+		() => getCalendarWeekdayLabels(language === 'ru' ? 'ru' : 'uz'),
+		[language],
+	)
+	const calendarCells = useMemo(() => {
+		const start = startOfCalendarGrid(calendarMonth)
+		const end = endOfCalendarGrid(calendarMonth)
+		const dayCount =
+			Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
+		return Array.from({ length: dayCount }, (_, index) => {
+			const next = new Date(start)
+			next.setDate(start.getDate() + index)
+			return next
+		})
+	}, [calendarMonth])
+
+	useEffect(() => {
+		if (!isOpen) {
+			setHoveredDraftDate(undefined)
+			return
+		}
+
+		setDraftDateRange(selectedDateRange)
+		setCalendarMonth(selectedDateRange?.from ?? new Date())
+		setHoveredDraftDate(undefined)
+	}, [isOpen, selectedDateRange])
+
+	function goToPreviousCalendarMonth() {
+		setCalendarMonth(
+			current => new Date(current.getFullYear(), current.getMonth() - 1, 1),
+		)
+	}
+
+	function goToNextCalendarMonth() {
+		setCalendarMonth(
+			current => new Date(current.getFullYear(), current.getMonth() + 1, 1),
+		)
+	}
+
+	function handleDraftDateClick(date: Date) {
+		if (!draftDateRange?.from || draftDateRange.to) {
+			setDraftDateRange({ from: date, to: undefined })
+			setHoveredDraftDate(undefined)
+			return
+		}
+
+		const from = draftDateRange.from
+		if (date < from) {
+			setDraftDateRange({ from: date, to: from })
+		} else {
+			setDraftDateRange({ from, to: date })
+		}
+		setHoveredDraftDate(undefined)
+	}
+
+	return (
+		<Popover open={isOpen} onOpenChange={onOpenChange}>
+			<PopoverTrigger asChild>
+				<button
+					type='button'
+					className='inline-flex h-8 w-full items-center justify-between gap-2 rounded-pill border border-border-soft/70 bg-gradient-to-b from-surface-card to-surface-subtle/80 px-3.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary shadow-[0_15px_26px_-22px_rgba(37,99,235,0.6)] transition duration-fast hover:border-primary/45 hover:text-text-primary min-[480px]:w-auto min-[480px]:min-w-[248px]'
+					aria-label={t('dashboard.filters.customRange')}
+				>
+					<span className='inline-flex items-center gap-2 truncate'>
+						<AppIcon
+							name='calendar'
+							className='h-3.5 w-3.5 text-primary'
+							aria-hidden='true'
+						/>
+						<span className='truncate'>{buttonLabel}</span>
+					</span>
+					<AppIcon
+						name='chevron-down'
+						className={[
+							'h-3.5 w-3.5 shrink-0 transition duration-fast',
+							isOpen ? 'rotate-180 text-primary' : 'text-text-muted',
+						].join(' ')}
+						aria-hidden='true'
+					/>
+				</button>
+			</PopoverTrigger>
+			<PopoverContent className='w-auto p-3'>
+				<div className='grid gap-3'>
+					<div className='flex items-center justify-between gap-3'>
+						<button
+							type='button'
+							onClick={goToPreviousCalendarMonth}
+							className='inline-flex h-8 w-8 items-center justify-center rounded-md border border-border-soft/60 bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+							aria-label={t('shared.pagination.previous')}
+						>
+							<span aria-hidden='true' className='text-base leading-none'>‹</span>
+						</button>
+						<p className='m-0 text-sm font-semibold text-text-primary'>
+							{formatCalendarCaption(calendarMonth, language === 'ru' ? 'ru' : 'uz')}
+						</p>
+						<button
+							type='button'
+							onClick={goToNextCalendarMonth}
+							className='inline-flex h-8 w-8 items-center justify-center rounded-md border border-border-soft/60 bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+							aria-label={t('shared.pagination.next')}
+						>
+							<span aria-hidden='true' className='text-base leading-none'>›</span>
+						</button>
+					</div>
+
+					<div className='grid grid-cols-7 gap-0.5'>
+						{calendarWeekdays.map(day => (
+							<div
+								key={day}
+								className='h-8 w-8 text-center text-[11px] font-semibold uppercase tracking-[0.06em] text-text-muted'
+							>
+								{day}
+							</div>
+						))}
+					</div>
+
+					<div className='grid grid-cols-7 gap-0'>
+						{calendarCells.map((date) => {
+							const isOutsideMonth = date.getMonth() !== calendarMonth.getMonth()
+							const dateKey = toIsoDate(date)
+							const isStart = isSameCalendarDay(date, draftDateRange?.from)
+							const isEnd = isSameCalendarDay(date, draftDateRange?.to)
+							const isRangeStart = calendarRangeState?.rangeFromKey === dateKey
+							const isRangeEnd = calendarRangeState?.rangeToKey === dateKey
+							const inRangeMiddle = Boolean(
+								calendarRangeState?.rangeKeys.has(dateKey) &&
+								!isRangeStart &&
+								!isRangeEnd,
+							)
+							const isStrong = isStart || isEnd || isRangeStart || isRangeEnd
+							const isSoft = inRangeMiddle
+							const isToday = isSameCalendarDay(date, new Date())
+							const rangeFillClass = isStrong || isSoft
+								? isStrong
+									? 'bg-primary/16'
+									: 'bg-primary/10'
+								: ''
+							const rangePositionClass = isStrong || isSoft
+								? isRangeStart && isRangeEnd
+									? 'rounded-[10px]'
+									: isRangeStart
+										? 'left-1/2 right-0 rounded-r-[10px]'
+										: isRangeEnd
+											? 'left-0 right-1/2 rounded-l-[10px]'
+											: 'left-0 right-0 rounded-none'
+								: ''
+
+							return (
+								<div
+									key={date.toISOString()}
+									className='relative flex h-9 w-9 items-center justify-center'
+									onMouseEnter={() => {
+										if (
+											draftDateRange?.from &&
+											!draftDateRange.to &&
+											!isSameCalendarDay(hoveredDraftDate, date)
+										) {
+											setHoveredDraftDate(date)
+										}
+									}}
+								>
+									{isStrong || isSoft ? (
+										<span
+											aria-hidden='true'
+											className={[
+												'pointer-events-none absolute inset-y-1',
+												rangeFillClass,
+												rangePositionClass,
+											].join(' ')}
+										/>
+									) : null}
+									<button
+										type='button'
+										onClick={() => handleDraftDateClick(date)}
+										className={[
+											'relative z-10 h-8 w-8 rounded-[10px] text-sm font-medium transition duration-fast',
+											isStrong
+												? 'bg-primary text-primary-foreground shadow-sm'
+												: isSoft
+													? 'text-text-primary'
+													: isToday
+														? 'text-primary'
+														: 'text-text-primary hover:bg-primary/10',
+											isOutsideMonth && !isStrong && !isSoft && !isToday
+												? 'text-text-muted/45'
+												: '',
+										].join(' ')}
+									>
+										{date.getDate()}
+									</button>
+								</div>
+							)
+						})}
+					</div>
+				</div>
+				<div className='mt-2 flex items-center justify-between gap-2 border-t border-border-soft/70 pt-2'>
+					<button
+						type='button'
+						className='inline-flex h-8 items-center rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary transition duration-fast hover:bg-surface-subtle hover:text-text-primary'
+						onClick={() => {
+							setDraftDateRange(undefined)
+							setHoveredDraftDate(undefined)
+						}}
+					>
+						{t('dashboard.filters.clearRange')}
+					</button>
+					<button
+						type='button'
+						className='inline-flex h-8 items-center rounded-md bg-primary px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground transition duration-fast hover:bg-primary-accent'
+						onClick={() => {
+							onApply(draftDateRange?.from ? draftDateRange : undefined)
+							onOpenChange(false)
+						}}
+					>
+						{t('common.save')}
+					</button>
+				</div>
+			</PopoverContent>
+		</Popover>
+	)
+})
+
 function DashboardPage() {
 	const { t, i18n } = useTranslation()
 	const navigate = useNavigate()
 	const locale = i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'
-	const calendarLocale = i18n.language === 'ru' ? ru : uz
 	const [overview, setOverview] = useState<DashboardOverview | null>(null)
 	const [filters, setFilters] = useState<DashboardFilters>({
 		interval: 'day',
@@ -489,6 +817,14 @@ function DashboardPage() {
 			}) satisfies ChartConfig,
 		[],
 	)
+
+	const selectedDateRange: DateRange | undefined =
+		isIsoDate(filters.customDateFrom) && isIsoDate(filters.customDateTo)
+			? {
+					from: parseIsoDate(filters.customDateFrom),
+					to: parseIsoDate(filters.customDateTo),
+				}
+			: undefined
 
 	if (loading && !overview) {
 		return (
@@ -637,13 +973,6 @@ function DashboardPage() {
 				i18n.language,
 			)} - ${formatDateLabel(overview.date_range.date_to, locale, i18n.language)}`
 		: t('dashboard.filters.pickRange')
-	const selectedDateRange: DateRange | undefined =
-		isIsoDate(filters.customDateFrom) && isIsoDate(filters.customDateTo)
-			? {
-					from: parseIsoDate(filters.customDateFrom),
-					to: parseIsoDate(filters.customDateTo),
-				}
-			: undefined
 	const dateRangeButtonLabel =
 		selectedDateRange?.from && selectedDateRange?.to
 			? `${formatLocalizedDate(selectedDateRange.from, i18n.language, {
@@ -717,96 +1046,32 @@ function DashboardPage() {
 				</section>
 
 				<section className='flex flex-wrap items-stretch justify-start gap-2 min-[480px]:items-center min-[480px]:justify-end'>
-					<Popover open={isDatePopoverOpen} onOpenChange={setIsDatePopoverOpen}>
-						<PopoverTrigger asChild>
-							<button
-								type='button'
-								className='inline-flex h-8 w-full items-center justify-between gap-2 rounded-pill border border-border-soft/70 bg-gradient-to-b from-surface-card to-surface-subtle/80 px-3.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary shadow-[0_15px_26px_-22px_rgba(37,99,235,0.6)] transition duration-fast hover:border-primary/45 hover:text-text-primary min-[480px]:w-auto min-[480px]:min-w-[248px]'
-								aria-label={t('dashboard.filters.customRange')}
-							>
-								<span className='inline-flex items-center gap-2 truncate'>
-									<AppIcon
-										name='calendar'
-										className='h-3.5 w-3.5 text-primary'
-										aria-hidden='true'
-									/>
-									<span className='truncate'>{dateRangeButtonLabel}</span>
-								</span>
-								<AppIcon
-									name='chevron-down'
-									className={[
-										'h-3.5 w-3.5 shrink-0 transition duration-fast',
-										isDatePopoverOpen
-											? 'rotate-180 text-primary'
-											: 'text-text-muted',
-									].join(' ')}
-									aria-hidden='true'
-								/>
-							</button>
-						</PopoverTrigger>
-						<PopoverContent className='w-auto p-3'>
-							<Calendar
-								mode='range'
-								selected={selectedDateRange}
-								defaultMonth={
-									selectedDateRange?.to ?? selectedDateRange?.from ?? new Date()
-								}
-								locale={calendarLocale}
-								formatters={
-									i18n.language === 'uz'
-										? {
-												formatCaption: date => formatUzMonthYear(date, false),
-											}
-										: undefined
-								}
-								onSelect={(range: DateRange | undefined) => {
-									if (!range?.from) {
-										setFilters(current => ({
-											...current,
-											customDateFrom: undefined,
-											customDateTo: undefined,
-										}))
-										return
-									}
+					<DashboardDateRangePicker
+						buttonLabel={dateRangeButtonLabel}
+						isOpen={isDatePopoverOpen}
+						language={i18n.language}
+						selectedDateRange={selectedDateRange}
+						onApply={range => {
+							if (!range?.from) {
+								setFilters(current => ({
+									...current,
+									customDateFrom: undefined,
+									customDateTo: undefined,
+								}))
+								return
+							}
 
-									const from = toIsoDate(range.from)
-									const to = toIsoDate(range.to ?? range.from)
+							const from = toIsoDate(range.from)
+							const to = toIsoDate(range.to ?? range.from)
 
-									setFilters(current => ({
-										...current,
-										customDateFrom: from,
-										customDateTo: to,
-									}))
-
-									if (range.to) {
-										setIsDatePopoverOpen(false)
-									}
-								}}
-							/>
-							<div className='mt-2 flex items-center justify-between gap-2 border-t border-border-soft/70 pt-2'>
-								<button
-									type='button'
-									className='inline-flex h-8 items-center rounded-md px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary transition duration-fast hover:bg-surface-subtle hover:text-text-primary'
-									onClick={() =>
-										setFilters(current => ({
-											...current,
-											customDateFrom: undefined,
-											customDateTo: undefined,
-										}))
-									}
-								>
-									{t('dashboard.filters.clearRange')}
-								</button>
-								<button
-									type='button'
-									className='inline-flex h-8 items-center rounded-md bg-primary px-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary-foreground transition duration-fast hover:bg-primary-accent'
-									onClick={() => setIsDatePopoverOpen(false)}
-								>
-									{t('common.save')}
-								</button>
-							</div>
-						</PopoverContent>
-					</Popover>
+							setFilters(current => ({
+								...current,
+								customDateFrom: from,
+								customDateTo: to,
+							}))
+						}}
+						onOpenChange={setIsDatePopoverOpen}
+					/>
 
 					<DashboardIntervalDropdown
 						value={filters.interval}
@@ -1147,5 +1412,3 @@ function DashboardPage() {
 }
 
 export default DashboardPage
-
-

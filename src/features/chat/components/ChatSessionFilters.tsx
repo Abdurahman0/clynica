@@ -68,7 +68,7 @@ function ChatSessionFilters({
   ];
 
   return (
-    <div className="grid gap-2.5 pb-2">
+    <div className="chat-filters--nova grid gap-2.5 pb-2">
       <SearchInput
         value={search}
         onChange={onSearchChange}
@@ -88,6 +88,7 @@ function ChatSessionFilters({
                 key={option.value}
                 type="button"
                 className={[
+                  'chat-filter-chip--nova',
                   'inline-flex h-[46px] min-w-0 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[10px] font-semibold transition duration-fast',
                   'ring-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 disabled:cursor-not-allowed disabled:opacity-60',
                   isActive
@@ -122,6 +123,7 @@ function ChatSessionFilters({
                 key={option.value}
                 type="button"
                 className={[
+                  'chat-filter-chip--nova',
                   'inline-flex min-h-[42px] items-center justify-center rounded-xl px-2 text-xs font-semibold transition duration-fast',
                   'ring-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 disabled:cursor-not-allowed disabled:opacity-60',
                   isActive
@@ -156,4 +158,3 @@ function ChatSessionFilters({
 }
 
 export default ChatSessionFilters;
-

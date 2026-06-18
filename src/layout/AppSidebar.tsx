@@ -59,7 +59,7 @@ function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
 	return (
 		<aside
 			className={[
-				'fixed inset-y-0 left-0 z-50 flex w-[84vw] max-w-sidebar flex-col overflow-hidden',
+				'app-sidebar--nova fixed inset-y-0 left-0 z-50 flex w-[84vw] max-w-sidebar flex-col overflow-hidden',
 				'bg-background-subtle/95 px-3 pb-4 pt-4 text-text-primary shadow-[18px_0_42px_-30px_rgba(25,28,30,0.22)] backdrop-blur-shell transition-transform duration-base',
 				isOpen ? 'translate-x-0' : '-translate-x-full',
 				'min-[960px]:sticky min-[960px]:top-0 min-[960px]:self-start min-[960px]:h-[100dvh] min-[960px]:w-sidebar min-[960px]:max-w-none min-[960px]:shrink-0 min-[960px]:translate-x-0',
@@ -166,4 +166,3 @@ function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
 }
 
 export default AppSidebar
-

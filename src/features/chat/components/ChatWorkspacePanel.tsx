@@ -788,8 +788,8 @@ function ChatWorkspacePanel({
 	) : null
 
 	return (
-		<div className='flex h-full min-h-0 flex-col gap-3 bg-background-default text-text-primary'>
-			<div className='w-full rounded-xl bg-background-subtle/80 p-3.5 text-left ring-1 ring-border-soft/50'>
+		<div className='chat-workspace--nova flex h-full min-h-0 flex-col gap-3 bg-background-default text-text-primary'>
+			<div className='chat-workspace-header--nova w-full rounded-xl bg-background-subtle/80 p-3.5 text-left ring-1 ring-border-soft/50'>
 				<div className='flex flex-wrap items-start gap-3'>
 					<button
 						type='button'
@@ -1011,7 +1011,7 @@ function ChatWorkspacePanel({
 
 			<div
 				ref={messagesContainerRef}
-				className='relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-xl ring-1 ring-border-soft/50'
+				className='chat-messages-shell--nova relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-xl ring-1 ring-border-soft/50'
 				style={{
 					backgroundImage: `url(${chatBackground})`,
 					backgroundSize: 'cover',
@@ -1143,7 +1143,7 @@ function ChatWorkspacePanel({
 				</div>
 			</div>
 
-			<div className='rounded-xl bg-background-subtle/80 p-3 ring-1 ring-border-soft/55 dark:bg-surface-card/92'>
+			<div className='chat-composer--nova rounded-xl bg-background-subtle/80 p-3 ring-1 ring-border-soft/55 dark:bg-surface-card/92'>
 				<label className='sr-only' htmlFor='chat-message-input'>
 					{labels.messageLabel}
 				</label>
@@ -1222,5 +1222,4 @@ function ChatWorkspacePanel({
 }
 
 export default ChatWorkspacePanel
-
 

@@ -165,7 +165,7 @@ function ChatSessionList({
   }
 
   return (
-    <div className='grid w-full min-w-0 gap-2 pb-1 pr-1'>
+    <div className='chat-session-list--nova grid w-full min-w-0 gap-2 pb-1 pr-1'>
       {visibleSessions.map((session) => {
         const isSelected = selectedSessionId === session.id;
         const unreadCount = unreadBySessionId[session.id] ?? 0;
@@ -177,6 +177,7 @@ function ChatSessionList({
             key={session.id}
             type='button'
             className={[
+              'chat-session-card--nova',
               'group relative w-full min-w-0 overflow-hidden rounded-2xl border-0 p-3 text-left transition duration-fast',
               'shadow-[0_10px_22px_-18px_rgba(15,23,42,0.9)] ring-1',
               isSelected

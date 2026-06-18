@@ -965,8 +965,8 @@ function TasksPage() {
 				</div>
 			) : null}
 			{!isLoading && board.columns.length > 0 ? (
-			<section className='overflow-hidden rounded-[28px] bg-surface-card text-text-primary shadow-sm ring-1 ring-border-soft/50'>
-				<div className='border-b border-border-soft/50 bg-surface-subtle/70 px-5 py-4 sm:px-8'>
+			<section className='tasks-board--nova overflow-hidden rounded-[28px] bg-surface-card text-text-primary shadow-sm ring-1 ring-border-soft/50'>
+				<div className='tasks-board-header--nova border-b border-border-soft/50 bg-surface-subtle/70 px-5 py-4 sm:px-8'>
 					<div className='flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'>
 						<div className='flex flex-wrap items-center gap-3'>
 							<div className='border-l-4 border-primary pl-4'>
@@ -1004,7 +1004,7 @@ function TasksPage() {
 					</div>
 				</div>
 
-				<div className='overflow-x-auto bg-background-subtle p-5 sm:p-7'>
+				<div className='tasks-board-canvas--nova overflow-x-auto bg-background-subtle p-5 sm:p-7'>
 					<div className='flex min-h-[520px] w-max gap-4 pb-3'>
 						{board.columns.map(column => {
 							const tone = columnToneClasses[column.tone]
@@ -1014,7 +1014,7 @@ function TasksPage() {
 									key={column.id}
 									onDragOver={event => event.preventDefault()}
 									onDrop={event => handleColumnDrop(event, column.id)}
-									className='flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 bg-surface-card shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]'
+									className='task-column--nova flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 bg-surface-card shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]'
 									style={{ borderTopColor: column.color }}
 								>
 									<div className='flex items-center justify-between gap-3 border-b border-border-soft/45 px-4 py-4'>
@@ -1063,7 +1063,7 @@ function TasksPage() {
 													onDragEnd={handleDragEnd}
 													onDragOver={event => event.preventDefault()}
 													onDrop={event => handleCardDrop(event, column, card.id)}
-													className={`${canManageTaskMoves ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} rounded-2xl bg-surface-subtle/75 p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-card hover:ring-border-soft/80 ${
+													className={`task-card--nova ${canManageTaskMoves ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} rounded-2xl bg-surface-subtle/75 p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-card hover:ring-border-soft/80 ${
 														draggingCardId === card.id
 															? 'scale-[0.98] opacity-45 ring-2 ring-primary/50'
 															: ''
@@ -1188,7 +1188,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleAddList}
-						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1314,7 +1314,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={event => handleAddTask(event, draftColumnId)}
-						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1496,7 +1496,7 @@ function TasksPage() {
 					}}
 				>
 					<section
-						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 						aria-label={t('tasks.modal.viewTitle')}
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
@@ -1661,7 +1661,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleSaveCard}
-						className='max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>

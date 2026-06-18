@@ -169,7 +169,10 @@
   "auth": {
     "login": {
       "eyebrow": "Renaissance Clinic",
-      "subtitle": "Платформа управления CRM",
+      "title": "Renaissance Clinic",
+      "heroTitle": "Renaissance Clinic CRM",
+      "subtitle": "Единая CRM-платформа для управления клиникой",
+      "designLabel": "Стиль интерфейса",
       "usernameLabel": "Имя пользователя",
       "usernamePlaceholder": "developer",
       "passwordLabel": "Пароль",
@@ -181,7 +184,22 @@
       "hidePassword": "Скрыть пароль",
       "showPassword": "Показать пароль",
       "footerRights": "© 2026 Renaissance Clinic. Все права защищены.",
-      "footerPowered": "Разработчик"
+      "footerPowered": "Разработчик",
+      "heroStats": {
+        "uptime": "стабильная работа CRM",
+        "modules": "готовых модулей",
+        "workspace": "единое рабочее пространство"
+      },
+      "designOptions": {
+        "classic": {
+          "title": "Classic",
+          "description": "Текущий зелёный и привычный дизайн."
+        },
+        "nova": {
+          "title": "Nova",
+          "description": "Более свежий и современный визуальный стиль."
+        }
+      }
     },
     "accessDenied": {
       "eyebrow": "Контроль доступа",
@@ -2818,4 +2836,3 @@
     }
   }
 }
-

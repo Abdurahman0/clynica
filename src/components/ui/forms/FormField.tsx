@@ -34,7 +34,7 @@ export interface FormFieldProps {
 }
 
 const inputBaseClassName = [
-	'w-full rounded-lg border bg-surface-card px-3.5 py-2.5 text-sm font-medium text-text-primary',
+	'form-field__input--nova w-full rounded-lg border bg-surface-card px-3.5 py-2.5 text-sm font-medium text-text-primary',
 	'placeholder:text-text-muted outline-none transition duration-fast',
 	'focus:border-primary/50 focus:ring-2 focus:ring-primary/20',
 	'disabled:cursor-not-allowed disabled:opacity-50',
@@ -135,7 +135,7 @@ export const FormField = React.forwardRef<
 		}
 
 		return (
-			<div className='flex flex-col gap-2'>
+			<div className='form-field--nova flex flex-col gap-2'>
 				{label && (
 					<label className='text-sm font-semibold text-text-secondary'>
 						{label}

@@ -9,7 +9,7 @@ interface PageHeaderProps {
 
 function PageHeader({ eyebrow, title, subtitle, actions }: PageHeaderProps) {
   return (
-    <header className="mb-4 grid gap-3 min-[768px]:mb-5 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-start">
+    <header className="page-header--nova mb-4 grid gap-3 min-[768px]:mb-5 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-start">
       <div className="min-w-0">
         {eyebrow ? (
           <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary">
