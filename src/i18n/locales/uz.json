@@ -2604,9 +2604,16 @@
     },
     "statusColors": {
       "neutral": "Kulrang",
+      "azure": "Safir ko'k",
+      "teal": "To'q moviy-yashil",
       "success": "Yashil",
+      "violet": "Binafsha",
+      "fuchsia": "Fuksiya",
       "warning": "Sariq",
-      "danger": "Qizil"
+      "orange": "To'q sariq",
+      "danger": "Qizil",
+      "bronze": "Bronza",
+      "midnight": "Tun qora"
     },
     "list": {
       "searchPlaceholder": "Ism, telefon yoki izoh bo'yicha qidiring...",

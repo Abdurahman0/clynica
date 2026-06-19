@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog';
@@ -15,9 +15,16 @@ import type { Client, CRMStatusItem } from '../../../services/contracts';
 
 const STATUS_COLOR_OPTIONS = [
   { value: '#9AA4AE', key: 'neutral' },
+  { value: '#2563EB', key: 'azure' },
+  { value: '#0F766E', key: 'teal' },
   { value: '#1FA971', key: 'success' },
+  { value: '#7C3AED', key: 'violet' },
+  { value: '#C2418C', key: 'fuchsia' },
   { value: '#E0A84F', key: 'warning' },
+  { value: '#F97316', key: 'orange' },
   { value: '#D95C5C', key: 'danger' },
+  { value: '#7C4A2D', key: 'bronze' },
+  { value: '#0F172A', key: 'midnight' },
 ] as const;
 
 function ClientsPage() {
@@ -56,9 +63,16 @@ function ClientsPage() {
     statusSaveFailed: t('clients.statusMessages.saveFailed'),
     statusDeleteFailed: t('clients.statusMessages.deleteFailed'),
     statusColorNeutral: t('clients.statusColors.neutral'),
+    statusColorAzure: t('clients.statusColors.azure'),
+    statusColorTeal: t('clients.statusColors.teal'),
     statusColorSuccess: t('clients.statusColors.success'),
+    statusColorViolet: t('clients.statusColors.violet'),
+    statusColorFuchsia: t('clients.statusColors.fuchsia'),
     statusColorWarning: t('clients.statusColors.warning'),
+    statusColorOrange: t('clients.statusColors.orange'),
     statusColorDanger: t('clients.statusColors.danger'),
+    statusColorBronze: t('clients.statusColors.bronze'),
+    statusColorMidnight: t('clients.statusColors.midnight'),
   };
 
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
@@ -364,17 +378,48 @@ function ClientsPage() {
     }
   }, []);
 
-  const statusColorSelectOptions = STATUS_COLOR_OPTIONS.map((entry) => ({
-    value: entry.value,
-    label:
-      entry.key === 'neutral'
-        ? tx.statusColorNeutral
-        : entry.key === 'success'
-          ? tx.statusColorSuccess
-          : entry.key === 'warning'
-            ? tx.statusColorWarning
-            : tx.statusColorDanger,
-  }));
+  const statusColorSelectOptions = useMemo(
+    () =>
+      STATUS_COLOR_OPTIONS.map((entry) => ({
+        value: entry.value,
+        color: entry.value,
+        label:
+          entry.key === 'neutral'
+            ? tx.statusColorNeutral
+            : entry.key === 'azure'
+              ? tx.statusColorAzure
+              : entry.key === 'teal'
+                ? tx.statusColorTeal
+                : entry.key === 'success'
+                  ? tx.statusColorSuccess
+                  : entry.key === 'violet'
+                    ? tx.statusColorViolet
+                    : entry.key === 'fuchsia'
+                      ? tx.statusColorFuchsia
+                      : entry.key === 'warning'
+                        ? tx.statusColorWarning
+                        : entry.key === 'orange'
+                          ? tx.statusColorOrange
+                          : entry.key === 'danger'
+                            ? tx.statusColorDanger
+                            : entry.key === 'bronze'
+                              ? tx.statusColorBronze
+                              : tx.statusColorMidnight,
+      })),
+    [
+      tx.statusColorAzure,
+      tx.statusColorBronze,
+      tx.statusColorDanger,
+      tx.statusColorFuchsia,
+      tx.statusColorMidnight,
+      tx.statusColorNeutral,
+      tx.statusColorOrange,
+      tx.statusColorSuccess,
+      tx.statusColorTeal,
+      tx.statusColorViolet,
+      tx.statusColorWarning,
+    ],
+  );
 
   const header = (
     <PageHeader
@@ -708,6 +753,3 @@ function ClientsPage() {
 }
 
 export default ClientsPage;
-
-
-
