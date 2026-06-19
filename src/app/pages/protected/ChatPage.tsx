@@ -23,6 +23,7 @@ type OperatorFilter = 'all' | 'active' | 'inactive';
 
 const ALL_CHANNEL_VALUE = 'all' as const;
 const PAGE_SIZE = 120;
+const MAX_SESSION_PAGES = 50;
 const MESSAGE_PAGE_SIZE = 250;
 const SESSIONS_POLL_INTERVAL_MS = 8000;
 const MESSAGES_POLL_INTERVAL_MS = 6000;
@@ -283,17 +284,44 @@ function ChatPage() {
       setHasSessionsError(false);
 
       try {
-        const result = await services.chat.listSessions(sessionQuery);
+        const collectedSessions: Conversation[] = [];
+        const seenSessionIds = new Set<string>();
 
-        if (requestId !== sessionsRequestRef.current) {
-          return;
+        for (let page = 1; page <= MAX_SESSION_PAGES; page += 1) {
+          const result = await services.chat.listSessions({
+            ...sessionQuery,
+            page,
+            pageSize: PAGE_SIZE,
+          });
+
+          if (requestId !== sessionsRequestRef.current) {
+            return;
+          }
+
+          for (const session of result.items) {
+            if (seenSessionIds.has(session.id)) {
+              continue;
+            }
+
+            seenSessionIds.add(session.id);
+            collectedSessions.push(session);
+            sessionCacheRef.current[session.id] = session;
+          }
+
+          const resolvedPageSize = Math.max(1, result.page_size ?? PAGE_SIZE);
+          const resolvedTotal = Math.max(
+            collectedSessions.length,
+            result.count ?? result.total ?? collectedSessions.length,
+          );
+          const hasMore =
+            Boolean(result.next) || page * resolvedPageSize < resolvedTotal;
+
+          if (!hasMore || result.items.length === 0) {
+            break;
+          }
         }
 
-        for (const session of result.items) {
-          sessionCacheRef.current[session.id] = session;
-        }
-
-        setSessions(applySessionListState(result.items));
+        setSessions(applySessionListState(collectedSessions));
       } catch {
         if (requestId !== sessionsRequestRef.current) {
           return;
@@ -836,7 +864,7 @@ function ChatPage() {
               onOrderingChange={(value) => setOrdering(value as SessionOrdering)}
             />
 
-            <div className="min-h-0 overflow-y-auto overflow-x-hidden pr-1">
+            <div className="chat-session-list-scroll--nova min-h-0 overflow-y-auto overflow-x-hidden pr-1">
               <ChatSessionList
                 sessions={sessions}
                 selectedSessionId={activeSessionId}

@@ -403,6 +403,7 @@
       "noSelectionTitle": "Bron tanlanmagan",
       "noSelectionDescription": "Jadvaldan bronni tanlasangiz, tafsilot shu yerda ko'rinadi.",
       "openClient": "Mijozni ochish",
+      "openChat": "Chatni ochish",
       "calendarConnected": "Google Calendar bilan bog'langan",
       "calendarPending": "Calendar hali ulanmagan",
       "durationValue": "{{count}} daqiqa",

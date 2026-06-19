@@ -286,7 +286,7 @@ function ChatUserProfilePanel({
 					</button>
 				</header>
 
-				<div className='grid min-h-0 gap-3 overflow-y-auto pr-1'>
+				<div className='chat-profile-scroll--nova grid min-h-0 gap-3 overflow-y-auto pr-1'>
 					{profileData ? (
 						<>
 							<section className='rounded-xl bg-surface-card p-4 ring-1 ring-border-soft/45'>

@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
+﻿import { useEffect, useMemo, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog'
 import { PageHeader, PageLayout } from '../../../components/shared/page'
@@ -12,19 +13,42 @@ import { getChannelLabel } from '../../../i18n/labels'
 import { services } from '../../../services'
 import type { BookingItem } from '../../../services/contracts'
 import type { SelectOption } from '../../../types/common'
+import type { Conversation } from '../../../types/domain'
 import {
 	HandmadeDateTimePicker,
 } from '../../../features/clients/components/HandmadeDatePickers'
 
-const DEFAULT_START_HOUR = 9
-const DEFAULT_END_HOUR = 18
-const HOUR_ROW_HEIGHT = 60
+const DEFAULT_START_HOUR = 11
+const DEFAULT_END_HOUR = 17
+const HOUR_ROW_HEIGHT = 96
 const PIXELS_PER_MINUTE = HOUR_ROW_HEIGHT / 60
 const MAX_FETCH_PAGES = 30
 const MAX_CLIENT_FETCH_PAGES = 20
+const CHAT_LOOKUP_PAGE_SIZE = 120
+const MAX_CHAT_LOOKUP_PAGES = 50
 
 const formLabelClassName =
 	'text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'
+
+const RU_WEEKDAY_NAMES = [
+	'ВОСКРЕСЕНЬЕ',
+	'ПОНЕДЕЛЬНИК',
+	'ВТОРНИК',
+	'СРЕДА',
+	'ЧЕТВЕРГ',
+	'ПЯТНИЦА',
+	'СУББОТА',
+]
+
+const UZ_WEEKDAY_NAMES = [
+	'YAKSHANBA',
+	'DUSHANBA',
+	'SESHANBA',
+	'CHORSHANBA',
+	'PAYSHANBA',
+	'JUMA',
+	'SHANBA',
+]
 
 interface TimelineItem extends BookingItem {
 	startMinutes: number
@@ -44,6 +68,7 @@ interface ClientOption {
 	id: string
 	full_name: string
 	phone?: string
+	chatSessionId?: string
 }
 
 interface BookingFormState {
@@ -125,8 +150,13 @@ function getStartOfWeek(date: Date): Date {
 	return result
 }
 
-function formatWeekdayName(date: Date, locale: string): string {
-	return new Intl.DateTimeFormat(locale, { weekday: 'long' }).format(date)
+function formatWeekdayName(date: Date, language: string): string {
+	const day = date.getDay()
+	if (language === 'ru') {
+		return RU_WEEKDAY_NAMES[day] || ''
+	}
+
+	return UZ_WEEKDAY_NAMES[day] || ''
 }
 
 function formatDayNumber(date: Date, locale: string): string {
@@ -195,7 +225,7 @@ function toDateTimeFieldValue(value: string | undefined): string {
 }
 
 function createDefaultScheduledFor(dateKey: string): string {
-	return `${dateKey}T09:00`
+	return `${dateKey}T11:00`
 }
 
 function formatBookingDateValue(
@@ -274,44 +304,26 @@ function getBookingStatusTone(
 
 function getBookingCardClassName(status: string | undefined, isActive: boolean): string {
 	const normalized = String(status || 'pending').toLowerCase()
-	const selectedState = isActive ? 'ring-2 ring-[#10b981]/30 shadow-md' : 'shadow-sm'
+	const selectedState = isActive
+		? 'ring-2 ring-primary/35 shadow-[0_22px_40px_-26px_rgba(99,102,241,0.58)]'
+		: 'shadow-[0_14px_28px_-24px_rgba(15,23,42,0.32)] hover:shadow-[0_18px_34px_-24px_rgba(99,102,241,0.28)]'
 
 	if (normalized === 'confirmed' || normalized === 'came') {
-		return `border-[#7dd3c7] bg-[#ecfdf5] text-[#065f46] ${selectedState}`
+		return `border-[rgb(99_102_241_/_0.26)] bg-[linear-gradient(180deg,rgba(238,242,255,0.96),rgba(199,210,254,0.64))] text-[rgb(49,46,129)] dark:border-[rgb(129_140_248_/_0.24)] dark:bg-[linear-gradient(180deg,rgba(49,46,129,0.44),rgba(30,41,59,0.74))] dark:text-[rgb(224,231,255)] ${selectedState}`
 	}
 	if (normalized === 'cancelled' || normalized === 'no_show') {
-		return `border-[#cbd5e1] bg-[#f8fafc] text-[#334155] ${selectedState}`
+		return `border-[rgb(148_163_184_/_0.28)] bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(226,232,240,0.72))] text-[rgb(51,65,85)] dark:border-[rgb(100_116_139_/_0.34)] dark:bg-[linear-gradient(180deg,rgba(51,65,85,0.54),rgba(15,23,42,0.82))] dark:text-[rgb(203,213,225)] ${selectedState}`
 	}
 
-	return `border-[#facc15] bg-[#fffbeb] text-[#854d0e] ${selectedState}`
+	return `border-[rgb(244_114_182_/_0.24)] bg-[linear-gradient(180deg,rgba(253,242,248,0.96),rgba(251,207,232,0.64))] text-[rgb(157,23,77)] dark:border-[rgb(244_114_182_/_0.28)] dark:bg-[linear-gradient(180deg,rgba(131,24,67,0.44),rgba(17,24,39,0.82))] dark:text-[rgb(251,207,232)] ${selectedState}`
 }
 
 function resolveTimelineHours(
-	bookings: BookingItem[],
+	_bookings: BookingItem[],
 ): { startHour: number; endHour: number } {
-	if (bookings.length === 0) {
-		return {
-			startHour: DEFAULT_START_HOUR,
-			endHour: DEFAULT_END_HOUR,
-		}
-	}
-
-	const earliestMinutes = Math.min(
-		...bookings.map(item => getMinutesFromDate(item.scheduled_for)),
-	)
-	const latestMinutes = Math.max(
-		...bookings.map(item => {
-			if (item.ends_at) {
-				return getMinutesFromDate(item.ends_at)
-			}
-
-			return getMinutesFromDate(item.scheduled_for) + (item.duration_minutes || 30)
-		}),
-	)
-
 	return {
-		startHour: Math.max(0, Math.min(DEFAULT_START_HOUR, Math.floor(earliestMinutes / 60))),
-		endHour: Math.min(24, Math.max(DEFAULT_END_HOUR, Math.ceil(latestMinutes / 60))),
+		startHour: DEFAULT_START_HOUR,
+		endHour: DEFAULT_END_HOUR,
 	}
 }
 
@@ -434,6 +446,7 @@ async function fetchAllClientOptions(): Promise<ClientOption[]> {
 				id: client.id,
 				full_name: client.full_name,
 				phone: client.phone,
+				chatSessionId: client.chat_session_id || undefined,
 			})
 		}
 
@@ -445,6 +458,43 @@ async function fetchAllClientOptions(): Promise<ClientOption[]> {
 	return items
 }
 
+async function findChatSessionIdForClient(clientId: string): Promise<string | null> {
+	const normalizedClientId = String(clientId)
+
+	for (let page = 1; page <= MAX_CHAT_LOOKUP_PAGES; page += 1) {
+		const response = await services.chat.listSessions({
+			page,
+			pageSize: CHAT_LOOKUP_PAGE_SIZE,
+			ordering: '-last_message_at',
+		})
+
+		const matchedSession = response.items.find(
+			(session: Conversation) =>
+				String(session.client?.id || '') === normalizedClientId,
+		)
+		if (matchedSession?.id) {
+			return String(matchedSession.id)
+		}
+
+		const resolvedPageSize = Math.max(
+			1,
+			response.page_size ?? CHAT_LOOKUP_PAGE_SIZE,
+		)
+		const resolvedTotal = Math.max(
+			response.items.length,
+			response.count ?? response.total ?? response.items.length,
+		)
+		const hasMore =
+			Boolean(response.next) || page * resolvedPageSize < resolvedTotal
+
+		if (!hasMore || response.items.length === 0) {
+			break
+		}
+	}
+
+	return null
+}
+
 function BookingsPage() {
 	const { t, i18n } = useTranslation()
 	const navigate = useNavigate()
@@ -452,6 +502,10 @@ function BookingsPage() {
 	const isRu = i18n.language === 'ru'
 	const locale = i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'
 	const canOpenClient = hasPermission('can_view_clients')
+	const canOpenChat =
+		hasPermission('can_access_chats') ||
+		hasPermission('can_view_conversations') ||
+		hasPermission('can_manage_conversations')
 	const canManageBookings = hasPermission('can_manage_bookings')
 	const [bookings, setBookings] = useState<BookingItem[]>([])
 	const [selectedDate, setSelectedDate] = useState(() => toIsoDate(new Date()))
@@ -473,6 +527,8 @@ function BookingsPage() {
 	const [submittingBooking, setSubmittingBooking] = useState(false)
 	const [pendingDeleteBookingId, setPendingDeleteBookingId] = useState<string | null>(null)
 	const [deletingBooking, setDeletingBooking] = useState(false)
+	const [activeBookingChatSessionId, setActiveBookingChatSessionId] = useState<string | null>(null)
+	const bookingClientChatCacheRef = useRef<Record<string, string | null>>({})
 
 	useEffect(() => {
 		let active = true
@@ -520,7 +576,7 @@ function BookingsPage() {
 	}, [refreshKey])
 
 	useEffect(() => {
-		if (!canManageBookings) {
+		if (!canManageBookings && !canOpenChat) {
 			return
 		}
 
@@ -548,7 +604,65 @@ function BookingsPage() {
 		return () => {
 			active = false
 		}
-	}, [canManageBookings])
+	}, [canManageBookings, canOpenChat])
+
+	useEffect(() => {
+		if (!canOpenChat) {
+			setActiveBookingChatSessionId(null)
+			return
+		}
+
+		const activeClientId = activeBooking?.client?.id || activeBooking?.client_id
+		if (!activeClientId) {
+			setActiveBookingChatSessionId(null)
+			return
+		}
+		const resolvedClientId = activeClientId
+
+		const cachedChatSessionId =
+			bookingClientChatCacheRef.current[resolvedClientId] ||
+			clientOptions.find(option => option.id === resolvedClientId)?.chatSessionId ||
+			null
+		setActiveBookingChatSessionId(cachedChatSessionId)
+		if (cachedChatSessionId) {
+			return
+		}
+
+		let cancelled = false
+
+		async function loadActiveBookingClientChat() {
+			try {
+				const nextChatSessionId = await findChatSessionIdForClient(resolvedClientId)
+				if (cancelled) {
+					return
+				}
+
+				if (nextChatSessionId) {
+					bookingClientChatCacheRef.current[resolvedClientId] = nextChatSessionId
+				}
+				setActiveBookingChatSessionId(nextChatSessionId)
+				setClientOptions(current =>
+					current.map(option =>
+						option.id === resolvedClientId
+							? { ...option, chatSessionId: nextChatSessionId || undefined }
+							: option,
+					),
+				)
+			} catch {
+				if (cancelled) {
+					return
+				}
+
+				setActiveBookingChatSessionId(null)
+			}
+		}
+
+		void loadActiveBookingClientChat()
+
+		return () => {
+			cancelled = true
+		}
+	}, [activeBooking, canOpenChat])
 
 	const selectedDateObject = useMemo(() => parseIsoDate(selectedDate), [selectedDate])
 	const weekStartDate = useMemo(
@@ -771,16 +885,6 @@ function BookingsPage() {
 		}
 	}
 
-	function getCalendarConnectionLabel(calendarEventId?: string): string {
-		if (calendarEventId) {
-			return isRu
-				? 'Подключено к Google Calendar'
-				: "Google Calendar bilan bog'langan"
-		}
-
-		return isRu ? 'Google Calendar не подключен' : 'Google Calendar ulanmagan'
-	}
-
 	const header = (
 		<PageHeader
 			eyebrow={t('bookings.page.eyebrow')}
@@ -902,7 +1006,7 @@ function BookingsPage() {
 											className={[
 												'min-h-[88px] border-r border-border-soft/70 px-3 py-3 text-center last:border-r-0',
 												isSelected
-													? 'bg-[#0f172a] text-white'
+													? 'bg-[linear-gradient(145deg,#0f172a,_#172554_58%,_#0f766e)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
 													: 'bg-surface-card text-text-primary',
 											].join(' ')}
 										>
@@ -912,14 +1016,14 @@ function BookingsPage() {
 													isSelected ? 'text-white/55' : 'text-text-muted',
 												].join(' ')}
 											>
-												{formatWeekdayName(column.date, locale)}
+												{formatWeekdayName(column.date, i18n.language)}
 											</p>
 											<div className='mt-3 flex justify-center'>
 												<span
 													className={[
 														'inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-sm font-extrabold',
 														isSelected
-															? 'bg-[#10b981] text-[#052e2b]'
+															? 'bg-[#14b8a6] text-white shadow-[0_10px_24px_-10px_rgba(20,184,166,0.85)]'
 															: 'text-text-primary',
 													].join(' ')}
 												>
@@ -960,7 +1064,9 @@ function BookingsPage() {
 											key={column.dateKey}
 											className={[
 												'relative border-r border-border-soft/70 last:border-r-0',
-												isSelected ? 'bg-primary/[0.035]' : 'bg-surface-card',
+												isSelected
+													? 'bg-[linear-gradient(180deg,rgba(20,184,166,0.10),rgba(15,23,42,0.02))]'
+													: 'bg-surface-card',
 											].join(' ')}
 											style={{ height: `${timelineHeight}px` }}
 										>
@@ -1045,18 +1151,18 @@ function BookingsPage() {
 					onClick={() => setActiveBooking(null)}
 				>
 					<div
-						className='w-full max-w-[520px] rounded-[28px] bg-surface-card p-5 shadow-xl ring-1 ring-border-soft/60'
+						className='w-full max-w-[520px] rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.14),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10'
 						onClick={event => event.stopPropagation()}
 					>
 						<div className='flex items-start justify-between gap-3'>
 							<div className='min-w-0'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#67e8f9]'>
 									{t('bookings.page.detailsEyebrow')}
 								</p>
-								<h2 className='mt-1 truncate font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-text-primary'>
+								<h2 className='mt-1 truncate font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-white'>
 									{activeBooking.client?.full_name || t('common.notAvailable')}
 								</h2>
-								<p className='mt-1 text-sm text-text-secondary'>
+								<p className='mt-1 text-sm text-slate-300'>
 									{formatBookingDateValue(
 										activeBooking.scheduled_for,
 										i18n.language,
@@ -1067,7 +1173,7 @@ function BookingsPage() {
 							</div>
 							<button
 								type='button'
-								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/6 text-slate-300 transition duration-fast hover:bg-white/10 hover:text-white'
 								onClick={() => setActiveBooking(null)}
 							>
 								<AppIcon name='close' className='h-4 w-4' aria-hidden='true' />
@@ -1080,25 +1186,58 @@ function BookingsPage() {
 								label={getBookingStatusLabel(activeBooking.status, t)}
 								tone={getBookingStatusTone(activeBooking.status)}
 							/>
-							<span className='inline-flex min-h-7 items-center rounded-pill bg-surface-subtle px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary ring-1 ring-border-soft/60'>
+							<span className='inline-flex min-h-7 items-center rounded-pill bg-white/6 px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-200 ring-1 ring-white/10'>
 								{formatDurationLabel(activeBooking.duration_minutes, t)}
 							</span>
 						</div>
 
+						<div className='mt-5 flex flex-wrap items-center gap-2'>
+							{canOpenClient && activeBooking.client?.id ? (
+								<button
+									type='button'
+									className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent'
+									onClick={() => {
+										navigate(routePaths.clients, {
+											state: { clientId: activeBooking.client?.id },
+										})
+										setActiveBooking(null)
+									}}
+								>
+									<AppIcon name='user' className='h-4 w-4' aria-hidden='true' />
+									{t('bookings.page.openClient')}
+								</button>
+							) : null}
+							{canOpenChat && activeBookingChatSessionId ? (
+								<button
+									type='button'
+									className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-white/8 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/12 transition duration-fast hover:bg-white/12 hover:text-white'
+									onClick={() => {
+										navigate(routePaths.chats, {
+											state: { sessionId: activeBookingChatSessionId },
+										})
+										setActiveBooking(null)
+									}}
+								>
+									<AppIcon name='chat' className='h-4 w-4' aria-hidden='true' />
+									{t('bookings.page.openChat')}
+								</button>
+							) : null}
+						</div>
+
 						<div className='mt-5 grid gap-4 sm:grid-cols-2'>
 							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
 									{t('bookings.page.fields.phone')}
 								</p>
-								<p className='m-0 text-sm font-semibold text-text-primary'>
+								<p className='m-0 text-sm font-semibold text-slate-100'>
 									{activeBooking.client?.phone || t('common.notAvailable')}
 								</p>
 							</div>
 							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
 									{t('bookings.page.fields.source')}
 								</p>
-								<p className='m-0 text-sm font-semibold text-text-primary'>
+								<p className='m-0 text-sm font-semibold text-slate-100'>
 									{activeBooking.client?.source
 										? getChannelLabel(
 												t,
@@ -1109,10 +1248,10 @@ function BookingsPage() {
 								</p>
 							</div>
 							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
 									{t('bookings.page.fields.requestedDate')}
 								</p>
-								<p className='m-0 text-sm font-semibold text-text-primary'>
+								<p className='m-0 text-sm font-semibold text-slate-100'>
 									{activeBooking.requested_date
 										? formatBookingDateValue(
 												activeBooking.requested_date,
@@ -1123,33 +1262,25 @@ function BookingsPage() {
 										: t('common.notAvailable')}
 								</p>
 							</div>
-							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
-									{t('bookings.page.fields.calendar')}
-								</p>
-								<p className='m-0 text-sm font-semibold text-text-primary'>
-									{getCalendarConnectionLabel(activeBooking.calendar_event_id)}
-								</p>
-							</div>
 						</div>
 
 						{activeBooking.client?.ai_summary ? (
-							<div className='mt-5 rounded-2xl border border-border-soft/70 bg-surface-subtle/65 p-4'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
+							<div className='mt-5 rounded-2xl border border-white/10 bg-white/5 p-4'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
 									{t('bookings.page.fields.summary')}
 								</p>
-								<p className='mt-2 text-sm leading-6 text-text-secondary'>
+								<p className='mt-2 text-sm leading-6 text-slate-300'>
 									{activeBooking.client.ai_summary}
 								</p>
 							</div>
 						) : null}
 
-						<div className='mt-5 flex flex-wrap items-center gap-2'>
+						<div className='mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-white/10 pt-4'>
 							{canManageBookings ? (
 								<>
 									<button
 										type='button'
-										className='inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-secondary ring-1 ring-border-soft/60 transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+										className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'
 										onClick={() => openEditBookingModal(activeBooking)}
 									>
 										{isRu ? 'Редактировать' : 'Tahrirlash'}
@@ -1166,25 +1297,11 @@ function BookingsPage() {
 							) : null}
 							<button
 								type='button'
-								className='inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-secondary ring-1 ring-border-soft/60 transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+								className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'
 								onClick={() => setActiveBooking(null)}
 							>
-								{t('common.cancel')}
+								{isRu ? 'Отмена' : 'Bekor qilish'}
 							</button>
-							{canOpenClient && activeBooking.client?.id ? (
-								<button
-									type='button'
-									className='ml-auto inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent'
-									onClick={() =>
-										navigate(routePaths.clients, {
-											state: { clientId: activeBooking.client?.id },
-										})
-									}
-								>
-									<AppIcon name='user' className='h-4 w-4' aria-hidden='true' />
-									{t('bookings.page.openClient')}
-								</button>
-							) : null}
 						</div>
 					</div>
 				</div>
@@ -1201,17 +1318,21 @@ function BookingsPage() {
 					}}
 				>
 					<div
-						className='w-full max-w-[560px] rounded-[28px] bg-surface-card p-5 shadow-xl ring-1 ring-border-soft/60'
+						className='w-full max-w-[560px] rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.13),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10'
 						onClick={event => event.stopPropagation()}
 					>
 						<div className='flex items-start justify-between gap-3'>
 							<div className='min-w-0'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#67e8f9]'>
 									{bookingFormMode === 'edit'
-										? t('common.edit')
-										: t('common.create')}
+										? isRu
+											? 'Редактировать'
+											: 'Tahrirlash'
+										: isRu
+											? 'Создание'
+											: 'Yaratish'}
 								</p>
-								<h2 className='mt-1 font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-text-primary'>
+								<h2 className='mt-1 font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-white'>
 									{bookingFormMode === 'edit'
 										? isRu
 											? 'Редактировать бронь'
@@ -1223,7 +1344,7 @@ function BookingsPage() {
 							</div>
 							<button
 								type='button'
-								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/6 text-slate-300 transition duration-fast hover:bg-white/10 hover:text-white'
 								onClick={() => resetBookingForm(selectedDate)}
 								disabled={submittingBooking}
 							>
@@ -1314,15 +1435,15 @@ function BookingsPage() {
 							<div className='flex flex-wrap items-center gap-2'>
 								<button
 									type='button'
-									className='inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-secondary ring-1 ring-border-soft/60 transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+									className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'
 									onClick={() => resetBookingForm(selectedDate)}
 									disabled={submittingBooking}
 								>
-									{t('common.cancel')}
+									{isRu ? 'Отмена' : 'Bekor qilish'}
 								</button>
 								<button
 									type='submit'
-									className='ml-auto inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent disabled:cursor-not-allowed disabled:opacity-60'
+									className='ml-auto inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-[#14b8a6] px-4 text-sm font-semibold text-white transition duration-fast hover:bg-[#0f9f94] disabled:cursor-not-allowed disabled:opacity-60'
 									disabled={submittingBooking || (bookingFormMode === 'create' && clientsLoading)}
 								>
 									<AppIcon
@@ -1357,7 +1478,7 @@ function BookingsPage() {
 							? 'Это действие нельзя отменить.'
 							: "Bu amalni bekor qilib bo'lmaydi."
 					}
-					cancelLabel={t('common.cancel')}
+					cancelLabel={isRu ? 'Отмена' : 'Bekor qilish'}
 					confirmLabel={isRu ? 'Удалить' : "O'chirish"}
 					isBusy={deletingBooking}
 					confirmTone='danger'

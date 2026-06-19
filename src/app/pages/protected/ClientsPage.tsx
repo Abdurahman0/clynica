@@ -1,5 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog';
 import { FilterSelect, Switch } from '../../../components/shared/data';
@@ -98,6 +99,40 @@ function ClientsPage() {
     position: '',
     is_active: true,
   });
+
+  useEffect(() => {
+    const hasOpenDrawer = Boolean(selectedClientId || isFormOpen || isStatusFormOpen);
+    if (!hasOpenDrawer) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') {
+        return;
+      }
+
+      if (selectedClientId) {
+        setSelectedClientId(null);
+        return;
+      }
+
+      if (isFormOpen) {
+        setIsFormOpen(false);
+        setEditingClient(null);
+        return;
+      }
+
+      if (isStatusFormOpen && !isSavingStatus) {
+        setIsStatusFormOpen(false);
+        setEditingStatus(null);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isFormOpen, isSavingStatus, isStatusFormOpen, selectedClientId]);
 
   useEffect(() => {
     if (!canOpenStatusesTable) {
@@ -465,37 +500,45 @@ function ClientsPage() {
       }
     />
   );
+  const activeDrawerWidth = selectedClientId ? 520 : isFormOpen || isStatusFormOpen ? 560 : 0;
+  const pageShellStyle = activeDrawerWidth
+    ? ({ ['--client-drawer-offset' as const]: `${activeDrawerWidth}px` } as CSSProperties)
+    : undefined;
 
   if (hasError) {
     return (
-      <PageLayout header={header}>
-        <EmptyState title={tx.errorTitle} description={tx.errorDescription} />
-      </PageLayout>
+      <div className="client-page-shell--nova" style={pageShellStyle}>
+        <PageLayout header={header}>
+          <EmptyState title={tx.errorTitle} description={tx.errorDescription} />
+        </PageLayout>
+      </div>
     );
   }
 
   return (
     <>
-      <PageLayout header={header}>
-        <PageSection>
-          <ClientsListView
-            key={listRefreshKey}
-            tableMode={tableMode}
-            onTableModeChange={setTableMode}
-            onRowClick={(client) => setSelectedClientId(client.id)}
-            onEditClient={openEditForm}
-            onDeleteClient={handleDeleteFromList}
-            onEditStatus={openEditStatusForm}
-            onDeleteStatus={handleDeleteStatusFromList}
-            selectedClientId={selectedClientId}
-            canManageClients={canManageClients}
-            canViewStatuses={canUseStatusesData}
-            canManageStatuses={canManageStatuses}
-            onStatsChange={handleStatsChange}
-            onStatusesCountChange={setStatusesCount}
-          />
-        </PageSection>
-      </PageLayout>
+      <div className="client-page-shell--nova" style={pageShellStyle}>
+        <PageLayout header={header}>
+          <PageSection>
+            <ClientsListView
+              key={listRefreshKey}
+              tableMode={tableMode}
+              onTableModeChange={setTableMode}
+              onRowClick={(client) => setSelectedClientId(client.id)}
+              onEditClient={openEditForm}
+              onDeleteClient={handleDeleteFromList}
+              onEditStatus={openEditStatusForm}
+              onDeleteStatus={handleDeleteStatusFromList}
+              selectedClientId={selectedClientId}
+              canManageClients={canManageClients}
+              canViewStatuses={canUseStatusesData}
+              canManageStatuses={canManageStatuses}
+              onStatsChange={handleStatsChange}
+              onStatusesCountChange={setStatusesCount}
+            />
+          </PageSection>
+        </PageLayout>
+      </div>
 
       {actionMessage ? (
         <div className="fixed bottom-4 right-4 z-[230] w-[min(92vw,460px)]">
@@ -528,13 +571,15 @@ function ClientsPage() {
 
       {selectedClientId ? (
         <div
-          className="fixed inset-0 z-[140] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
+          className="client-drawer-overlay--nova fixed inset-0 z-[140] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
           role="presentation"
           onClick={() => setSelectedClientId(null)}
         >
-          <div
-            className="h-full w-full max-w-[520px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
+          <aside
+            className="client-drawer-panel--nova h-full w-full max-w-[520px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
             onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
           >
             <ClientsDetailPanel
               clientId={selectedClientId}
@@ -551,19 +596,21 @@ function ClientsPage() {
                 setClientToDelete(client);
               }}
             />
-          </div>
+          </aside>
         </div>
       ) : null}
 
       {isFormOpen ? (
         <div
-          className="fixed inset-0 z-[150] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
+          className="client-drawer-overlay--nova fixed inset-0 z-[150] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
           role="presentation"
           onClick={() => setIsFormOpen(false)}
         >
-          <div
-            className="h-full w-full max-w-[560px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
+          <aside
+            className="client-drawer-panel--nova h-full w-full max-w-[560px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
             onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
           >
             <ClientsFormPanel
               client={editingClient ?? undefined}
@@ -575,7 +622,7 @@ function ClientsPage() {
               }}
               onSuccess={handleClientSaved}
             />
-          </div>
+          </aside>
         </div>
       ) : null}
 
@@ -596,7 +643,7 @@ function ClientsPage() {
 
       {isStatusFormOpen ? (
         <div
-          className="fixed inset-0 z-[155] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
+          className="client-drawer-overlay--nova fixed inset-0 z-[155] flex justify-end bg-background-overlay/72 backdrop-blur-[3px]"
           role="presentation"
           onClick={() => {
             if (!isSavingStatus) {
@@ -606,8 +653,10 @@ function ClientsPage() {
           }}
         >
           <aside
-            className="h-full w-full max-w-[560px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
+            className="client-drawer-panel--nova h-full w-full max-w-[560px] overflow-y-auto bg-background-subtle p-4 shadow-xl ring-1 ring-border-soft/50 min-[641px]:p-5"
             onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
           >
             <header className="mb-4 rounded-xl bg-surface-card p-4 shadow-sm ring-1 ring-border-soft/40">
               <div className="flex items-start justify-between gap-3">

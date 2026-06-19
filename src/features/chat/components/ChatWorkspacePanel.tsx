@@ -1011,7 +1011,7 @@ function ChatWorkspacePanel({
 
 			<div
 				ref={messagesContainerRef}
-				className='chat-messages-shell--nova relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-xl ring-1 ring-border-soft/50'
+				className='chat-messages-shell--nova chat-scroll-region--nova relative min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-xl ring-1 ring-border-soft/50'
 				style={{
 					backgroundImage: `url(${chatBackground})`,
 					backgroundSize: 'cover',

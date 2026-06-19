@@ -527,6 +527,7 @@
 	html[data-design='nova'] .chat-workspace-header--nova,
 	html[data-design='nova'] .chat-messages-shell--nova,
 	html[data-design='nova'] .chat-composer--nova,
+	html[data-design='nova'] .client-drawer-panel--nova,
 	html[data-design='nova'] .task-column--nova,
 	html[data-design='nova'] .task-modal--nova {
 		backdrop-filter: blur(28px) saturate(165%);
@@ -614,8 +615,72 @@
 			inset 0 1px 0 rgb(255 255 255 / 0.48);
 	}
 
+	html[data-design='nova'] .chat-session-list-scroll--nova,
+	html[data-design='nova'] .chat-scroll-region--nova,
+	html[data-design='nova'] .chat-profile-scroll--nova {
+		overscroll-behavior-y: contain;
+		scrollbar-gutter: stable;
+		-webkit-overflow-scrolling: touch;
+		contain: layout paint;
+		transform: translateZ(0);
+		backface-visibility: hidden;
+	}
+
+	html[data-design='nova'] .chat-rail-card--nova,
+	html[data-design='nova'] .chat-workspace-card--nova,
+	html[data-design='nova'] .chat-messages-shell--nova {
+		will-change: transform;
+		transform: translateZ(0);
+		backface-visibility: hidden;
+	}
+
 	html[data-design='nova'] .chat-workspace--nova article {
 		backdrop-filter: blur(22px) saturate(155%);
+	}
+
+	html[data-design='nova'] .client-drawer-overlay--nova {
+		animation: novaDrawerOverlayIn 180ms ease-out;
+	}
+
+	html[data-design='nova'] .client-page-shell--nova {
+		transition: margin-right 260ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@media (min-width: 1024px) {
+		html[data-design='nova'] .client-page-shell--nova {
+			margin-right: var(--client-drawer-offset, 0px);
+		}
+	}
+
+	html[data-design='nova'] .client-drawer-panel--nova {
+		animation: novaDrawerInRight 260ms cubic-bezier(0.22, 1, 0.36, 1);
+		overscroll-behavior-y: contain;
+		scrollbar-gutter: stable;
+		will-change: transform, opacity;
+		transform: translateZ(0);
+		backface-visibility: hidden;
+	}
+
+	@keyframes novaDrawerOverlayIn {
+		from {
+			opacity: 0;
+		}
+
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes novaDrawerInRight {
+		from {
+			transform: translate3d(40px, 0, 0);
+			opacity: 0.42;
+		}
+
+		to {
+			transform: translate3d(0, 0, 0);
+			opacity: 1;
+		}
 	}
 
 	html[data-design='nova'] .chat-workspace--nova article[class*='bg-[linear-gradient(160deg'] {

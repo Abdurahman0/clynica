@@ -58,6 +58,27 @@ function asNumber(value: unknown): number | undefined {
 	return undefined
 }
 
+function resolveChatSessionId(record: UnknownRecord): string | undefined {
+	const directValue =
+		asString(record.chat_session_id) ||
+		asString(record.chat_session) ||
+		asString(record.session_id)
+	if (directValue) {
+		return directValue
+	}
+
+	const nestedChatSession = asRecord(record.chat_session)
+	if (nestedChatSession) {
+		return (
+			asString(nestedChatSession.id) ||
+			asString(nestedChatSession.session_id) ||
+			undefined
+		)
+	}
+
+	return undefined
+}
+
 function mapStatusItem(dto: unknown): CRMStatusItem | null {
 	const record = asRecord(dto)
 	if (!record) {
@@ -194,7 +215,7 @@ function mapClient(dto: unknown): Client {
 
 	return {
 		id: asString(record.id),
-		chat_session_id: undefined,
+		chat_session_id: resolveChatSessionId(record),
 		full_name: asString(record.full_name),
 		phone: asString(record.phone),
 		source_platform: mapSource(record.source),
