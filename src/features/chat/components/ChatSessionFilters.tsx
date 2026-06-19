@@ -13,11 +13,15 @@ interface ChatSessionFiltersProps {
   operatorFilter: OperatorFilterValue;
   ordering: string;
   orderingOptions: SelectOption[];
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
   disabled: boolean;
   onSearchChange: (value: string) => void;
   onChannelChange: (value: ChannelFilterValue) => void;
   onOperatorFilterChange: (value: OperatorFilterValue) => void;
   onOrderingChange: (value: string) => void;
+  onPageChange: (page: number) => void;
 }
 
 interface ChannelOption {
@@ -44,13 +48,19 @@ function ChatSessionFilters({
   operatorFilter,
   ordering,
   orderingOptions,
+  currentPage,
+  totalPages,
+  totalItems,
   disabled,
   onSearchChange,
   onChannelChange,
   onOperatorFilterChange,
   onOrderingChange,
+  onPageChange,
 }: ChatSessionFiltersProps) {
   const { t } = useTranslation();
+  const canGoPrevious = currentPage > 1;
+  const canGoNext = currentPage < Math.max(totalPages, 1);
 
   const channelOptions: ChannelOption[] = [
     {
@@ -152,6 +162,35 @@ function ChatSessionFilters({
           onChange={onOrderingChange}
           disabled={disabled}
         />
+      </div>
+
+      <div className="grid gap-1.5">
+        <div className="flex items-center justify-between gap-2">
+          <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted">
+            {t('shared.pagination.page')} {currentPage} / {Math.max(totalPages, 1)}
+          </p>
+          <span className="text-[11px] font-medium text-text-muted">
+            {totalItems} {t('shared.pagination.totalItems')}
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            className="chat-filter-chip--nova inline-flex min-h-[42px] items-center justify-center rounded-xl bg-surface-subtle/90 px-2 text-xs font-semibold text-text-secondary ring-1 ring-border-soft/45 transition duration-fast hover:bg-surface-card hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={disabled || !canGoPrevious}
+          >
+            {t('shared.pagination.previous')}
+          </button>
+          <button
+            type="button"
+            className="chat-filter-chip--nova inline-flex min-h-[42px] items-center justify-center rounded-xl bg-surface-subtle/90 px-2 text-xs font-semibold text-text-secondary ring-1 ring-border-soft/45 transition duration-fast hover:bg-surface-card hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={disabled || !canGoNext}
+          >
+            {t('shared.pagination.next')}
+          </button>
+        </div>
       </div>
     </div>
   );

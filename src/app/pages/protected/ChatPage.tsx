@@ -23,7 +23,6 @@ type OperatorFilter = 'all' | 'active' | 'inactive';
 
 const ALL_CHANNEL_VALUE = 'all' as const;
 const PAGE_SIZE = 120;
-const MAX_SESSION_PAGES = 50;
 const MESSAGE_PAGE_SIZE = 250;
 const SESSIONS_POLL_INTERVAL_MS = 8000;
 const MESSAGES_POLL_INTERVAL_MS = 6000;
@@ -204,8 +203,10 @@ function ChatPage() {
   const [channelFilter, setChannelFilter] = useState<ChannelFilter>(ALL_CHANNEL_VALUE);
   const [operatorFilter, setOperatorFilter] = useState<OperatorFilter>('all');
   const [ordering, setOrdering] = useState<SessionOrdering>('-last_message_at');
+  const [sessionsPage, setSessionsPage] = useState(1);
 
   const [sessions, setSessions] = useState<Conversation[]>([]);
+  const [sessionsTotal, setSessionsTotal] = useState(0);
   const [activeSessionId, setActiveSessionId] = useState<EntityId | null>(null);
   const [activeSession, setActiveSession] = useState<Conversation | null>(null);
   const [isSessionsLoading, setIsSessionsLoading] = useState(true);
@@ -252,7 +253,7 @@ function ChatPage() {
 
   const sessionQuery = useMemo(
     () => ({
-      page: 1,
+      page: sessionsPage,
       pageSize: PAGE_SIZE,
       search: search.trim() || undefined,
       channel: channelFilter === ALL_CHANNEL_VALUE ? undefined : channelFilter,
@@ -262,7 +263,7 @@ function ChatPage() {
           : operatorFilter === 'active',
       ordering,
     }),
-    [channelFilter, operatorFilter, ordering, search],
+    [channelFilter, operatorFilter, ordering, search, sessionsPage],
   );
 
   const applySessionListState = useCallback(
@@ -284,50 +285,25 @@ function ChatPage() {
       setHasSessionsError(false);
 
       try {
-        const collectedSessions: Conversation[] = [];
-        const seenSessionIds = new Set<string>();
+        const result = await services.chat.listSessions(sessionQuery);
 
-        for (let page = 1; page <= MAX_SESSION_PAGES; page += 1) {
-          const result = await services.chat.listSessions({
-            ...sessionQuery,
-            page,
-            pageSize: PAGE_SIZE,
-          });
-
-          if (requestId !== sessionsRequestRef.current) {
-            return;
-          }
-
-          for (const session of result.items) {
-            if (seenSessionIds.has(session.id)) {
-              continue;
-            }
-
-            seenSessionIds.add(session.id);
-            collectedSessions.push(session);
-            sessionCacheRef.current[session.id] = session;
-          }
-
-          const resolvedPageSize = Math.max(1, result.page_size ?? PAGE_SIZE);
-          const resolvedTotal = Math.max(
-            collectedSessions.length,
-            result.count ?? result.total ?? collectedSessions.length,
-          );
-          const hasMore =
-            Boolean(result.next) || page * resolvedPageSize < resolvedTotal;
-
-          if (!hasMore || result.items.length === 0) {
-            break;
-          }
+        if (requestId !== sessionsRequestRef.current) {
+          return;
         }
 
-        setSessions(applySessionListState(collectedSessions));
+        for (const session of result.items) {
+          sessionCacheRef.current[session.id] = session;
+        }
+
+        setSessions(applySessionListState(result.items));
+        setSessionsTotal(result.count ?? result.total ?? result.items.length);
       } catch {
         if (requestId !== sessionsRequestRef.current) {
           return;
         }
 
         setHasSessionsError(true);
+        setSessionsTotal(0);
       } finally {
         if (!options?.silent && requestId === sessionsRequestRef.current) {
           setIsSessionsLoading(false);
@@ -828,8 +804,30 @@ function ChatPage() {
   const selectedSessionForModal = activeSessionId
     ? activeSession ?? sessions.find((session) => session.id === activeSessionId) ?? null
     : null;
+  const totalSessionPages = Math.max(1, Math.ceil(Math.max(sessionsTotal, 0) / PAGE_SIZE));
+  const visibleSessionsCount = sessionsTotal > 0 ? sessionsTotal : sessions.length;
 
   const workspaceSession = selectedSessionForModal;
+
+  function handleSearchChange(value: string) {
+    setSessionsPage(1);
+    setSearch(value);
+  }
+
+  function handleChannelChange(value: ChannelFilter) {
+    setSessionsPage(1);
+    setChannelFilter(value);
+  }
+
+  function handleOperatorFilterChange(value: OperatorFilter) {
+    setSessionsPage(1);
+    setOperatorFilter(value);
+  }
+
+  function handleOrderingChange(value: SessionOrdering) {
+    setSessionsPage(1);
+    setOrdering(value);
+  }
 
   return (
     <>
@@ -847,7 +845,7 @@ function ChatPage() {
                 {copy.sessionsTitle}
               </h2>
               <span className="text-[12px] font-medium text-text-muted">
-                {sessions.length} {copy.countSuffix}
+                {visibleSessionsCount} {copy.countSuffix}
               </span>
             </div>
 
@@ -857,11 +855,15 @@ function ChatPage() {
               operatorFilter={operatorFilter}
               ordering={ordering}
               orderingOptions={orderingOptions}
+              currentPage={sessionsPage}
+              totalPages={totalSessionPages}
+              totalItems={sessionsTotal}
               disabled={isSessionsLoading}
-              onSearchChange={setSearch}
-              onChannelChange={setChannelFilter}
-              onOperatorFilterChange={setOperatorFilter}
-              onOrderingChange={(value) => setOrdering(value as SessionOrdering)}
+              onSearchChange={handleSearchChange}
+              onChannelChange={handleChannelChange}
+              onOperatorFilterChange={handleOperatorFilterChange}
+              onOrderingChange={(value) => handleOrderingChange(value as SessionOrdering)}
+              onPageChange={setSessionsPage}
             />
 
             <div className="chat-session-list-scroll--nova min-h-0 overflow-y-auto overflow-x-hidden pr-1">
