@@ -10,6 +10,7 @@ export interface CrmRecall {
 	note: string
 	is_active: boolean
 	reminder_sent_at: string | null
+	created_by_name: string
 	created_at: string
 	updated_at: string
 }
@@ -57,7 +58,8 @@ function extractItems(value: unknown): unknown[] {
 function mapRecall(value: unknown): CrmRecall | null {
 	const record = toRecord(value)
 	const id = toNumber(record.id)
-	const clientId = toStringValue(record.client_id || record.client)
+	const clientRecord = toRecord(record.client)
+	const clientId = toStringValue(record.client_id || clientRecord.id || record.client)
 	const scheduledFor = toStringValue(record.scheduled_for)
 
 	if (!id || !clientId || !scheduledFor) {
@@ -72,6 +74,7 @@ function mapRecall(value: unknown): CrmRecall | null {
 		note: toStringValue(record.note),
 		is_active: record.is_active !== false,
 		reminder_sent_at: toNullableString(record.reminder_sent_at),
+		created_by_name: toStringValue(record.created_by_name),
 		created_at: toStringValue(record.created_at),
 		updated_at: toStringValue(record.updated_at),
 	}

@@ -1374,7 +1374,7 @@ function BookingsPage() {
 										{t('bookings.page.fields.summary')}
 									</p>
 									<p className='mt-2 text-sm leading-6 text-text-secondary'>
-										{activeBooking.client.ai_summary}
+									{activeBooking.client.ai_summary}
 									</p>
 								</div>
 							) : null}
@@ -1385,9 +1385,12 @@ function BookingsPage() {
 										clientId={activeBooking.client.id}
 										language={i18n.language}
 										locale={locale}
+										showHistory
+										showEditor={false}
 									/>
 								</div>
 							) : null}
+
 						</div>
 
 						<div className='mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border-soft/50 pt-4'>
@@ -1547,6 +1550,7 @@ function BookingsPage() {
 									clientId={bookingForm.clientId}
 									language={i18n.language}
 									locale={locale}
+									showHistory
 								/>
 							) : null}
 
