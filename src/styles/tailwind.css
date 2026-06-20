@@ -784,6 +784,22 @@
 			inset 0 1px 0 rgb(255 255 255 / 0.82);
 	}
 
+	.dashboard-stat-chip {
+		box-shadow: 0 16px 36px -22px rgb(0 0 0 / 0.26);
+	}
+
+	.dashboard-stat-chip:hover {
+		box-shadow: 0 26px 52px -22px rgb(0 0 0 / 0.34);
+	}
+
+	html[data-theme='dark'] .dashboard-stat-chip {
+		box-shadow: 0 12px 28px -20px rgb(255 255 255 / 0.12);
+	}
+
+	html[data-theme='dark'] .dashboard-stat-chip:hover {
+		box-shadow: 0 24px 48px -22px rgb(255 255 255 / 0.18);
+	}
+
 	html[data-design='nova'] .task-modal--nova {
 		border-color: rgb(var(--color-border-soft) / 0.95);
 		background:

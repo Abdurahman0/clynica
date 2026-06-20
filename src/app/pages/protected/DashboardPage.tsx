@@ -1011,10 +1011,10 @@ function DashboardPage() {
 						<article
 							key={card.label}
 							className={[
-								'min-w-0 overflow-hidden rounded-xl bg-surface-card p-4 shadow-sm ring-1 ring-border-soft/40 transform-gpu transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform',
+								'dashboard-stat-chip min-w-0 overflow-hidden rounded-xl bg-surface-card p-4 ring-1 ring-border-soft/40 transform-gpu transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform',
 								card.path
-									? 'cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-lg hover:ring-primary/35'
-									: 'hover:-translate-y-0.5 hover:scale-[1.01] hover:shadow-md hover:ring-border-soft/60',
+									? 'cursor-pointer hover:-translate-y-0.5 hover:scale-[1.02] hover:ring-primary/35'
+									: 'hover:-translate-y-0.5 hover:scale-[1.01] hover:ring-border-soft/60',
 							].join(' ')}
 							onClick={card.path ? () => navigate(card.path!) : undefined}
 							role={card.path ? 'button' : undefined}

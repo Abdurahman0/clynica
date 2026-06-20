@@ -1,10 +1,11 @@
 import axios, {
   AxiosError,
+  AxiosHeaders,
   type InternalAxiosRequestConfig,
   type AxiosResponseHeaders,
   type RawAxiosResponseHeaders,
 } from 'axios';
-import { clearTokens, getAccessToken } from './auth-storage';
+import { clearTokens, getAccessToken, getRefreshToken, setTokens } from './auth-storage';
 import type { AuthTokens } from './auth-storage';
 
 declare module 'axios' {
@@ -46,6 +47,7 @@ export const apiClient = axios.create({
 });
 
 let authFailureHandler: (() => void) | null = null;
+let refreshRequestPromise: Promise<AuthTokens | null> | null = null;
 
 function applyCommonRequestHeaders(
   config: InternalAxiosRequestConfig,
@@ -91,7 +93,46 @@ export function handleUnauthorizedResponse(): void {
 }
 
 export async function requestTokenRefresh(): Promise<AuthTokens | null> {
-  return null;
+  if (refreshRequestPromise) {
+    return refreshRequestPromise;
+  }
+
+  const refreshToken = getRefreshToken();
+  if (!refreshToken) {
+    return null;
+  }
+
+  refreshRequestPromise = (async () => {
+    try {
+      const response = await apiClient.post<any>(
+        '/api/auth/refresh/',
+        { refresh: refreshToken },
+        { _retry: true, _skipAuthRefresh: true },
+      );
+
+      const responseData = response.data?.data ?? response.data;
+      if (typeof responseData?.access !== 'string' || responseData.access.length === 0) {
+        return null;
+      }
+
+      const nextTokens: AuthTokens = {
+        access: responseData.access,
+        refresh:
+          typeof responseData?.refresh === 'string' && responseData.refresh.length > 0
+            ? responseData.refresh
+            : refreshToken,
+      };
+
+      setTokens(nextTokens);
+      return nextTokens;
+    } catch {
+      return null;
+    } finally {
+      refreshRequestPromise = null;
+    }
+  })();
+
+  return refreshRequestPromise;
 }
 
 apiClient.interceptors.request.use((config) => {
@@ -120,12 +161,31 @@ apiClient.interceptors.response.use(
     const originalConfig = error.config;
     const statusCode = error.response?.status;
 
-    if (statusCode !== 401 || !originalConfig || originalConfig._retry) {
+    if (
+      statusCode !== 401 ||
+      !originalConfig ||
+      originalConfig._retry ||
+      originalConfig._skipAuthRefresh
+    ) {
       return Promise.reject(error);
     }
 
     originalConfig._retry = true;
-    handleUnauthorizedResponse();
-    return Promise.reject(error);
+
+    const refreshedTokens = await requestTokenRefresh();
+    if (!refreshedTokens?.access) {
+      handleUnauthorizedResponse();
+      return Promise.reject(error);
+    }
+
+    const nextHeaders =
+      originalConfig.headers instanceof AxiosHeaders
+        ? originalConfig.headers
+        : AxiosHeaders.from(originalConfig.headers ?? {});
+
+    nextHeaders.set('Authorization', `Bearer ${refreshedTokens.access}`);
+    originalConfig.headers = nextHeaders;
+
+    return apiClient(originalConfig);
   },
 );
