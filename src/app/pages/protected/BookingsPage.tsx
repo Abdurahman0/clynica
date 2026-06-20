@@ -331,7 +331,7 @@ function getBookingCardClassName(status: string | undefined, isActive: boolean):
 		? 'ring-2 ring-primary/35 shadow-[0_22px_40px_-26px_rgba(99,102,241,0.58)]'
 		: 'shadow-[0_14px_28px_-24px_rgba(15,23,42,0.32)] hover:shadow-[0_18px_34px_-24px_rgba(99,102,241,0.28)]'
 
-	return `text-text-primary dark:text-slate-100 ${selectedState}`
+	return `text-text-primary ${selectedState}`
 }
 
 function getBookingCardStyle(statusColor: string | undefined, isActive: boolean) {
@@ -1088,14 +1088,14 @@ function BookingsPage() {
 											className={[
 												'min-h-[88px] border-r border-border-soft/70 px-3 py-3 text-center last:border-r-0',
 												isSelected
-													? 'bg-[linear-gradient(145deg,#0f172a,_#172554_58%,_#0f766e)] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]'
+													? 'bg-[linear-gradient(145deg,rgba(99,102,241,0.16),rgba(20,184,166,0.12)_58%,rgba(15,23,42,0.02))] text-text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.28)] ring-1 ring-primary/20 dark:bg-[linear-gradient(145deg,#0f172a,_#172554_58%,_#0f766e)] dark:text-white dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] dark:ring-white/10'
 													: 'bg-surface-card text-text-primary',
 											].join(' ')}
 										>
 											<p
 												className={[
 													'm-0 text-[10px] font-semibold uppercase tracking-[0.18em]',
-													isSelected ? 'text-white/55' : 'text-text-muted',
+													isSelected ? 'text-primary dark:text-white/55' : 'text-text-muted',
 												].join(' ')}
 											>
 												{formatWeekdayName(column.date, i18n.language)}
@@ -1105,7 +1105,7 @@ function BookingsPage() {
 													className={[
 														'inline-flex h-8 min-w-8 items-center justify-center rounded-full px-2 text-sm font-extrabold',
 														isSelected
-															? 'bg-[#14b8a6] text-white shadow-[0_10px_24px_-10px_rgba(20,184,166,0.85)]'
+															? 'bg-primary text-primary-foreground shadow-[0_10px_24px_-10px_rgba(99,102,241,0.45)] dark:bg-[#14b8a6] dark:text-white dark:shadow-[0_10px_24px_-10px_rgba(20,184,166,0.85)]'
 															: 'text-text-primary',
 													].join(' ')}
 												>
@@ -1219,15 +1219,15 @@ function BookingsPage() {
 															}}
 															aria-hidden='true'
 														/>
-														<p className='m-0 truncate text-[12px] font-bold'>
+														<p className='m-0 truncate text-[12px] font-bold text-text-primary'>
 															{item.client?.full_name || t('common.notAvailable')}
 														</p>
-														<p className='mt-1 line-clamp-2 text-[10px] font-medium opacity-80'>
+														<p className='mt-1 line-clamp-2 text-[10px] font-medium text-text-secondary'>
 															{item.client?.ai_summary ||
 																item.client?.phone ||
 																t('common.notAvailable')}
 														</p>
-														<p className='mt-2 text-[10px] font-semibold opacity-90'>
+														<p className='mt-2 text-[10px] font-semibold text-text-secondary'>
 															{formatTimeLabel(item.scheduled_for)} - {formatTimeLabel(item.ends_at)}
 														</p>
 													</button>
@@ -1249,18 +1249,18 @@ function BookingsPage() {
 					onClick={() => setActiveBooking(null)}
 				>
 					<div
-						className='flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[520px] flex-col overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.14),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10 sm:max-h-[calc(100dvh-8rem)]'
+						className='flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[520px] flex-col overflow-hidden rounded-[28px] bg-surface-card p-5 text-text-primary shadow-[0_40px_110px_-42px_rgba(15,23,42,0.42)] ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-8rem)]'
 						onClick={event => event.stopPropagation()}
 					>
 						<div className='flex items-start justify-between gap-3'>
 							<div className='min-w-0'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#67e8f9]'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary'>
 									{t('bookings.page.detailsEyebrow')}
 								</p>
-								<h2 className='mt-1 truncate font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-white'>
+								<h2 className='mt-1 truncate font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-text-primary'>
 									{activeBooking.client?.full_name || t('common.notAvailable')}
 								</h2>
-								<p className='mt-1 text-sm text-slate-300'>
+								<p className='mt-1 text-sm text-text-secondary'>
 									{formatBookingDateValue(
 										activeBooking.scheduled_for,
 										i18n.language,
@@ -1271,7 +1271,7 @@ function BookingsPage() {
 							</div>
 							<button
 								type='button'
-								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/6 text-slate-300 transition duration-fast hover:bg-white/10 hover:text-white'
+								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
 								onClick={() => setActiveBooking(null)}
 							>
 								<AppIcon name='close' className='h-4 w-4' aria-hidden='true' />
@@ -1290,7 +1290,7 @@ function BookingsPage() {
 										bookingStatusColors,
 									)}
 								/>
-								<span className='inline-flex min-h-7 items-center rounded-pill bg-white/6 px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-200 ring-1 ring-white/10'>
+								<span className='inline-flex min-h-7 items-center rounded-pill bg-surface-subtle px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-text-secondary ring-1 ring-border-soft/50'>
 									{formatDurationLabel(activeBooking.duration_minutes, t)}
 								</span>
 							</div>
@@ -1314,7 +1314,7 @@ function BookingsPage() {
 								{canOpenChat && activeBookingChatSessionId ? (
 									<button
 										type='button'
-										className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-white/8 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/12 transition duration-fast hover:bg-white/12 hover:text-white'
+										className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-primary ring-1 ring-border-soft/45 transition duration-fast hover:bg-surface-muted'
 										onClick={() => {
 											navigate(routePaths.chats, {
 												state: { sessionId: activeBookingChatSessionId },
@@ -1330,18 +1330,18 @@ function BookingsPage() {
 
 							<div className='mt-5 grid gap-4 sm:grid-cols-2'>
 							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
 									{t('bookings.page.fields.phone')}
 								</p>
-								<p className='m-0 text-sm font-semibold text-slate-100'>
+								<p className='m-0 text-sm font-semibold text-text-primary'>
 									{activeBooking.client?.phone || t('common.notAvailable')}
 								</p>
 							</div>
 							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
 									{t('bookings.page.fields.source')}
 								</p>
-								<p className='m-0 text-sm font-semibold text-slate-100'>
+								<p className='m-0 text-sm font-semibold text-text-primary'>
 									{activeBooking.client?.source
 										? getChannelLabel(
 												t,
@@ -1352,10 +1352,10 @@ function BookingsPage() {
 								</p>
 							</div>
 							<div className='grid gap-1.5'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
 									{t('bookings.page.fields.requestedDate')}
 								</p>
-								<p className='m-0 text-sm font-semibold text-slate-100'>
+								<p className='m-0 text-sm font-semibold text-text-primary'>
 									{activeBooking.requested_date
 										? formatBookingDateValue(
 												activeBooking.requested_date,
@@ -1369,11 +1369,11 @@ function BookingsPage() {
 							</div>
 
 							{activeBooking.client?.ai_summary ? (
-								<div className='mt-5 rounded-2xl border border-white/10 bg-white/5 p-4'>
-									<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
+								<div className='mt-5 rounded-2xl border border-border-soft/50 bg-surface-subtle p-4'>
+									<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
 										{t('bookings.page.fields.summary')}
 									</p>
-									<p className='mt-2 text-sm leading-6 text-slate-300'>
+									<p className='mt-2 text-sm leading-6 text-text-secondary'>
 										{activeBooking.client.ai_summary}
 									</p>
 								</div>
@@ -1390,12 +1390,12 @@ function BookingsPage() {
 							) : null}
 						</div>
 
-						<div className='mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-white/10 pt-4'>
+						<div className='mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-border-soft/50 pt-4'>
 							{canManageBookings ? (
 								<>
 									<button
 										type='button'
-										className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'
+										className='inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-primary ring-1 ring-border-soft/45 transition duration-fast hover:bg-surface-muted'
 										onClick={() => openEditBookingModal(activeBooking)}
 									>
 										{isRu ? 'Редактировать' : 'Tahrirlash'}
@@ -1412,7 +1412,7 @@ function BookingsPage() {
 							) : null}
 							<button
 								type='button'
-								className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'
+								className='inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-primary ring-1 ring-border-soft/45 transition duration-fast hover:bg-surface-muted'
 								onClick={() => setActiveBooking(null)}
 							>
 								{isRu ? 'Отмена' : 'Bekor qilish'}
@@ -1433,12 +1433,12 @@ function BookingsPage() {
 					}}
 				>
 					<div
-						className='flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] flex-col overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.13),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10 sm:max-h-[calc(100dvh-8rem)]'
+						className='flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] flex-col overflow-hidden rounded-[28px] bg-surface-card p-5 text-text-primary shadow-[0_40px_110px_-42px_rgba(15,23,42,0.42)] ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-8rem)]'
 						onClick={event => event.stopPropagation()}
 					>
 						<div className='flex items-start justify-between gap-3'>
 							<div className='min-w-0'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#67e8f9]'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary'>
 									{bookingFormMode === 'edit'
 										? isRu
 											? 'Редактировать'
@@ -1447,7 +1447,7 @@ function BookingsPage() {
 											? 'Создание'
 											: 'Yaratish'}
 								</p>
-								<h2 className='mt-1 font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-white'>
+								<h2 className='mt-1 font-display text-[1.45rem] font-extrabold tracking-[-0.03em] text-text-primary'>
 									{bookingFormMode === 'edit'
 										? isRu
 											? 'Редактировать бронь'
@@ -1459,7 +1459,7 @@ function BookingsPage() {
 							</div>
 							<button
 								type='button'
-								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/6 text-slate-300 transition duration-fast hover:bg-white/10 hover:text-white'
+								className='inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
 								onClick={() => resetBookingForm(selectedDate)}
 								disabled={submittingBooking}
 							>
@@ -1557,10 +1557,10 @@ function BookingsPage() {
 							) : null}
 							</div>
 
-							<div className='mt-5 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4'>
+							<div className='mt-5 flex flex-wrap items-center gap-2 border-t border-border-soft/50 pt-4'>
 								<button
 									type='button'
-									className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'
+									className='inline-flex min-h-10 items-center justify-center rounded-xl bg-surface-subtle px-4 text-sm font-semibold text-text-primary ring-1 ring-border-soft/45 transition duration-fast hover:bg-surface-muted'
 									onClick={() => resetBookingForm(selectedDate)}
 									disabled={submittingBooking}
 								>
