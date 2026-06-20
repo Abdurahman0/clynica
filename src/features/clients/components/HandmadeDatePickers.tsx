@@ -23,7 +23,7 @@ interface HandmadeDateTimePickerProps {
 }
 
 const triggerClassName =
-  'inline-flex min-h-[44px] w-full items-center justify-between gap-3 overflow-hidden rounded-lg border border-border-soft/60 bg-surface-card px-3.5 py-2.5 text-left text-sm font-medium text-text-primary shadow-sm outline-none transition duration-fast hover:bg-surface-subtle/90 focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60';
+  'inline-flex h-11 min-h-11 w-full items-center justify-between gap-3 overflow-hidden rounded-lg border border-border-soft/60 bg-surface-card px-3.5 py-0 text-left text-sm font-medium text-text-primary shadow-sm outline-none transition duration-fast hover:bg-surface-subtle/90 focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60';
 
 function parseDateOnly(value: string | undefined): Date | undefined {
   if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
@@ -155,7 +155,7 @@ export function HandmadeDatePicker({
           <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[300px] p-3" data-follow-up-panel="true">
+      <PopoverContent align="start" sideOffset={8} className="w-[300px] p-3" data-follow-up-panel="true">
         <Calendar
           mode="single"
           selected={selectedDate}
@@ -251,7 +251,7 @@ export function HandmadeDateTimePicker({
           <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-text-muted" aria-hidden="true" />
         </button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[320px] p-3" data-follow-up-panel="true">
+      <PopoverContent align="start" sideOffset={8} className="w-[320px] p-3" data-follow-up-panel="true">
         <div className="mb-3 grid grid-cols-2 gap-2">
           <FilterSelect value={draftHour} options={hourOptions} onChange={setDraftHour} disabled={!hasDate || isPastDate} size="compact" />
           <FilterSelect value={draftMinute} options={minuteOptions} onChange={setDraftMinute} disabled={!hasDate || isPastDate} size="compact" />

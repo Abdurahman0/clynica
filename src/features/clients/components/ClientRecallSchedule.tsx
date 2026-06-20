@@ -259,7 +259,7 @@ export function ClientRecallScheduleField({
         </span>
       </div>
 
-      <div className="grid gap-3 min-[560px]:grid-cols-3">
+      <div className="grid gap-3 min-[560px]:grid-cols-3 min-[560px]:items-end">
         <label className="grid gap-1.5">
           <span className="text-[11px] font-semibold uppercase tracking-[0.1em] text-text-muted">
             {labels.dateLabel}
@@ -268,11 +268,16 @@ export function ClientRecallScheduleField({
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="inline-flex h-10 min-h-10 w-full items-center justify-between gap-3 rounded-xl border border-border-soft/60 bg-surface-card/92 px-3.5 text-left text-sm font-medium text-text-primary shadow-sm outline-none transition duration-fast hover:bg-surface-subtle/90 focus-visible:ring-2 focus-visible:ring-primary/25 disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex h-10 min-h-10 w-full items-center justify-between gap-3 overflow-hidden rounded-lg border-0 bg-surface-card px-4 text-left text-sm font-medium text-text-primary shadow-sm outline-none transition duration-fast hover:bg-surface-subtle/90 focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-60"
                 disabled={disabled}
                 aria-label={labels.dateLabel}
               >
-                <span className={`truncate whitespace-nowrap ${parsed ? 'text-text-primary' : 'text-text-muted'}`}>
+                <span
+                  className={[
+                    'block min-w-0 flex-1 truncate whitespace-nowrap pr-1',
+                    parsed ? 'text-text-primary' : 'text-text-muted',
+                  ].join(' ')}
+                >
                   {parsed
                     ? formatLocalizedDate(parsed, language, {
                         locale,
@@ -283,10 +288,14 @@ export function ClientRecallScheduleField({
                       })
                     : labels.datePlaceholder}
                 </span>
-                <AppIcon name="calendar" className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                <AppIcon
+                  name="calendar"
+                  className="h-4 w-4 shrink-0 text-text-muted"
+                  aria-hidden="true"
+                />
               </button>
             </PopoverTrigger>
-            <PopoverContent align="start" sideOffset={10} className="w-auto p-3">
+            <PopoverContent align="start" sideOffset={8} className="w-auto p-3">
               <Calendar
                 mode="single"
                 selected={parsed ?? undefined}

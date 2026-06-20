@@ -31,6 +31,7 @@ function FilterSelect({
   const [openAbove, setOpenAbove] = useState(false)
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null)
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const menuRef = useRef<HTMLDivElement | null>(null)
 
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? options[0],
@@ -39,7 +40,15 @@ function FilterSelect({
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent | TouchEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) {
+      const target = event.target as Node
+      if (
+        rootRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return
+      }
+
+      if (!rootRef.current?.contains(target)) {
         setIsOpen(false)
       }
     }
@@ -167,8 +176,9 @@ function FilterSelect({
         ? createPortal(
         <div
           id="filter-select-menu"
+          ref={menuRef}
           className={[
-            'z-[980] overflow-hidden rounded-lg bg-surface-card p-1.5 shadow-[0_22px_44px_-30px_rgba(25,28,30,0.38)] ring-1 ring-border-soft/30',
+            'z-[1310] overflow-hidden rounded-lg bg-surface-card p-1.5 shadow-[0_22px_44px_-30px_rgba(25,28,30,0.38)] ring-1 ring-border-soft/30',
           ].join(' ')}
           style={menuStyle}
           role="listbox"
