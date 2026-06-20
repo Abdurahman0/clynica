@@ -14,9 +14,11 @@ import { services } from '../../../services'
 import type { BookingItem } from '../../../services/contracts'
 import type { SelectOption } from '../../../types/common'
 import type { Conversation } from '../../../types/domain'
+import { listBookingStatusColors } from '../../../services/api/booking-status-colors.service'
 import {
 	HandmadeDateTimePicker,
 } from '../../../features/clients/components/HandmadeDatePickers'
+import { RecallManagerPanel } from '../../../features/clients/components/RecallManagerPanel'
 
 const DEFAULT_START_HOUR = 11
 const DEFAULT_END_HOUR = 17
@@ -77,6 +79,8 @@ interface BookingFormState {
 	requestedDate: string
 	status: BookingStatusValue
 }
+
+type BookingStatusColorMap = Partial<Record<BookingStatusValue, string>>
 
 function toIsoDate(value: Date): string {
 	const year = value.getFullYear()
@@ -262,6 +266,26 @@ function formatDurationLabel(
 	})
 }
 
+function isHexColor(value: string | undefined): value is string {
+	return Boolean(value && /^#?[0-9a-f]{6}$/i.test(value))
+}
+
+function normalizeHexColor(value: string | undefined, fallback: string): string {
+	if (!isHexColor(value)) {
+		return fallback
+	}
+
+	return value.startsWith('#') ? value : `#${value}`
+}
+
+function hexToRgba(hexColor: string, alpha: number): string {
+	const normalized = hexColor.replace('#', '')
+	const r = Number.parseInt(normalized.slice(0, 2), 16)
+	const g = Number.parseInt(normalized.slice(2, 4), 16)
+	const b = Number.parseInt(normalized.slice(4, 6), 16)
+	return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
 function getBookingStatusLabel(
 	status: string | undefined,
 	t: ReturnType<typeof useTranslation>['t'],
@@ -303,19 +327,36 @@ function getBookingStatusTone(
 }
 
 function getBookingCardClassName(status: string | undefined, isActive: boolean): string {
-	const normalized = String(status || 'pending').toLowerCase()
 	const selectedState = isActive
 		? 'ring-2 ring-primary/35 shadow-[0_22px_40px_-26px_rgba(99,102,241,0.58)]'
 		: 'shadow-[0_14px_28px_-24px_rgba(15,23,42,0.32)] hover:shadow-[0_18px_34px_-24px_rgba(99,102,241,0.28)]'
 
-	if (normalized === 'confirmed' || normalized === 'came') {
-		return `border-[rgb(99_102_241_/_0.26)] bg-[linear-gradient(180deg,rgba(238,242,255,0.96),rgba(199,210,254,0.64))] text-[rgb(49,46,129)] dark:border-[rgb(129_140_248_/_0.24)] dark:bg-[linear-gradient(180deg,rgba(49,46,129,0.44),rgba(30,41,59,0.74))] dark:text-[rgb(224,231,255)] ${selectedState}`
+	return `text-text-primary dark:text-slate-100 ${selectedState}`
+}
+
+function getBookingCardStyle(statusColor: string | undefined, isActive: boolean) {
+	const color = normalizeHexColor(statusColor, '#8b5cf6')
+
+	return {
+		borderColor: hexToRgba(color, isActive ? 0.48 : 0.28),
+		background: `linear-gradient(180deg, ${hexToRgba(color, 0.18)}, ${hexToRgba(color, 0.07)})`,
+		boxShadow: isActive
+			? `0 22px 40px -26px ${hexToRgba(color, 0.55)}`
+			: `0 18px 34px -26px ${hexToRgba(color, 0.28)}`,
 	}
-	if (normalized === 'cancelled' || normalized === 'no_show') {
-		return `border-[rgb(148_163_184_/_0.28)] bg-[linear-gradient(180deg,rgba(248,250,252,0.96),rgba(226,232,240,0.72))] text-[rgb(51,65,85)] dark:border-[rgb(100_116_139_/_0.34)] dark:bg-[linear-gradient(180deg,rgba(51,65,85,0.54),rgba(15,23,42,0.82))] dark:text-[rgb(203,213,225)] ${selectedState}`
+}
+
+function resolveBookingStatusColor(
+	status: string | undefined,
+	statusColor: string | undefined,
+	statusColors: BookingStatusColorMap,
+): string | undefined {
+	if (statusColor) {
+		return statusColor
 	}
 
-	return `border-[rgb(244_114_182_/_0.24)] bg-[linear-gradient(180deg,rgba(253,242,248,0.96),rgba(251,207,232,0.64))] text-[rgb(157,23,77)] dark:border-[rgb(244_114_182_/_0.28)] dark:bg-[linear-gradient(180deg,rgba(131,24,67,0.44),rgba(17,24,39,0.82))] dark:text-[rgb(251,207,232)] ${selectedState}`
+	const normalized = String(status || 'pending').toLowerCase() as BookingStatusValue
+	return statusColors[normalized]
 }
 
 function resolveTimelineHours(
@@ -528,6 +569,7 @@ function BookingsPage() {
 	const [pendingDeleteBookingId, setPendingDeleteBookingId] = useState<string | null>(null)
 	const [deletingBooking, setDeletingBooking] = useState(false)
 	const [activeBookingChatSessionId, setActiveBookingChatSessionId] = useState<string | null>(null)
+	const [bookingStatusColors, setBookingStatusColors] = useState<BookingStatusColorMap>({})
 	const bookingClientChatCacheRef = useRef<Record<string, string | null>>({})
 
 	useEffect(() => {
@@ -574,6 +616,41 @@ function BookingsPage() {
 			active = false
 		}
 	}, [refreshKey])
+
+	useEffect(() => {
+		let active = true
+
+		async function loadBookingStatusColors() {
+			try {
+				const items = await listBookingStatusColors()
+				if (!active) {
+					return
+				}
+
+				setBookingStatusColors(
+					items.reduce<BookingStatusColorMap>((accumulator, item) => {
+						const key = item.status as BookingStatusValue
+						if (item.color) {
+							accumulator[key] = item.color
+						}
+						return accumulator
+					}, {}),
+				)
+			} catch {
+				if (!active) {
+					return
+				}
+
+				setBookingStatusColors({})
+			}
+		}
+
+		void loadBookingStatusColors()
+
+		return () => {
+			active = false
+		}
+	}, [])
 
 	useEffect(() => {
 		if (!canManageBookings && !canOpenChat) {
@@ -710,25 +787,30 @@ function BookingsPage() {
 			{
 				value: 'pending',
 				label: t('tasks.bookingStatuses.pending'),
+				color: bookingStatusColors.pending,
 			},
 			{
 				value: 'confirmed',
 				label: t('tasks.bookingStatuses.confirmed'),
+				color: bookingStatusColors.confirmed,
 			},
 			{
 				value: 'came',
 				label: t('tasks.bookingStatuses.came'),
+				color: bookingStatusColors.came,
 			},
 			{
 				value: 'no_show',
 				label: t('tasks.bookingStatuses.noShow'),
+				color: bookingStatusColors.no_show,
 			},
 			{
 				value: 'cancelled',
 				label: t('tasks.bookingStatuses.cancelled'),
+				color: bookingStatusColors.cancelled,
 			},
 		],
-		[t],
+		[bookingStatusColors, t],
 	)
 	const clientSelectOptions = useMemo<SelectOption[]>(
 		() => [
@@ -1104,6 +1186,11 @@ function BookingsPage() {
 												const left = `calc(${(item.lane / item.laneCount) * 100}% + 4px)`
 												const width = `calc(${100 / item.laneCount}% - 8px)`
 												const isActive = item.id === activeBooking?.id
+												const resolvedStatusColor = resolveBookingStatusColor(
+													item.status,
+													item.status_color,
+													bookingStatusColors,
+												)
 
 												return (
 													<button
@@ -1119,8 +1206,19 @@ function BookingsPage() {
 															left,
 															width,
 															height: `${height}px`,
+															...getBookingCardStyle(resolvedStatusColor, isActive),
 														}}
 													>
+														<span
+															className='absolute inset-x-0 top-0 h-1 rounded-t-[12px]'
+															style={{
+																backgroundColor: normalizeHexColor(
+																	resolvedStatusColor,
+																	'#8b5cf6',
+																),
+															}}
+															aria-hidden='true'
+														/>
 														<p className='m-0 truncate text-[12px] font-bold'>
 															{item.client?.full_name || t('common.notAvailable')}
 														</p>
@@ -1146,12 +1244,12 @@ function BookingsPage() {
 
 			{activeBooking ? (
 				<div
-					className='fixed inset-0 z-[180] flex items-center justify-center bg-background-overlay/72 p-4 backdrop-blur-[3px]'
+					className='fixed inset-0 z-[1200] flex items-end bg-background-overlay/72 p-3 backdrop-blur-[3px] sm:items-start sm:justify-center sm:px-4 sm:pb-4 sm:pt-24'
 					role='presentation'
 					onClick={() => setActiveBooking(null)}
 				>
 					<div
-						className='w-full max-w-[520px] rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.14),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10'
+						className='flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[520px] flex-col overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(45,212,191,0.14),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10 sm:max-h-[calc(100dvh-8rem)]'
 						onClick={event => event.stopPropagation()}
 					>
 						<div className='flex items-start justify-between gap-3'>
@@ -1180,51 +1278,57 @@ function BookingsPage() {
 							</button>
 						</div>
 
-						<div className='mt-4 flex flex-wrap gap-2'>
-							<StatusBadge
-								status={activeBooking.status || 'pending'}
-								label={getBookingStatusLabel(activeBooking.status, t)}
-								tone={getBookingStatusTone(activeBooking.status)}
-							/>
-							<span className='inline-flex min-h-7 items-center rounded-pill bg-white/6 px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-200 ring-1 ring-white/10'>
-								{formatDurationLabel(activeBooking.duration_minutes, t)}
-							</span>
-						</div>
+						<div className='mt-4 min-h-0 overflow-y-auto pr-1'>
+							<div className='flex flex-wrap gap-2'>
+								<StatusBadge
+									status={activeBooking.status || 'pending'}
+									label={getBookingStatusLabel(activeBooking.status, t)}
+									tone={getBookingStatusTone(activeBooking.status)}
+									color={resolveBookingStatusColor(
+										activeBooking.status,
+										activeBooking.status_color,
+										bookingStatusColors,
+									)}
+								/>
+								<span className='inline-flex min-h-7 items-center rounded-pill bg-white/6 px-2.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-slate-200 ring-1 ring-white/10'>
+									{formatDurationLabel(activeBooking.duration_minutes, t)}
+								</span>
+							</div>
 
-						<div className='mt-5 flex flex-wrap items-center gap-2'>
-							{canOpenClient && activeBooking.client?.id ? (
-								<button
-									type='button'
-									className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent'
-									onClick={() => {
-										navigate(routePaths.clients, {
-											state: { clientId: activeBooking.client?.id },
-										})
-										setActiveBooking(null)
-									}}
-								>
-									<AppIcon name='user' className='h-4 w-4' aria-hidden='true' />
-									{t('bookings.page.openClient')}
-								</button>
-							) : null}
-							{canOpenChat && activeBookingChatSessionId ? (
-								<button
-									type='button'
-									className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-white/8 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/12 transition duration-fast hover:bg-white/12 hover:text-white'
-									onClick={() => {
-										navigate(routePaths.chats, {
-											state: { sessionId: activeBookingChatSessionId },
-										})
-										setActiveBooking(null)
-									}}
-								>
-									<AppIcon name='chat' className='h-4 w-4' aria-hidden='true' />
-									{t('bookings.page.openChat')}
-								</button>
-							) : null}
-						</div>
+							<div className='mt-5 flex flex-wrap items-center gap-2'>
+								{canOpenClient && activeBooking.client?.id ? (
+									<button
+										type='button'
+										className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition duration-fast hover:bg-primary-accent'
+										onClick={() => {
+											navigate(routePaths.clients, {
+												state: { clientId: activeBooking.client?.id },
+											})
+											setActiveBooking(null)
+										}}
+									>
+										<AppIcon name='user' className='h-4 w-4' aria-hidden='true' />
+										{t('bookings.page.openClient')}
+									</button>
+								) : null}
+								{canOpenChat && activeBookingChatSessionId ? (
+									<button
+										type='button'
+										className='inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-white/8 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/12 transition duration-fast hover:bg-white/12 hover:text-white'
+										onClick={() => {
+											navigate(routePaths.chats, {
+												state: { sessionId: activeBookingChatSessionId },
+											})
+											setActiveBooking(null)
+										}}
+									>
+										<AppIcon name='chat' className='h-4 w-4' aria-hidden='true' />
+										{t('bookings.page.openChat')}
+									</button>
+								) : null}
+							</div>
 
-						<div className='mt-5 grid gap-4 sm:grid-cols-2'>
+							<div className='mt-5 grid gap-4 sm:grid-cols-2'>
 							<div className='grid gap-1.5'>
 								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
 									{t('bookings.page.fields.phone')}
@@ -1262,18 +1366,29 @@ function BookingsPage() {
 										: t('common.notAvailable')}
 								</p>
 							</div>
-						</div>
-
-						{activeBooking.client?.ai_summary ? (
-							<div className='mt-5 rounded-2xl border border-white/10 bg-white/5 p-4'>
-								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
-									{t('bookings.page.fields.summary')}
-								</p>
-								<p className='mt-2 text-sm leading-6 text-slate-300'>
-									{activeBooking.client.ai_summary}
-								</p>
 							</div>
-						) : null}
+
+							{activeBooking.client?.ai_summary ? (
+								<div className='mt-5 rounded-2xl border border-white/10 bg-white/5 p-4'>
+									<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400'>
+										{t('bookings.page.fields.summary')}
+									</p>
+									<p className='mt-2 text-sm leading-6 text-slate-300'>
+										{activeBooking.client.ai_summary}
+									</p>
+								</div>
+							) : null}
+
+							{activeBooking.client?.id ? (
+								<div className='mt-5'>
+									<RecallManagerPanel
+										clientId={activeBooking.client.id}
+										language={i18n.language}
+										locale={locale}
+									/>
+								</div>
+							) : null}
+						</div>
 
 						<div className='mt-6 flex flex-wrap items-center justify-end gap-2 border-t border-white/10 pt-4'>
 							{canManageBookings ? (
@@ -1309,7 +1424,7 @@ function BookingsPage() {
 
 			{bookingFormMode ? (
 				<div
-					className='fixed inset-0 z-[190] flex items-center justify-center bg-background-overlay/72 p-4 backdrop-blur-[3px]'
+					className='fixed inset-0 z-[1200] flex items-end bg-background-overlay/72 p-3 backdrop-blur-[3px] sm:items-start sm:justify-center sm:px-4 sm:pb-4 sm:pt-24'
 					role='presentation'
 					onClick={() => {
 						if (!submittingBooking) {
@@ -1318,7 +1433,7 @@ function BookingsPage() {
 					}}
 				>
 					<div
-						className='w-full max-w-[560px] rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.13),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10'
+						className='flex max-h-[calc(100dvh-1.5rem)] w-full max-w-[560px] flex-col overflow-hidden rounded-[28px] bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.13),_transparent_34%),linear-gradient(155deg,#0f172a,_#162033_56%,_#0b1220)] p-5 text-slate-100 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.95)] ring-1 ring-white/10 sm:max-h-[calc(100dvh-8rem)]'
 						onClick={event => event.stopPropagation()}
 					>
 						<div className='flex items-start justify-between gap-3'>
@@ -1352,7 +1467,8 @@ function BookingsPage() {
 							</button>
 						</div>
 
-						<form className='mt-5 grid gap-4' onSubmit={handleBookingFormSubmit}>
+						<form className='mt-5 flex min-h-0 flex-1 flex-col' onSubmit={handleBookingFormSubmit}>
+							<div className='grid min-h-0 gap-4 overflow-y-auto pr-1'>
 							<div className='grid gap-1.5'>
 								<label className={formLabelClassName}>
 									{isRu ? 'Клиент' : 'Mijoz'}
@@ -1426,13 +1542,22 @@ function BookingsPage() {
 								/>
 							</div>
 
+							{bookingForm.clientId ? (
+								<RecallManagerPanel
+									clientId={bookingForm.clientId}
+									language={i18n.language}
+									locale={locale}
+								/>
+							) : null}
+
 							{bookingFormError ? (
 								<p className='m-0 rounded-lg bg-danger-bg px-3 py-2 text-sm font-medium text-danger'>
 									{bookingFormError}
 								</p>
 							) : null}
+							</div>
 
-							<div className='flex flex-wrap items-center gap-2'>
+							<div className='mt-5 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4'>
 								<button
 									type='button'
 									className='inline-flex min-h-10 items-center justify-center rounded-xl bg-white/6 px-4 text-sm font-semibold text-slate-100 ring-1 ring-white/10 transition duration-fast hover:bg-white/10 hover:text-white'

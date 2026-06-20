@@ -1,14 +1,22 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { SelectOption } from '../../../types/common';
-import AppIcon from '../icons/AppIcon';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import type { CSSProperties } from 'react'
+import type { SelectOption } from '../../../types/common'
+import AppIcon from '../icons/AppIcon'
+import { useTranslation } from 'react-i18next'
 
 interface FilterSelectProps {
-  value: string;
-  options: SelectOption[];
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  size?: 'default' | 'compact';
+  value: string
+  options: SelectOption[]
+  onChange: (value: string) => void
+  disabled?: boolean
+  size?: 'default' | 'compact'
+}
+
+interface MenuPosition {
+  top: number
+  left: number
+  width: number
 }
 
 function FilterSelect({
@@ -18,73 +26,100 @@ function FilterSelect({
   disabled = false,
   size = 'default',
 }: FilterSelectProps) {
-  const { t } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [openAbove, setOpenAbove] = useState(false);
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const { t } = useTranslation()
+  const [isOpen, setIsOpen] = useState(false)
+  const [openAbove, setOpenAbove] = useState(false)
+  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null)
+  const rootRef = useRef<HTMLDivElement | null>(null)
 
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? options[0],
     [options, value],
-  );
+  )
 
   useEffect(() => {
     function handlePointerDown(event: MouseEvent | TouchEvent) {
       if (!rootRef.current?.contains(event.target as Node)) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
     }
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        setIsOpen(false);
+        setIsOpen(false)
       }
     }
 
-    window.addEventListener('mousedown', handlePointerDown);
-    window.addEventListener('touchstart', handlePointerDown);
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('mousedown', handlePointerDown)
+    window.addEventListener('touchstart', handlePointerDown)
+    window.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      window.removeEventListener('mousedown', handlePointerDown);
-      window.removeEventListener('touchstart', handlePointerDown);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+      window.removeEventListener('mousedown', handlePointerDown)
+      window.removeEventListener('touchstart', handlePointerDown)
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [])
 
   useEffect(() => {
-    setIsOpen(false);
-  }, [value]);
+    setIsOpen(false)
+  }, [value])
 
   useEffect(() => {
     if (!isOpen) {
-      return;
+      setMenuPosition(null)
+      return
     }
 
     function updatePlacement() {
-      const rect = rootRef.current?.getBoundingClientRect();
+      const rect = rootRef.current?.getBoundingClientRect()
       if (!rect) {
-        return;
+        return
       }
 
-      const expectedMenuHeight = 260;
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const spaceAbove = rect.top;
+      const expectedMenuHeight = 260
+      const gap = 8
+      const spaceBelow = window.innerHeight - rect.bottom
+      const spaceAbove = rect.top
+      const shouldOpenAbove =
+        spaceBelow < expectedMenuHeight && spaceAbove > spaceBelow
 
-      setOpenAbove(
-        spaceBelow < expectedMenuHeight && spaceAbove > spaceBelow,
-      );
+      setOpenAbove(shouldOpenAbove)
+      setMenuPosition({
+        top: shouldOpenAbove
+          ? Math.max(gap, rect.top - gap)
+          : Math.min(window.innerHeight - gap, rect.bottom + gap),
+        left: Math.max(gap, rect.left),
+        width: Math.max(180, rect.width),
+      })
     }
 
-    updatePlacement();
-    window.addEventListener('resize', updatePlacement);
-    window.addEventListener('scroll', updatePlacement, true);
+    updatePlacement()
+    window.addEventListener('resize', updatePlacement)
+    window.addEventListener('scroll', updatePlacement, true)
 
     return () => {
-      window.removeEventListener('resize', updatePlacement);
-      window.removeEventListener('scroll', updatePlacement, true);
-    };
-  }, [isOpen]);
+      window.removeEventListener('resize', updatePlacement)
+      window.removeEventListener('scroll', updatePlacement, true)
+    }
+  }, [isOpen])
+
+  const menuStyle = useMemo<CSSProperties | undefined>(() => {
+    if (!menuPosition) {
+      return undefined
+    }
+
+    return {
+      left: `${menuPosition.left}px`,
+      maxHeight: 'min(16rem, calc(100dvh - 1rem))',
+      position: 'fixed',
+      top: openAbove ? 'auto' : `${menuPosition.top}px`,
+      bottom: openAbove
+        ? `${Math.max(8, window.innerHeight - menuPosition.top)}px`
+        : 'auto',
+      width: `${Math.min(menuPosition.width, window.innerWidth - 16)}px`,
+    }
+  }, [menuPosition, openAbove])
 
   return (
     <div
@@ -104,6 +139,7 @@ function FilterSelect({
         disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
+        aria-controls={isOpen ? 'filter-select-menu' : undefined}
       >
         <span className="flex min-w-0 flex-1 items-center gap-2 pr-1">
           {selectedOption?.color ? (
@@ -127,18 +163,20 @@ function FilterSelect({
         />
       </button>
 
-      {isOpen ? (
+      {isOpen && menuStyle && typeof document !== 'undefined'
+        ? createPortal(
         <div
+          id="filter-select-menu"
           className={[
-            'absolute left-0 z-[150] w-full overflow-hidden rounded-lg bg-surface-card p-1.5 shadow-[0_22px_44px_-30px_rgba(25,28,30,0.38)] ring-1 ring-border-soft/30',
-            openAbove ? 'bottom-[calc(100%+8px)]' : 'top-[calc(100%+8px)]',
+            'z-[980] overflow-hidden rounded-lg bg-surface-card p-1.5 shadow-[0_22px_44px_-30px_rgba(25,28,30,0.38)] ring-1 ring-border-soft/30',
           ].join(' ')}
+          style={menuStyle}
           role="listbox"
         >
           <div className="max-h-64 overflow-y-auto py-1">
             {options.map((option) => {
-              const isSelected = option.value === value;
-              const isDisabled = Boolean(option.disabled);
+              const isSelected = option.value === value
+              const isDisabled = Boolean(option.disabled)
 
               return (
                 <button
@@ -155,8 +193,8 @@ function FilterSelect({
                     if (isDisabled) {
                       return;
                     }
-                    onChange(option.value);
-                    setIsOpen(false);
+                    onChange(option.value)
+                    setIsOpen(false)
                   }}
                   role="option"
                   aria-selected={isSelected}
@@ -177,13 +215,14 @@ function FilterSelect({
                     <span className="inline-flex h-2 w-2 shrink-0 rounded-full bg-primary" />
                   ) : null}
                 </button>
-              );
+              )
             })}
           </div>
-        </div>
+        </div>,
+        document.body,
       ) : null}
     </div>
-  );
+  )
 }
 
-export default FilterSelect;
+export default FilterSelect

@@ -6,6 +6,8 @@ import { useAuth } from '../auth'
 import { services } from '../services'
 import { routePaths } from '../config/routes'
 import LanguageDropdown from './LanguageDropdown'
+import { authService } from '../services/api/auth.service'
+import { mergeStoredAuthUser } from '../features/auth/auth-store'
 
 interface AppTopbarProps {
 	title: string
@@ -16,6 +18,51 @@ interface AppTopbarProps {
 }
 
 const THEME_STORAGE_KEY = 'renaissance-clinic-theme'
+const DEFAULT_BACKGROUND_ACCENT = '#6366f1'
+const BACKGROUND_COLOR_PRESETS = [
+	{ value: '#6366f1', labelUz: 'Indigo', labelRu: 'Индиго' },
+	{ value: '#0f766e', labelUz: 'Teal', labelRu: 'Тёмная бирюза' },
+	{ value: '#059669', labelUz: 'Zumrad', labelRu: 'Изумруд' },
+	{ value: '#c2418c', labelUz: 'Fuksiya', labelRu: 'Фуксия' },
+	{ value: '#d97706', labelUz: 'Amber', labelRu: 'Янтарный' },
+	{ value: '#475569', labelUz: 'Slate', labelRu: 'Сланец' },
+] as const
+
+function isHexColor(value: string | undefined): value is string {
+	return Boolean(value && /^#?[0-9a-f]{6}$/i.test(value))
+}
+
+function normalizeHexColor(value: string | undefined, fallback: string): string {
+	if (!isHexColor(value)) {
+		return fallback
+	}
+
+	return value.startsWith('#') ? value : `#${value}`
+}
+
+function buildCustomizeLabels(language: string) {
+	const isRu = language.toLowerCase().startsWith('ru')
+
+	return isRu
+		? {
+				title: 'Настройка',
+				subtitle: 'Подберите акцент фона для рабочего пространства.',
+				colorSection: 'Цвет фона',
+				reset: 'Сбросить',
+				save: 'Сохранить',
+				saving: 'Сохранение...',
+				button: 'Настройка',
+			}
+		: {
+				title: 'Moslash',
+				subtitle: 'Ish maydoni fon aksentini tanlang.',
+				colorSection: 'Fon rangi',
+				reset: 'Standartga qaytarish',
+				save: 'Saqlash',
+				saving: 'Saqlanmoqda...',
+				button: 'Moslash',
+			}
+}
 
 function getInitialIsDarkTheme() {
 	if (typeof window === 'undefined') {
@@ -53,12 +100,22 @@ function AppTopbar({
 	showRouteMeta = false,
 }: AppTopbarProps) {
 	const location = useLocation()
-	const { t } = useTranslation()
+	const { t, i18n } = useTranslation()
 	const [isDarkTheme, setIsDarkTheme] = useState(getInitialIsDarkTheme)
 	const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false)
+	const [isCustomizeOpen, setIsCustomizeOpen] = useState(false)
+	const [isSavingColor, setIsSavingColor] = useState(false)
+	const [backgroundColorDraft, setBackgroundColorDraft] = useState(DEFAULT_BACKGROUND_ACCENT)
 	const [chatSessionCount, setChatSessionCount] = useState<number | null>(null)
 	const profileMenuRef = useRef<HTMLDivElement | null>(null)
 	const { currentUser, logout } = useAuth()
+	const customizeLabels = buildCustomizeLabels(i18n.language)
+	const currentBackgroundColor = normalizeHexColor(
+		currentUser?.color,
+		DEFAULT_BACKGROUND_ACCENT,
+	)
+	const hasPendingBackgroundColorChange =
+		backgroundColorDraft.toLowerCase() !== currentBackgroundColor.toLowerCase()
 
 	useEffect(() => {
 		const nextTheme = isDarkTheme ? 'dark' : 'light'
@@ -96,7 +153,16 @@ function AppTopbar({
 
 	useEffect(() => {
 		setIsProfileMenuOpen(false)
+		setIsCustomizeOpen(false)
 	}, [location.pathname])
+
+	useEffect(() => {
+		if (!isCustomizeOpen) {
+			return
+		}
+
+		setBackgroundColorDraft(currentBackgroundColor)
+	}, [currentBackgroundColor, isCustomizeOpen])
 
 	useEffect(() => {
 		let isMounted = true
@@ -143,6 +209,23 @@ function AppTopbar({
 		logout()
 	}
 
+	async function handleSaveBackgroundColor() {
+		if (!hasPendingBackgroundColorChange) {
+			setIsCustomizeOpen(false)
+			return
+		}
+
+		setIsSavingColor(true)
+
+		try {
+			const savedColor = await authService.updateMyColor(backgroundColorDraft)
+			mergeStoredAuthUser({ color: savedColor })
+			setIsCustomizeOpen(false)
+		} finally {
+			setIsSavingColor(false)
+		}
+	}
+
 	return (
 		<header className='app-topbar--nova sticky top-0 z-30 flex min-h-topbar items-center justify-between gap-3 border-b border-border-soft/55 bg-background-default px-5 py-3 backdrop-blur-shell supports-[backdrop-filter]:bg-background-default/78 max-[640px]:flex-wrap min-[960px]:px-7'>
 			<div className='flex min-w-0 flex-1 items-center gap-3'>
@@ -180,6 +263,18 @@ function AppTopbar({
 						{chatSessionCount} ta sessiya
 					</span>
 				) : null}
+
+				<button
+					type='button'
+					className='inline-flex h-10 items-center justify-center gap-2 rounded-full bg-surface-card px-3.5 text-text-secondary transition duration-fast hover:bg-primary/10 hover:text-text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25'
+					onClick={() => setIsCustomizeOpen(true)}
+					aria-label={customizeLabels.button}
+				>
+					<AppIcon name='settings' className='h-4.5 w-4.5' aria-hidden='true' />
+					<span className='hidden text-sm font-semibold min-[960px]:inline'>
+						{customizeLabels.button}
+					</span>
+				</button>
 
 				<button
 					type='button'
@@ -275,6 +370,103 @@ function AppTopbar({
 					) : null}
 				</div>
 			</div>
+
+			{isCustomizeOpen ? (
+				<div
+					className='fixed inset-0 z-[160] bg-background-overlay/58 backdrop-blur-sm'
+					onMouseDown={event => {
+						if (event.target === event.currentTarget && !isSavingColor) {
+							setIsCustomizeOpen(false)
+						}
+					}}
+				>
+					<div className='fixed inset-x-3 bottom-3 rounded-[28px] bg-surface-card p-5 shadow-[0_40px_110px_-42px_rgba(15,23,42,0.62)] ring-1 ring-border-soft/55 sm:inset-auto sm:right-6 sm:top-[84px] sm:w-[390px]'>
+						<div className='flex items-start justify-between gap-4'>
+							<div>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.14em] text-primary'>
+									{customizeLabels.title}
+								</p>
+								<p className='mt-1 text-sm text-text-secondary'>
+									{customizeLabels.subtitle}
+								</p>
+							</div>
+							<button
+								type='button'
+								className='inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-surface-subtle text-text-secondary transition duration-fast hover:bg-surface-muted hover:text-text-primary'
+								onClick={() => setIsCustomizeOpen(false)}
+								disabled={isSavingColor}
+								aria-label={t('common.cancel')}
+							>
+								<AppIcon name='close' className='h-4 w-4' aria-hidden='true' />
+							</button>
+						</div>
+
+						<div className='mt-5 grid gap-3'>
+							<div className='grid gap-2'>
+								<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
+									{customizeLabels.colorSection}
+								</p>
+								<div className='grid gap-2 sm:grid-cols-2'>
+									{BACKGROUND_COLOR_PRESETS.map(option => {
+										const isActive =
+											option.value.toLowerCase() ===
+											backgroundColorDraft.toLowerCase()
+										const label =
+											i18n.language === 'ru' ? option.labelRu : option.labelUz
+
+										return (
+											<button
+												key={option.value}
+												type='button'
+												onClick={() => setBackgroundColorDraft(option.value)}
+												className={[
+													'flex items-center justify-between gap-3 rounded-2xl border px-3.5 py-3 text-left transition duration-fast',
+													isActive
+														? 'border-primary/45 bg-primary/8 shadow-[0_18px_36px_-28px_rgba(99,102,241,0.42)]'
+														: 'border-border-soft/60 bg-surface-subtle hover:border-primary/25 hover:bg-surface-card',
+												].join(' ')}
+											>
+												<span className='flex min-w-0 items-center gap-3'>
+													<span
+														className='h-4 w-4 shrink-0 rounded-full ring-4 ring-white/70 dark:ring-white/10'
+														style={{ backgroundColor: option.value }}
+														aria-hidden='true'
+													/>
+													<span className='truncate text-sm font-semibold text-text-primary'>
+														{label}
+													</span>
+												</span>
+												{isActive ? (
+													<span className='h-2.5 w-2.5 shrink-0 rounded-full bg-primary' />
+												) : null}
+											</button>
+										)
+									})}
+								</div>
+							</div>
+						</div>
+
+						<div className='mt-5 flex gap-2'>
+							<button
+								type='button'
+								className='inline-flex min-h-11 flex-1 items-center justify-center rounded-2xl bg-surface-subtle px-4 text-sm font-semibold text-text-secondary transition hover:bg-surface-muted hover:text-text-primary disabled:opacity-60'
+								onClick={() => setBackgroundColorDraft(DEFAULT_BACKGROUND_ACCENT)}
+								disabled={isSavingColor}
+							>
+								{customizeLabels.reset}
+							</button>
+							<button
+								type='button'
+								className='inline-flex min-h-11 flex-1 items-center justify-center rounded-2xl bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary-accent disabled:opacity-60'
+								onClick={() => void handleSaveBackgroundColor()}
+								disabled={isSavingColor}
+							>
+								{isSavingColor ? customizeLabels.saving : customizeLabels.save}
+							</button>
+						</div>
+					</div>
+				</div>
+			) : null}
 		</header>
 	)
 }

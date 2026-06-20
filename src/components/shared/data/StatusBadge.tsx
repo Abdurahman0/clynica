@@ -4,6 +4,7 @@ interface StatusBadgeProps {
   status: string;
   label?: string;
   tone?: StatusBadgeTone;
+  color?: string;
 }
 
 const BADGE_BASE_CLASS_NAME = [
@@ -94,12 +95,31 @@ export function getStatusBadgeTone(status: string): StatusBadgeTone {
   return 'neutral';
 }
 
-function StatusBadge({ status, label, tone }: StatusBadgeProps) {
+function toBadgeStyle(color?: string): Record<string, string> | undefined {
+  if (!color || !/^#?[0-9a-f]{6}$/i.test(color)) {
+    return undefined;
+  }
+
+  const normalized = color.startsWith('#') ? color.slice(1) : color;
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+
+  return {
+    backgroundColor: `rgba(${r}, ${g}, ${b}, 0.16)`,
+    color: `#${normalized}`,
+    boxShadow: `inset 0 0 0 1px rgba(${r}, ${g}, ${b}, 0.22)`,
+  };
+}
+
+function StatusBadge({ status, label, tone, color }: StatusBadgeProps) {
   const resolvedTone = tone ?? getStatusBadgeTone(status);
+  const customStyle = toBadgeStyle(color);
 
   return (
     <span
       className={`${BADGE_BASE_CLASS_NAME} ${BADGE_TONE_CLASS_NAMES[resolvedTone]}`}
+      style={customStyle}
     >
       {label ?? formatStatusLabel(status)}
     </span>

@@ -139,6 +139,27 @@ export function clearStoredAuthUser(): void {
   persistUser(null);
 }
 
+export function mergeStoredAuthUser(
+  patch: Partial<AuthenticatedUser>,
+): AuthenticatedUser | null {
+  const existing = authState.user ?? readPersistedUser();
+  if (!existing) {
+    return null;
+  }
+
+  const nextUser = {
+    ...existing,
+    ...patch,
+  };
+
+  setState({
+    user: nextUser,
+    isAuthenticated: true,
+  });
+
+  return nextUser;
+}
+
 export async function login(username: string, password: string): Promise<AuthenticatedUser> {
   setState({ loading: true });
 
@@ -273,4 +294,3 @@ export async function restoreSession(): Promise<void> {
 setAuthFailureHandler(() => {
   logout({ redirectToLogin: true });
 });
-

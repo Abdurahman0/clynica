@@ -42,6 +42,7 @@ export interface ClientBookingItem {
 	requested_date?: string | null
 	scheduled_for?: string
 	status?: string
+	status_color?: string
 	confirmed_by_name?: string
 	created_at?: string
 }
@@ -68,6 +69,7 @@ export interface BookingItem extends BaseEntity {
 	duration_minutes?: number
 	ends_at?: string
 	status?: string
+	status_color?: string
 	calendar_event_id?: string
 	confirmed_by_name?: string
 }

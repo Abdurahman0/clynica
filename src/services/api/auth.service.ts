@@ -375,6 +375,7 @@ function normalizeUser(rawUser: unknown): AuthenticatedUser {
     fullName: fullName || "Noma'lum foydalanuvchi",
     email,
     phone: readString(userRecord.phone) ?? undefined,
+    color: readString(userRecord.color) ?? undefined,
     role,
     status,
     avatarUrl: readString(userRecord.avatarUrl) ?? readString(userRecord.avatar_url) ?? undefined,
@@ -425,6 +426,12 @@ export const authService = {
     return normalizeUser(userData);
   },
 
+  async updateMyColor(color: string): Promise<string> {
+    const { data } = await apiClient.patch<any>('/api/auth/me/color/', { color });
+    const responseData = data?.data || data;
+    return readString(responseData?.color) ?? color;
+  },
+
   async logout(): Promise<void> {
     await apiClient.post('/api/auth/logout/', undefined, {
       _skipAuthRefresh: true,
@@ -432,4 +439,3 @@ export const authService = {
   },
 
 };
-

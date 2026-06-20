@@ -13,6 +13,7 @@ import type {
   UpdateClientInput,
 } from '../../../services/contracts';
 import { HandmadeDatePicker, HandmadeDateTimePicker } from './HandmadeDatePickers';
+import { RecallManagerPanel } from './RecallManagerPanel';
 
 export interface ClientsFormPanelProps {
   client?: Client;
@@ -547,6 +548,14 @@ export function ClientsFormPanel({
           </div>
         </form>
 
+        {currentClient?.id ? (
+          <RecallManagerPanel
+            clientId={currentClient.id}
+            language={i18n.language}
+            locale={locale}
+          />
+        ) : null}
+
         {canViewBookings ? (
           <div className="rounded-xl bg-surface-card p-4 shadow-sm ring-1 ring-border-soft/40">
             <div className="grid gap-2.5">
@@ -567,6 +576,7 @@ export function ClientsFormPanel({
                             status={String(booking.status || 'pending')}
                             label={getBookingStatusLabel(booking.status, isRu)}
                             tone={getStatusTone(booking.status)}
+                            color={booking.status_color}
                           />
                           <button
                             type="button"

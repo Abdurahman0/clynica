@@ -19,6 +19,7 @@ export interface AppUser extends AuditInfo {
   phone?: string;
   role: UserRole;
   status?: UserStatus;
+  color?: string;
   avatarUrl?: string;
   permissionKeys?: string[];
   lastActiveAt?: TimestampString;

@@ -14,6 +14,7 @@ import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog'
 import { PageLayout } from '../../../components/shared/page'
 import { FilterSelect } from '../../../components/shared/data'
 import { HandmadeDateTimePicker } from '../../../features/clients/components/HandmadeDatePickers'
+import { RecallManagerPanel } from '../../../features/clients/components/RecallManagerPanel'
 import type { SelectOption } from '../../../types/common'
 import { useAuth } from '../../../auth'
 import { services } from '../../../services'
@@ -1179,7 +1180,7 @@ function TasksPage() {
 
 			{isListModalOpen ? (
 				<div
-					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					className='fixed inset-0 z-[1200] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-start sm:justify-center sm:px-6 sm:pb-6 sm:pt-24'
 					onMouseDown={event => {
 						if (event.target === event.currentTarget) {
 							closeListModal()
@@ -1188,7 +1189,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleAddList}
-						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-lg touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova flex max-h-[calc(100dvh-1.5rem)] w-full max-w-lg flex-col overflow-hidden touch-pan-y overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-8rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1217,7 +1218,7 @@ function TasksPage() {
 							</button>
 						</div>
 
-						<div className='grid gap-3'>
+						<div className='grid min-h-0 gap-3 overflow-y-auto pr-1'>
 							<label className='grid gap-1.5'>
 								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 									{t('tasks.fields.listTitle')}
@@ -1305,7 +1306,7 @@ function TasksPage() {
 
 			{draftColumnId ? (
 				<div
-					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					className='fixed inset-0 z-[1200] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-start sm:justify-center sm:px-6 sm:pb-6 sm:pt-24'
 					onMouseDown={event => {
 						if (event.target === event.currentTarget) {
 							closeCreateModal()
@@ -1314,7 +1315,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={event => handleAddTask(event, draftColumnId)}
-						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova flex max-h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden touch-pan-y overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-8rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1338,7 +1339,7 @@ function TasksPage() {
 							</button>
 						</div>
 
-						<div className='grid gap-3'>
+						<div className='grid min-h-0 gap-3 overflow-y-auto pr-1'>
 							<label className='grid gap-1.5'>
 								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 									{t('tasks.fields.title')}
@@ -1375,7 +1376,7 @@ function TasksPage() {
 								/>
 							</label>
 
-							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-5'>
+							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.priority')}
@@ -1462,6 +1463,14 @@ function TasksPage() {
 									/>
 								</label>
 							</div>
+
+							{createDraft.client ? (
+								<RecallManagerPanel
+									clientId={createDraft.client}
+									language={i18n.language}
+									locale={i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'}
+								/>
+							) : null}
 						</div>
 
 						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end'>
@@ -1488,7 +1497,7 @@ function TasksPage() {
 
 			{selectedCard && !canManageManualTasks ? (
 				<div
-					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					className='fixed inset-0 z-[1200] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-start sm:justify-center sm:px-6 sm:pb-6 sm:pt-24'
 					onMouseDown={event => {
 						if (event.target === event.currentTarget) {
 							closeCard()
@@ -1496,7 +1505,7 @@ function TasksPage() {
 					}}
 				>
 					<section
-						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova flex max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl flex-col overflow-hidden touch-pan-y overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-8rem)] sm:p-6'
 						aria-label={t('tasks.modal.viewTitle')}
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
@@ -1521,7 +1530,7 @@ function TasksPage() {
 							</button>
 						</div>
 
-						<div className='grid gap-3'>
+						<div className='grid min-h-0 gap-3 overflow-y-auto pr-1'>
 							<div className='rounded-2xl bg-surface-subtle p-4 ring-1 ring-border-soft/45'>
 								<p className='m-0 text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 									{t('tasks.fields.title')}
@@ -1645,6 +1654,14 @@ function TasksPage() {
 									</div>
 								))}
 							</div>
+
+							{selectedCard.clientId ? (
+								<RecallManagerPanel
+									clientId={selectedCard.clientId}
+									language={i18n.language}
+									locale={i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'}
+								/>
+							) : null}
 						</div>
 					</section>
 				</div>
@@ -1652,7 +1669,7 @@ function TasksPage() {
 
 			{selectedCard && canManageManualTasks ? (
 				<div
-					className='fixed inset-0 z-[900] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-center sm:justify-center sm:p-6'
+					className='fixed inset-0 z-[1200] flex items-end bg-background-overlay/72 p-3 backdrop-blur-sm sm:items-start sm:justify-center sm:px-6 sm:pb-6 sm:pt-24'
 					onMouseDown={event => {
 						if (event.target === event.currentTarget) {
 							closeCard()
@@ -1661,7 +1678,7 @@ function TasksPage() {
 				>
 					<form
 						onSubmit={handleSaveCard}
-						className='task-modal--nova max-h-[calc(100dvh-1.5rem)] w-full max-w-3xl touch-pan-y overflow-y-auto overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-3rem)] sm:p-6'
+						className='task-modal--nova flex max-h-[calc(100dvh-1.5rem)] w-full max-w-5xl flex-col overflow-hidden touch-pan-y overscroll-contain rounded-[28px] bg-surface-card p-5 text-text-primary shadow-xl ring-1 ring-border-soft/50 sm:max-h-[calc(100dvh-8rem)] sm:p-6'
 					>
 						<div className='mb-5 flex items-start justify-between gap-4'>
 							<div>
@@ -1685,7 +1702,7 @@ function TasksPage() {
 							</button>
 						</div>
 
-						<div className='grid gap-3'>
+						<div className='grid min-h-0 gap-3 overflow-y-auto pr-1'>
 							<label className='grid gap-1.5'>
 								<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 									{t('tasks.fields.title')}
@@ -1719,7 +1736,7 @@ function TasksPage() {
 								/>
 							</label>
 
-							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-6'>
+							<div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
 								<label className='grid gap-1.5'>
 									<span className='text-[11px] font-black uppercase tracking-[0.16em] text-text-muted'>
 										{t('tasks.fields.status')}
@@ -1824,6 +1841,14 @@ function TasksPage() {
 									/>
 								</label>
 							</div>
+
+							{editDraft.client ? (
+								<RecallManagerPanel
+									clientId={editDraft.client}
+									language={i18n.language}
+									locale={i18n.language === 'ru' ? 'ru-RU' : 'uz-UZ'}
+								/>
+							) : null}
 						</div>
 
 						<div className='mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between'>

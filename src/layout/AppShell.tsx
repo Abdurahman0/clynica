@@ -1,38 +1,144 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { getRouteByPathname } from '../config/routes';
-import AppSidebar from './AppSidebar';
-import AppTopbar from './AppTopbar';
+import { useEffect, useMemo, useState } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { getRouteByPathname } from '../config/routes'
+import { useAuth } from '../auth'
+import AppSidebar from './AppSidebar'
+import AppTopbar from './AppTopbar'
+
+function isHexColor(value: string | undefined): value is string {
+  return Boolean(value && /^#?[0-9a-f]{6}$/i.test(value));
+}
+
+function normalizeHexColor(value: string | undefined, fallback: string): string {
+  if (!isHexColor(value)) {
+    return fallback;
+  }
+
+  return value.startsWith('#') ? value : `#${value}`;
+}
+
+function hexToRgba(hexColor: string, alpha: number): string {
+  const normalized = hexColor.replace('#', '');
+  const r = Number.parseInt(normalized.slice(0, 2), 16);
+  const g = Number.parseInt(normalized.slice(2, 4), 16);
+  const b = Number.parseInt(normalized.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 function AppShell() {
-  const { t } = useTranslation();
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [refreshCounter, setRefreshCounter] = useState(0);
-  const location = useLocation();
+  const { t } = useTranslation()
+  const { currentUser } = useAuth()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [refreshCounter, setRefreshCounter] = useState(0)
+  const [themeMode, setThemeMode] = useState<'light' | 'dark'>(() =>
+    typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark'
+      ? 'dark'
+      : 'light',
+  )
+  const location = useLocation()
 
   useEffect(() => {
     if (!isSidebarOpen) {
-      return;
+      return
     }
 
     if (typeof window !== 'undefined' && window.matchMedia('(min-width: 960px)').matches) {
-      return;
+      return
     }
 
-    setIsSidebarOpen(false);
-  }, [location.pathname]);
+    setIsSidebarOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') {
+      return
+    }
+
+    const root = document.documentElement
+    const syncThemeMode = () =>
+      setThemeMode(root.dataset.theme === 'dark' ? 'dark' : 'light')
+
+    syncThemeMode()
+
+    const observer = new MutationObserver(syncThemeMode)
+    observer.observe(root, {
+      attributeFilter: ['data-theme'],
+      attributes: true,
+    })
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
 
   const currentRoute = useMemo(
     () => getRouteByPathname(location.pathname),
     [location.pathname],
-  );
-  const isChatRoute = currentRoute?.id === 'chats';
+  )
+  const isChatRoute = currentRoute?.id === 'chats'
   const showTopbarRouteMeta =
-    currentRoute?.id === 'chats' || currentRoute?.id === 'dashboard';
+    currentRoute?.id === 'chats' || currentRoute?.id === 'dashboard'
+  const shellAccentColor = normalizeHexColor(currentUser?.color, '#6366f1')
+  const isDarkTheme = themeMode === 'dark'
+
+  const shellBackgroundStyle = useMemo(
+    () => ({
+      backgroundImage: isDarkTheme
+        ? [
+            `radial-gradient(circle at 12% -6%, ${hexToRgba(shellAccentColor, 0.34)}, transparent 28%)`,
+            `radial-gradient(circle at 86% 8%, ${hexToRgba(shellAccentColor, 0.24)}, transparent 24%)`,
+            `radial-gradient(circle at 50% 100%, ${hexToRgba(shellAccentColor, 0.14)}, transparent 34%)`,
+            'linear-gradient(180deg, rgba(4,8,15,0.98), rgba(8,12,20,0.96) 52%, rgba(6,10,18,0.98))',
+          ].join(', ')
+        : [
+            `radial-gradient(circle at 10% -10%, ${hexToRgba(shellAccentColor, 0.24)}, transparent 30%)`,
+            `radial-gradient(circle at 92% 6%, ${hexToRgba(shellAccentColor, 0.18)}, transparent 26%)`,
+            `radial-gradient(circle at 50% 100%, ${hexToRgba(shellAccentColor, 0.12)}, transparent 38%)`,
+            'linear-gradient(180deg, rgba(248,250,252,0.98), rgba(241,245,249,0.96) 54%, rgba(236,242,248,0.98))',
+          ].join(', '),
+    }),
+    [isDarkTheme, shellAccentColor],
+  )
+
+  const contentBackgroundStyle = useMemo(() => {
+    return {
+      backgroundImage: isDarkTheme
+        ? [
+            `radial-gradient(circle at 14% 0%, ${hexToRgba(shellAccentColor, 0.3)}, transparent 24%)`,
+            `radial-gradient(circle at 88% 10%, ${hexToRgba(shellAccentColor, 0.2)}, transparent 22%)`,
+            `radial-gradient(circle at 50% 110%, ${hexToRgba(shellAccentColor, 0.12)}, transparent 34%)`,
+            'linear-gradient(180deg, rgba(8,12,20,0.76), rgba(8,12,20,0.9) 42%, rgba(8,12,20,0.94))',
+          ].join(', ')
+        : [
+            `radial-gradient(circle at 10% 0%, ${hexToRgba(shellAccentColor, 0.2)}, transparent 28%)`,
+            `radial-gradient(circle at 92% 12%, ${hexToRgba(shellAccentColor, 0.14)}, transparent 24%)`,
+            `linear-gradient(120deg, ${hexToRgba(shellAccentColor, 0.07)}, transparent 36%)`,
+            'linear-gradient(180deg, rgba(255,255,255,0.68), rgba(248,250,252,0.56) 48%, rgba(241,245,249,0.72))',
+          ].join(', '),
+      backgroundBlendMode: 'screen, screen, normal, normal',
+    }
+  }, [isDarkTheme, shellAccentColor])
 
   return (
-    <div className="app-shell--nova relative flex h-dvh w-full overflow-hidden bg-background-default">
+    <div
+      className="app-shell--nova relative flex h-dvh w-full overflow-hidden bg-background-default"
+      style={shellBackgroundStyle}
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-100"
+        style={{
+          backgroundImage: isDarkTheme
+            ? [
+                `radial-gradient(circle at 18% 16%, ${hexToRgba(shellAccentColor, 0.16)}, transparent 18%)`,
+                `radial-gradient(circle at 82% 22%, ${hexToRgba(shellAccentColor, 0.12)}, transparent 16%)`,
+              ].join(', ')
+            : [
+                `radial-gradient(circle at 16% 14%, ${hexToRgba(shellAccentColor, 0.14)}, transparent 18%)`,
+                `radial-gradient(circle at 84% 20%, ${hexToRgba(shellAccentColor, 0.1)}, transparent 16%)`,
+              ].join(', '),
+        }}
+      />
       <div
         className={[
           'fixed inset-0 z-40 bg-background-overlay transition-opacity duration-base min-[960px]:hidden',
@@ -49,7 +155,7 @@ function AppShell() {
         onClose={() => setIsSidebarOpen(false)}
       />
 
-      <div className="flex h-dvh min-w-0 w-full flex-1 flex-col overflow-hidden bg-background-default">
+      <div className="relative flex h-dvh min-w-0 w-full flex-1 flex-col overflow-hidden bg-transparent">
         <AppTopbar
           title={
             currentRoute
@@ -70,14 +176,24 @@ function AppShell() {
 
         <main
           className={[
-            'flex-1 overscroll-contain',
+            'relative flex-1 overscroll-contain',
             isChatRoute
               ? 'overflow-hidden min-[1024px]:overflow-y-auto'
               : 'overflow-y-auto',
           ].join(' ')}
+          style={contentBackgroundStyle}
         >
           <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              backgroundImage: isDarkTheme
+                ? `linear-gradient(180deg, ${hexToRgba(shellAccentColor, 0.07)}, transparent 18%, transparent 100%)`
+                : `linear-gradient(180deg, ${hexToRgba(shellAccentColor, 0.09)}, transparent 16%, transparent 100%)`,
+            }}
+          />
+          <div
             className={[
+              'relative',
               isChatRoute
                 ? 'h-full px-0 py-0 min-[960px]:px-7 min-[960px]:pb-8 min-[960px]:pt-4'
                 : 'px-3 pb-5 pt-3 min-[640px]:px-4 min-[640px]:pb-6 min-[640px]:pt-4 min-[960px]:px-7 min-[960px]:pb-8 min-[960px]:pt-4',
@@ -92,7 +208,7 @@ function AppShell() {
         </main>
       </div>
     </div>
-  );
+  )
 }
 
-export default AppShell;
+export default AppShell

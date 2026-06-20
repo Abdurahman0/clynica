@@ -153,6 +153,7 @@ function mapBookingItem(dto: unknown): BookingItem | null {
 		duration_minutes: asNumber(record.duration_minutes),
 		ends_at: asString(record.ends_at) || undefined,
 		status: asString(record.status) || undefined,
+		status_color: asString(record.status_color) || undefined,
 		calendar_event_id: asString(record.calendar_event_id) || undefined,
 		confirmed_by_name:
 			asString(record.confirmed_by_name) || undefined,
@@ -202,6 +203,7 @@ function toClientBookingItem(booking: BookingItem): ClientBookingItem {
 		requested_date: booking.requested_date ?? null,
 		scheduled_for: booking.scheduled_for,
 		status: booking.status,
+		status_color: booking.status_color,
 		confirmed_by_name: booking.confirmed_by_name,
 		created_at: booking.created_at,
 	}
