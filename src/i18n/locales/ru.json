@@ -9,7 +9,7 @@
     "edit": "Редактировать",
     "delete": "Удалить",
     "search": "Поиск",
-    "all": "Р'СЃРµ",
+    "all": "Все",
     "yes": "Да",
     "no": "Нет",
     "na": "Недоступно",
@@ -180,7 +180,7 @@
       "passwordError": "Пароль должен содержать не менее 8 символов.",
       "invalidCredentials": "Неверное имя пользователя или пароль.",
       "signIn": "Войти",
-      "signingIn": "Р'С…РѕРґ...",
+      "signingIn": "Вход...",
       "hidePassword": "Скрыть пароль",
       "showPassword": "Показать пароль",
       "footerRights": "© 2026 Renaissance Clinic. Все права защищены.",
@@ -554,7 +554,7 @@
     }
   },
   "leads": {
-    "pipelineEyebrow": "Р'РѕСЂРѕРЅРєР°",
+    "pipelineEyebrow": "Воронка",
     "title": "Лиды",
     "lead": "Лид",
     "newLead": "Новый лид",
@@ -667,7 +667,7 @@
     }
   },
   "customers": {
-    "eyebrow": "Р'РѕСЂРѕРЅРєР°",
+    "eyebrow": "Воронка",
     "title": "Клиенты",
     "subtitle": "Отслеживайте список клиентов и назначенных операторов.",
     "newCustomer": "Новый клиент",
@@ -1089,7 +1089,7 @@
     "fulfillmentDelivery": "Доставка",
     "fulfillmentPickup": "Самовывоз",
     "aiGenerated": "Добавлено ИИ",
-    "aiAll": "Р'СЃРµ",
+    "aiAll": "Все",
     "aiYes": "ИИ",
     "aiNo": "Вручную",
     "orderBy": "Сортировка",
@@ -1259,7 +1259,7 @@
       "orderBy": "Сортировка"
     },
     "status": {
-      "all": "Р'СЃРµ",
+      "all": "Все",
       "active": "Активные",
       "inactive": "Неактивные"
     },
@@ -1425,7 +1425,7 @@
       "orderBy": "Сортировка"
     },
     "status": {
-      "all": "Р'СЃРµ",
+      "all": "Все",
       "active": "Активные",
       "inactive": "Неактивные"
     },
@@ -1502,7 +1502,7 @@
     "title": "Платежи",
     "subtitle": "Отслеживайте отправленные транзакции, проверяйте ожидающие и завершайте их статус.",
     "newPayment": "Новый платёж",
-    "all": "Р'СЃРµ",
+    "all": "Все",
     "cancel": "Отмена",
     "notAvailable": "Недоступно",
     "records": "записей",
@@ -1785,7 +1785,7 @@
       "allStatuses": "Все статусы",
       "allTypes": "Все типы",
       "allPlatforms": "Все платформы",
-      "allProcessed": "Р'СЃРµ",
+      "allProcessed": "Все",
       "provider": "Провайдер",
       "status": "Статус",
       "visibility": "Видимость",
@@ -2004,7 +2004,7 @@
       "archived": "Архив"
     },
     "orderStatus": {
-      "all": "Р'СЃРµ РґРѕРіРѕРІРѕСЂС‹",
+      "all": "Все договоры",
       "contract": "Договор",
       "contracts": "Договоры",
       "draft": "Черновик",
@@ -2551,7 +2551,7 @@
   "clients": {
     "importExport": {
       "importClients": "Импорт",
-      "exportClients": "Р­РєСЃРїРѕСЂС'",
+      "exportClients": "Экспорт",
       "importTitle": "Импорт клиентов",
       "importSubtitle": "Загрузите JSON-файл или вставьте JSON-массив клиентов.",
       "uploadFile": "Загрузить файл",
@@ -2560,7 +2560,7 @@
       "startImport": "Импортировать",
       "importing": "Импорт...",
       "close": "Закрыть",
-      "exportInProgress": "Р­РєСЃРїРѕСЂС'...",
+      "exportInProgress": "Экспорт...",
       "importFileReadError": "Не удалось прочитать файл импорта.",
       "invalidImportJson": "Некорректный JSON. Ожидается массив объектов.",
       "importNoValidRows": "В данных нет валидных записей (нужно поле full_name).",
@@ -2687,7 +2687,7 @@
     "countSuffix": "шт.",
     "filters": {
       "allChannels": "Все каналы",
-      "all": "Р'СЃРµ",
+      "all": "Все",
       "read": "Прочитано",
       "unread": "Не прочитано",
       "channel": "Канал",
@@ -2756,7 +2756,7 @@
       "searchPlaceholder": "Поиск по чату, клиенту или внешнему ID",
       "channel": "Канал",
       "allChannels": "Все каналы",
-      "allChannelsShort": "Р'СЃРµ",
+      "allChannelsShort": "Все",
       "operator": "Оператор",
       "activeOperator": "Активный оператор",
       "inactiveOperator": "Неактивный оператор",
