@@ -2,12 +2,16 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type KeyboardEve
 import {
 	FiCalendar,
 	FiEdit2,
+	FiExternalLink,
+	FiFile,
 	FiImage,
 	FiPause,
 	FiPlay,
 	FiSend,
 	FiTrash2,
 	FiUser,
+	FiVideo,
+	FiVolume2,
 	FiX,
 } from 'react-icons/fi'
 import { useTranslation } from 'react-i18next'
@@ -320,6 +324,102 @@ function getAttachmentWrapperClassName(count: number): string {
 	}
 
 	return 'w-full max-w-[330px]'
+}
+
+type InstagramMediaType = 'audio' | 'video' | 'image' | 'ig_reel' | 'file'
+
+interface InstagramMediaPayload {
+	type: InstagramMediaType
+	url: string
+}
+
+const mediaExtensionTypes: Array<[InstagramMediaType, RegExp]> = [
+	['audio', /\.(aac|m4a|mp3|ogg|opus|wav|weba)$/i],
+	['video', /\.(m4v|mov|mp4|webm)$/i],
+	['image', /\.(avif|gif|jpe?g|png|webp)$/i],
+]
+
+function getParsedUrl(value: string): URL | null {
+	try {
+		const parsedUrl = new URL(value)
+		return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:' ? parsedUrl : null
+	} catch {
+		return null
+	}
+}
+
+function getMediaTypeFromUrl(url: string): InstagramMediaType | null {
+	const parsedUrl = getParsedUrl(url)
+	if (!parsedUrl) {
+		return null
+	}
+
+	if (getInstagramEmbedUrl(url)) {
+		return 'ig_reel'
+	}
+
+	const pathname = parsedUrl.pathname.toLowerCase()
+	const match = mediaExtensionTypes.find(([, pattern]) => pattern.test(pathname))
+	return match?.[0] ?? null
+}
+
+function getInstagramEmbedUrl(url: string): string | null {
+	const parsedUrl = getParsedUrl(url)
+	if (!parsedUrl || !parsedUrl.hostname.toLowerCase().endsWith('instagram.com')) {
+		return null
+	}
+
+	const match = parsedUrl.pathname.match(/^\/(p|reel|tv)\/([^/?#]+)/i)
+	if (!match) {
+		return null
+	}
+
+	return `https://www.instagram.com/${match[1].toLowerCase()}/${match[2]}/embed`
+}
+
+function shouldHideInlineMediaUrl(content: string, url: string): boolean {
+	const trimmedContent = content.trim()
+	if (trimmedContent === url) {
+		return true
+	}
+
+	const contentUrl = getParsedUrl(trimmedContent)
+	const mediaUrl = getParsedUrl(url)
+	return Boolean(contentUrl && mediaUrl && contentUrl.href === mediaUrl.href)
+}
+
+function getInstagramMediaPayload(message: ChatMessage): InstagramMediaPayload | null {
+	const metadata = asRecord(message.metadata)
+	const content = asText(message.content)?.trim() ?? ''
+	const url =
+		metadata?.is_non_text_media === true
+			? asText(metadata.media_url) ?? content
+			: getParsedUrl(content)
+				? content
+				: null
+	if (!url) {
+		return null
+	}
+
+	const rawType = asText(metadata?.media_type)?.toLowerCase()
+	const type: InstagramMediaType =
+		rawType === 'audio' ||
+		rawType === 'voice' ||
+		rawType === 'voice_message' ||
+		rawType === 'video' ||
+		rawType === 'image' ||
+		rawType === 'ig_reel'
+			? rawType === 'voice' || rawType === 'voice_message'
+				? 'audio'
+				: rawType
+			: getMediaTypeFromUrl(url) ??
+				(metadata?.is_non_text_media === true ? 'video' : 'file')
+
+	if (metadata?.is_non_text_media !== true && type === 'file') {
+		return null
+	}
+
+	return { type, url }
 }
 
 function ChatWorkspacePanel({
@@ -1033,7 +1133,16 @@ function ChatWorkspacePanel({
 						<div className='grid gap-3'>
 							{messages.map(message => {
 								const outgoing = message.direction === 'outgoing'
-								const hasTextContent = message.content.trim().length > 0
+								const instagramMedia = getInstagramMediaPayload(message)
+								const instagramEmbedUrl =
+									instagramMedia?.type === 'ig_reel'
+										? getInstagramEmbedUrl(instagramMedia.url)
+										: null
+								const visibleContent =
+									instagramMedia && shouldHideInlineMediaUrl(message.content, instagramMedia.url)
+										? ''
+										: message.content
+								const hasTextContent = visibleContent.trim().length > 0
 								const imageUrls = message.image_urls
 								const hasImages = imageUrls.length > 0
 								const attachedImagesLabel = labels.attachedImages
@@ -1074,6 +1183,130 @@ function ChatWorkspacePanel({
 											<p className='m-0 text-[11px] font-semibold uppercase tracking-[0.08em] opacity-80'>
 												{senderLabels[message.sender_type]}
 											</p>
+											{instagramMedia ? (
+												<div className='mt-2'>
+													{instagramMedia.type === 'audio' ? (
+														<div
+															className={[
+																'rounded-2xl p-2.5 ring-1',
+																outgoing
+																	? 'bg-white/12 ring-white/25'
+																	: 'bg-background-subtle/90 ring-border-soft/55 dark:bg-surface-card/65',
+															].join(' ')}
+														>
+															<p
+																className={[
+																	'm-0 mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.08em]',
+																	outgoing ? 'text-white/85' : 'text-text-secondary',
+																].join(' ')}
+															>
+																<FiVolume2 className='h-3.5 w-3.5' />
+																Voice
+															</p>
+															<audio
+																controls
+																preload='metadata'
+																src={instagramMedia.url}
+																className='block h-10 w-[min(280px,70vw)] max-w-full'
+															/>
+														</div>
+													) : instagramMedia.type === 'video' ? (
+														<div
+															className={[
+																'overflow-hidden rounded-2xl ring-1',
+																outgoing ? 'ring-white/25' : 'ring-border-soft/55',
+															].join(' ')}
+														>
+															<video
+																controls
+																preload='metadata'
+																src={instagramMedia.url}
+																className='block max-h-[320px] w-[min(320px,72vw)] max-w-full bg-black object-contain'
+															/>
+														</div>
+													) : instagramMedia.type === 'image' ? (
+														<button
+															type='button'
+															className='block overflow-hidden rounded-2xl ring-1 ring-border-soft/55'
+															onClick={() => setPreviewImageUrl(instagramMedia.url)}
+															aria-label='Instagram media'
+														>
+															<img
+																src={instagramMedia.url}
+																alt='Instagram media'
+																className='block max-h-[320px] w-[min(320px,72vw)] max-w-full object-cover'
+																loading='lazy'
+															/>
+														</button>
+													) : instagramMedia.type === 'ig_reel' ? (
+														<div
+															className={[
+																'overflow-hidden rounded-2xl ring-1',
+																outgoing
+																	? 'bg-white/12 ring-white/25'
+																	: 'bg-background-subtle/90 ring-border-soft/55 dark:bg-surface-card/65',
+															].join(' ')}
+														>
+															{instagramEmbedUrl ? (
+																<iframe
+																	title='Instagram reel'
+																	src={instagramEmbedUrl}
+																	className='block h-[420px] w-[min(340px,72vw)] max-w-full bg-background-subtle'
+																	loading='lazy'
+																	allow='autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share'
+																/>
+															) : (
+																<div
+																	className={[
+																		'flex max-w-[280px] items-center gap-3 p-3 text-sm font-semibold',
+																		outgoing ? 'text-white' : 'text-text-primary',
+																	].join(' ')}
+																>
+																	<span className='inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary'>
+																		<FiVideo className='h-4 w-4' />
+																	</span>
+																	<span className='min-w-0 flex-1'>
+																		<span className='block truncate'>Instagram reel</span>
+																		<span className='mt-0.5 block text-[11px] font-medium opacity-70'>
+																			Preview unavailable
+																		</span>
+																	</span>
+																</div>
+															)}
+															<a
+																href={instagramMedia.url}
+																target='_blank'
+																rel='noreferrer'
+																className={[
+																	'flex items-center justify-between gap-2 border-t px-3 py-2 text-[11px] font-semibold transition duration-fast',
+																	outgoing
+																		? 'border-white/15 text-white/82 hover:bg-white/10'
+																		: 'border-border-soft/55 text-text-secondary hover:bg-surface-muted',
+																].join(' ')}
+															>
+																<span>Open in Instagram</span>
+																<FiExternalLink className='h-3.5 w-3.5 shrink-0' />
+															</a>
+														</div>
+													) : (
+														<a
+															href={instagramMedia.url}
+															target='_blank'
+															rel='noreferrer'
+															className={[
+																'flex max-w-[280px] items-center gap-3 rounded-2xl p-3 text-sm font-semibold ring-1 transition duration-fast',
+																outgoing
+																	? 'bg-white/12 text-white ring-white/25 hover:bg-white/18'
+																	: 'bg-background-subtle/90 text-text-primary ring-border-soft/55 hover:bg-surface-muted dark:bg-surface-card/65',
+															].join(' ')}
+														>
+															<FiFile className='h-4 w-4 shrink-0' />
+															<span className='min-w-0 flex-1 truncate'>Open media file</span>
+															<FiExternalLink className='h-4 w-4 shrink-0 opacity-70' />
+														</a>
+													)}
+												</div>
+											) : null}
 											{hasImages ? (
 												<div className={attachmentCardClassName}>
 													<p
@@ -1118,7 +1351,7 @@ function ChatWorkspacePanel({
 											) : null}
 											{hasTextContent ? (
 												<p className='m-0 mt-1 whitespace-pre-wrap text-sm leading-6'>
-													{message.content}
+													{visibleContent}
 												</p>
 											) : null}
 											<p

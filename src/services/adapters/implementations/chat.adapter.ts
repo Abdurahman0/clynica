@@ -65,6 +65,92 @@ function mapFollowUp(value: unknown): ChatFollowUp | null {
   }
 }
 
+function getUrl(value: string): URL | null {
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url : null
+  } catch {
+    return null
+  }
+}
+
+function inferInstagramPreviewMediaType(value: string): string | null {
+  const url = getUrl(value.trim())
+  if (!url) return null
+
+  const hostname = url.hostname.toLowerCase()
+  const pathname = url.pathname.toLowerCase()
+
+  if (hostname.endsWith('instagram.com') && /^\/(p|reel|tv)\//i.test(url.pathname)) {
+    return 'ig_reel'
+  }
+
+  if (hostname.endsWith('fbsbx.com') && pathname.includes('/ig_messaging_cdn/')) {
+    return 'video'
+  }
+
+  if (/\.(aac|m4a|mp3|ogg|opus|wav|weba)([?#].*)?$/i.test(pathname)) {
+    return 'audio'
+  }
+
+  if (/\.(m4v|mov|mp4|webm)([?#].*)?$/i.test(pathname)) {
+    return 'video'
+  }
+
+  if (/\.(avif|gif|jpe?g|png|webp)([?#].*)?$/i.test(pathname)) {
+    return 'image'
+  }
+
+  return null
+}
+
+function formatLastMessagePreview(value: string, channel: string): string | null {
+  const preview = value.trim()
+  if (!preview) return null
+
+  if (channel !== 'instagram') {
+    return preview
+  }
+
+  const mediaType = inferInstagramPreviewMediaType(preview)
+  if (mediaType === 'audio') return 'Voice message'
+  if (mediaType === 'video') return 'Video'
+  if (mediaType === 'image') return 'Image'
+  if (mediaType === 'ig_reel') return 'Instagram reel'
+
+  return preview
+}
+
+function createLastMessagePayload(
+  record: UnknownRecord,
+  sessionId: string,
+  channel: string,
+): ChatMessage | null {
+  const preview = asString(record.last_message_preview)
+  const mediaType = channel === 'instagram' ? inferInstagramPreviewMediaType(preview) : null
+  if (!preview || !mediaType) return null
+
+  return {
+    id: `${sessionId}-last-preview`,
+    created_at: asString(record.last_message_at) || asString(record.updated_at),
+    updated_at: asString(record.last_message_at) || asString(record.updated_at),
+    sender_type: 'customer',
+    direction: 'incoming',
+    content: preview,
+    session_id: sessionId,
+    image_urls: [],
+    external_message_id: null,
+    metadata: {
+      media_url: preview,
+      media_type: mediaType,
+      is_non_text_media: true,
+    },
+    is_read: true,
+    session: sessionId,
+    sent_by: null,
+  } as unknown as ChatMessage
+}
+
 function mapMessage(value: unknown): ChatMessage {
   const record = asRecord(value) ?? {}
   const senderType = mapSenderType(record.sender_type)
@@ -113,6 +199,8 @@ function mapConversation(value: unknown): ChatSession {
       followUpContainer,
   )
 
+  const lastMessagePreview = asString(record.last_message_preview)
+
   return {
     id: asString(record.id),
     channel: channel as any,
@@ -136,8 +224,8 @@ function mapConversation(value: unknown): ChatSession {
     operator_needed_defined: true,
     last_message_at: asString(record.last_message_at) || null,
     state: Boolean(record.needs_operator) ? 'pending' : 'open',
-    last_message: asString(record.last_message_preview) || null,
-    last_message_payload: null,
+    last_message: formatLastMessagePreview(lastMessagePreview, channel) || null,
+    last_message_payload: createLastMessagePayload(record, asString(record.id), channel),
     unread_count: 0,
     created_at: asString(record.created_at),
     updated_at: asString(record.updated_at),
