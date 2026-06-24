@@ -78,6 +78,20 @@ export interface BookingsListParams extends ListParams {
 	client?: string
 }
 
+export interface StatusTransition {
+	id: string
+	from_status: number
+	from_status_name: string
+	from_status_color?: string
+	to_status: number
+	to_status_name: string
+	to_status_color?: string
+	label?: string
+	changed_by?: number
+	changed_by_name?: string
+	changed_at?: string
+}
+
 export interface CRMStatusItem {
 	id: string
 	name: string
@@ -131,6 +145,8 @@ export interface Client extends BaseEntity {
 	metadata?: Record<string, unknown>
 	selected_products?: ClientSelectedProduct[]
 	recent_contracts?: ClientRecentContract[]
+	latest_status_transition?: StatusTransition | null
+	status_transitions?: StatusTransition[]
 }
 
 export interface CreateClientInput extends CreateInput<Client> {

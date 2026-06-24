@@ -16,6 +16,7 @@ import type {
 	CreateClientInput,
 	IClientsService,
 	PaginatedResponse,
+	StatusTransition,
 	UpdateCRMStatusInput,
 	UpdateClientInput,
 } from '../../contracts'
@@ -77,6 +78,37 @@ function resolveChatSessionId(record: UnknownRecord): string | undefined {
 	}
 
 	return undefined
+}
+
+function mapStatusTransition(dto: unknown): StatusTransition | null {
+	const record = asRecord(dto)
+	if (!record) {
+		return null
+	}
+
+	const id = asString(record.id)
+	const toStatus = asNumber(record.to_status)
+	const fromStatus = asNumber(record.from_status)
+	const toStatusName = asString(record.to_status_name)
+	const fromStatusName = asString(record.from_status_name)
+
+	if (!id || toStatus === undefined || fromStatus === undefined) {
+		return null
+	}
+
+	return {
+		id,
+		from_status: fromStatus,
+		from_status_name: fromStatusName,
+		from_status_color: asString(record.from_status_color) || undefined,
+		to_status: toStatus,
+		to_status_name: toStatusName,
+		to_status_color: asString(record.to_status_color) || undefined,
+		label: asString(record.label) || undefined,
+		changed_by: asNumber(record.changed_by),
+		changed_by_name: asString(record.changed_by_name) || undefined,
+		changed_at: asString(record.changed_at) || undefined,
+	}
 }
 
 function mapStatusItem(dto: unknown): CRMStatusItem | null {
@@ -214,6 +246,7 @@ function mapClient(dto: unknown): Client {
 	const statusName = asString(record.status_name)
 	const notesSummary = asString(record.notes)
 	const rawBookings = Array.isArray(record.bookings) ? record.bookings : []
+	const rawTransitions = Array.isArray(record.status_transitions) ? record.status_transitions : []
 
 	return {
 		id: asString(record.id),
@@ -240,6 +273,10 @@ function mapClient(dto: unknown): Client {
 		created_at: asString(record.created_at) || undefined,
 		updated_at: asString(record.updated_at) || undefined,
 		metadata: undefined,
+		latest_status_transition: mapStatusTransition(record.latest_status_transition),
+		status_transitions: rawTransitions
+			.map(mapStatusTransition)
+			.filter((t): t is StatusTransition => t !== null),
 	} as Client
 }
 

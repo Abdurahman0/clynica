@@ -421,6 +421,45 @@ export function ClientsListView({
       key: 'status',
       label: tx.columns.status,
       render: (client) => {
+        const transition = client.latest_status_transition;
+        if (transition && transition.from_status_name && transition.to_status_name) {
+          const fromColor = /^#([0-9a-fA-F]{6})$/.test(transition.from_status_color ?? '')
+            ? transition.from_status_color!
+            : '#9AA4AE';
+          const toColor = /^#([0-9a-fA-F]{6})$/.test(transition.to_status_color ?? '')
+            ? transition.to_status_color!
+            : '#9AA4AE';
+          const fromPalette = getStatusBadgePalette(fromColor);
+          const toPalette = getStatusBadgePalette(toColor);
+          return (
+            <div className="flex min-w-0 items-center gap-1 overflow-hidden">
+              <span
+                className="inline-flex min-w-0 shrink items-center truncate rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-[0.02em]"
+                style={{
+                  backgroundColor: fromPalette.background,
+                  color: fromPalette.text,
+                  border: `1px solid ${fromPalette.border}`,
+                }}
+              >
+                <span className="truncate">{transition.from_status_name}</span>
+              </span>
+              <svg className="h-2.5 w-2.5 shrink-0 text-text-muted" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span
+                className="inline-flex min-w-0 shrink items-center truncate rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-[0.02em]"
+                style={{
+                  backgroundColor: toPalette.background,
+                  color: toPalette.text,
+                  border: `1px solid ${toPalette.border}`,
+                }}
+              >
+                <span className="truncate">{transition.to_status_name}</span>
+              </span>
+            </div>
+          );
+        }
+
         const normalizedStatus = String(client.status ?? '').trim().toLowerCase();
         const hasStatusValue =
           normalizedStatus.length > 0 &&

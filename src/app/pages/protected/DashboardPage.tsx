@@ -739,6 +739,25 @@ function DashboardPage() {
 	const [isDatePopoverOpen, setIsDatePopoverOpen] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const [hasError, setHasError] = useState(false)
+	const [statusColorById, setStatusColorById] = useState<Map<number, string>>(new Map())
+
+	useEffect(() => {
+		void (async () => {
+			try {
+				const items = await (services.clients as any).listStatuses?.()
+				if (!Array.isArray(items)) return
+				const map = new Map<number, string>()
+				for (const item of items) {
+					if (item?.id != null && item?.color) {
+						map.set(Number(item.id), String(item.color))
+					}
+				}
+				setStatusColorById(map)
+			} catch {
+				// colors stay as fallback
+			}
+		})()
+	}, [])
 
 	const query = useMemo(() => buildDashboardQuery(filters), [filters])
 	const intervalOptions = useMemo(
@@ -1405,6 +1424,142 @@ function DashboardPage() {
 						)}
 					</article>
 				</section>
+
+				{(() => {
+					const transitionStats: Array<{
+						from_status_id: number
+						from_status_name: string
+						to_status_id: number
+						to_status_name: string
+						total: number
+					}> = (overview as any)?.status_transition_stats ?? []
+
+					if (transitionStats.length === 0) return null
+
+					const TRANSITION_COLORS_FALLBACK = ['#6366F1', '#EF4444', '#10B981', '#F59E0B', '#0EA5E9', '#8B5CF6']
+					const transitionTotal = transitionStats.reduce((s, t) => s + t.total, 0)
+					const maxTotal = Math.max(...transitionStats.map(t => t.total), 1)
+
+					const transitionPieData = transitionStats.map((t, index) => ({
+						...t,
+						color: TRANSITION_COLORS_FALLBACK[index % TRANSITION_COLORS_FALLBACK.length]!,
+						share: transitionTotal > 0 ? (t.total / transitionTotal) * 100 : 0,
+						label: `${t.from_status_name} → ${t.to_status_name}`,
+					}))
+
+					const transitionChartConfig = { count: {} } satisfies ChartConfig
+
+					return (
+						<section className='grid gap-3'>
+							<article className='min-w-0 overflow-hidden rounded-xl bg-surface-card p-5 shadow-sm ring-1 ring-border-soft/40 transition duration-base hover:shadow-md hover:ring-border-soft/60'>
+								<h2 className='m-0 text-[1.08rem] font-semibold text-text-primary'>
+									{i18n.language === 'ru' ? 'Переходы статусов' : 'Status o\'tishlari'}
+								</h2>
+								<p className='mt-1 text-sm text-text-secondary'>
+									{i18n.language === 'ru'
+										? 'Как клиенты переходили из одного статуса в другой'
+										: 'Mijozlar bir statusdan ikkinchisiga qanday o\'tgani'}
+								</p>
+								<div className='mt-4 grid gap-4 xl:grid-cols-[240px_minmax(0,1fr)]'>
+									<div className='relative grid place-items-center rounded-xl border border-border-soft/60 bg-surface-subtle/65 p-3'>
+										<div className='h-[180px] w-[180px] min-[420px]:h-[210px] min-[420px]:w-[210px]'>
+											<ChartContainer config={transitionChartConfig} className='h-full w-full'>
+												<PieChart>
+													<Pie
+														data={transitionPieData}
+														dataKey='total'
+														nameKey='label'
+														innerRadius={48}
+														outerRadius={78}
+														paddingAngle={3}
+														cornerRadius={6}
+														stroke='rgb(var(--color-border-soft) / 0.45)'
+														strokeWidth={2}
+													>
+														{transitionPieData.map(item => (
+															<Cell key={`${item.from_status_id}-${item.to_status_id}`} fill={item.color} />
+														))}
+													</Pie>
+													<ChartTooltip
+														content={
+															<ChartTooltipContent
+																hideLabel
+																formatter={(value: number | undefined) => String(value ?? 0)}
+															/>
+														}
+													/>
+												</PieChart>
+											</ChartContainer>
+										</div>
+										<div className='pointer-events-none absolute inset-0 grid place-items-center'>
+											<div className='rounded-full bg-surface-card/90 px-3 py-1.5 text-center shadow-sm ring-1 ring-border-soft/60 backdrop-blur-sm'>
+												<p className='font-display text-[1.2rem] font-extrabold leading-none text-text-primary'>
+													{formatCount(transitionTotal, locale)}
+												</p>
+												<p className='mt-0.5 text-[9px] font-semibold uppercase tracking-[0.11em] text-text-muted'>
+													{i18n.language === 'ru' ? 'всего' : 'jami'}
+												</p>
+											</div>
+										</div>
+									</div>
+
+									<ul className='grid min-w-0 list-none gap-2 p-0'>
+										{transitionPieData.map(t => {
+											const barPct = Math.max((t.total / maxTotal) * 100, t.total > 0 ? 6 : 0)
+											const fromC = statusColorById.get(t.from_status_id) ?? t.color
+											const toC = statusColorById.get(t.to_status_id) ?? t.color
+											return (
+												<li
+													key={`${t.from_status_id}-${t.to_status_id}`}
+													className='rounded-lg bg-surface-subtle/85 px-3 py-2.5'
+												>
+													<div className='flex min-w-0 items-center gap-1.5 overflow-hidden'>
+														<span
+															className='h-2 w-2 shrink-0 rounded-full'
+															style={{ backgroundColor: t.color }}
+														/>
+														<span
+															className='inline-flex min-w-0 shrink items-center truncate rounded-full px-2 py-0.5 text-[11px] font-semibold'
+															style={{
+																backgroundColor: hexToRgba(fromC, 0.12),
+																color: fromC,
+																border: `1px solid ${hexToRgba(fromC, 0.28)}`,
+															}}
+														>
+															<span className='truncate'>{t.from_status_name}</span>
+														</span>
+														<svg className='h-2.5 w-2.5 shrink-0 text-text-muted' fill='none' viewBox='0 0 16 16' aria-hidden='true'>
+															<path d='M3 8h10M9 4l4 4-4 4' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' strokeLinejoin='round'/>
+														</svg>
+														<span
+															className='inline-flex min-w-0 shrink items-center truncate rounded-full px-2 py-0.5 text-[11px] font-semibold'
+															style={{
+																backgroundColor: hexToRgba(toC, 0.12),
+																color: toC,
+																border: `1px solid ${hexToRgba(toC, 0.28)}`,
+															}}
+														>
+															<span className='truncate'>{t.to_status_name}</span>
+														</span>
+														<span className='ml-auto shrink-0 font-semibold text-sm text-text-secondary'>
+															{formatCount(t.total, locale)}
+														</span>
+													</div>
+													<div className='mt-2 h-1.5 overflow-hidden rounded-full bg-border-soft/35'>
+														<span
+															className='block h-full rounded-full'
+															style={{ width: `${barPct}%`, backgroundColor: t.color }}
+														/>
+													</div>
+												</li>
+											)
+										})}
+									</ul>
+								</div>
+							</article>
+						</section>
+					)
+				})()}
 
 			</section>
 		</PageLayout>

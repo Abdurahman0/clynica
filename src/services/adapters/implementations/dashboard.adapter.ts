@@ -87,6 +87,20 @@ export class DashboardAdapter {
 				}
 			})
 
+		const rawTransitionStats = Array.isArray(record.status_transition_stats)
+			? record.status_transition_stats
+			: []
+		const statusTransitionStats = rawTransitionStats
+			.map(item => asRecord(item))
+			.filter((item): item is UnknownRecord => Boolean(item))
+			.map(item => ({
+				from_status_id: asNumber(item.from_status_id),
+				from_status_name: asString(item.from_status_name),
+				to_status_id: asNumber(item.to_status_id),
+				to_status_name: asString(item.to_status_name),
+				total: asNumber(item.total),
+			}))
+
 		return {
 			leads: 0,
 			clients,
@@ -175,6 +189,7 @@ export class DashboardAdapter {
 				came_count: cameCount,
 				no_show_count: noShowCount,
 			},
+			status_transition_stats: statusTransitionStats,
 		}
 	}
 }

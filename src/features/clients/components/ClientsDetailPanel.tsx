@@ -51,6 +51,39 @@ function getStatusTone(status: string | undefined): 'success' | 'warning' | 'dan
   return 'warning';
 }
 
+function parseHexColor(hex: string): [number, number, number] | null {
+  const n = hex.replace('#', '').trim();
+  if (!/^[0-9a-fA-F]{6}$/.test(n)) return null;
+  return [
+    Number.parseInt(n.slice(0, 2), 16),
+    Number.parseInt(n.slice(2, 4), 16),
+    Number.parseInt(n.slice(4, 6), 16),
+  ];
+}
+
+function mixRgb(
+  src: [number, number, number],
+  tgt: [number, number, number],
+  ratio: number,
+): [number, number, number] {
+  const r = Math.max(0, Math.min(1, ratio));
+  return [src[0] + (tgt[0] - src[0]) * r, src[1] + (tgt[1] - src[1]) * r, src[2] + (tgt[2] - src[2]) * r];
+}
+
+function toHex(r: number, g: number, b: number): string {
+  const h = (v: number) => Math.max(0, Math.min(255, Math.round(v))).toString(16).padStart(2, '0');
+  return `#${h(r)}${h(g)}${h(b)}`;
+}
+
+function getStatusBadgePalette(hexColor: string): { background: string; border: string; text: string } {
+  const parsed = parseHexColor(hexColor);
+  if (!parsed) return { background: '#EEF2F6', border: '#C9D2DC', text: '#1F2933' };
+  const bg = mixRgb(parsed, [255, 255, 255], 0.84);
+  const bd = mixRgb(parsed, [255, 255, 255], 0.58);
+  const tx = mixRgb(parsed, [0, 0, 0], 0.34);
+  return { background: toHex(...bg), border: toHex(...bd), text: toHex(...tx) };
+}
+
 function isPlaceholderStatusText(value: string | undefined | null): boolean {
   const normalized = String(value ?? '').trim().toLowerCase();
   return (
@@ -374,11 +407,42 @@ export function ClientsDetailPanel({
         </div>
 
         <div className="mt-3">
-          <StatusBadge
-            tone={hasStatusValue ? getStatusTone(client.status) : 'neutral'}
-            status={hasStatusValue ? String(client.status) : 'neutral'}
-            label={statusLabel}
-          />
+          {client.latest_status_transition && client.latest_status_transition.from_status_name && client.latest_status_transition.to_status_name ? (
+            <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+              {(() => {
+                const t = client.latest_status_transition;
+                const fromColor = /^#([0-9a-fA-F]{6})$/.test(t.from_status_color ?? '') ? t.from_status_color! : '#9AA4AE';
+                const toColor = /^#([0-9a-fA-F]{6})$/.test(t.to_status_color ?? '') ? t.to_status_color! : '#9AA4AE';
+                const fromP = getStatusBadgePalette(fromColor);
+                const toP = getStatusBadgePalette(toColor);
+                return (
+                  <>
+                    <span
+                      className="inline-flex min-w-0 shrink items-center truncate rounded-full px-2.5 py-0.5 text-[12px] font-semibold tracking-[0.02em]"
+                      style={{ backgroundColor: fromP.background, color: fromP.text, border: `1px solid ${fromP.border}` }}
+                    >
+                      <span className="truncate">{t.from_status_name}</span>
+                    </span>
+                    <svg className="h-3 w-3 shrink-0 text-text-muted" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                    <span
+                      className="inline-flex min-w-0 shrink items-center truncate rounded-full px-2.5 py-0.5 text-[12px] font-semibold tracking-[0.02em]"
+                      style={{ backgroundColor: toP.background, color: toP.text, border: `1px solid ${toP.border}` }}
+                    >
+                      <span className="truncate">{t.to_status_name}</span>
+                    </span>
+                  </>
+                );
+              })()}
+            </div>
+          ) : (
+            <StatusBadge
+              tone={hasStatusValue ? getStatusTone(client.status) : 'neutral'}
+              status={hasStatusValue ? String(client.status) : 'neutral'}
+              label={statusLabel}
+            />
+          )}
         </div>
       </header>
 
@@ -465,6 +529,46 @@ export function ClientsDetailPanel({
             ) : (
               <p className="m-0 text-sm text-text-muted">-</p>
             )}
+          </div>
+        </PageCard>
+      ) : null}
+
+      {Array.isArray(client.status_transitions) && client.status_transitions.length > 0 ? (
+        <PageCard>
+          <div className="grid gap-2.5">
+            <p className={labelClassName}>{isRu ? 'История статусов' : 'Status tarixi'}</p>
+            <div className="grid gap-2">
+              {client.status_transitions.map((t) => {
+                const fromColor = /^#([0-9a-fA-F]{6})$/.test(t.from_status_color ?? '') ? t.from_status_color! : '#9AA4AE';
+                const toColor = /^#([0-9a-fA-F]{6})$/.test(t.to_status_color ?? '') ? t.to_status_color! : '#9AA4AE';
+                const fromP = getStatusBadgePalette(fromColor);
+                const toP = getStatusBadgePalette(toColor);
+                return (
+                  <div key={t.id} className="rounded-lg bg-surface-subtle/80 px-3 py-2.5 ring-1 ring-border-soft/35">
+                    <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+                      <span
+                        className="inline-flex min-w-0 shrink items-center truncate rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-[0.02em]"
+                        style={{ backgroundColor: fromP.background, color: fromP.text, border: `1px solid ${fromP.border}` }}
+                      >
+                        <span className="truncate">{t.from_status_name}</span>
+                      </span>
+                      <svg className="h-2.5 w-2.5 shrink-0 text-text-muted" fill="none" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                      <span
+                        className="inline-flex min-w-0 shrink items-center truncate rounded-full px-2 py-0.5 text-[11px] font-semibold tracking-[0.02em]"
+                        style={{ backgroundColor: toP.background, color: toP.text, border: `1px solid ${toP.border}` }}
+                      >
+                        <span className="truncate">{t.to_status_name}</span>
+                      </span>
+                    </div>
+                    <p className="mt-1.5 text-[11px] text-text-muted">
+                      {t.changed_by_name ? `${t.changed_by_name} · ` : ''}{formatDate(t.changed_at, i18n.language, locale)}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </PageCard>
       ) : null}
