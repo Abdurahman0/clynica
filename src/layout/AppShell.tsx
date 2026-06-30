@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { getRouteByPathname } from '../config/routes'
 import { useAuth } from '../auth'
 import AppSidebar from './AppSidebar'
 import AppTopbar from './AppTopbar'
+import { createThemePalette } from '../lib/theme-palette'
 
 function isHexColor(value: string | undefined): value is string {
   return Boolean(value && /^#?[0-9a-f]{6}$/i.test(value));
@@ -82,6 +83,25 @@ function AppShell() {
   const shellAccentColor = normalizeHexColor(currentUser?.color, '#6366f1')
   const isDarkTheme = themeMode === 'dark'
 
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    const palette = createThemePalette(shellAccentColor, themeMode)
+    const previousValues = Object.fromEntries(
+      Object.keys(palette).map(property => [property, root.style.getPropertyValue(property)]),
+    )
+
+    Object.entries(palette).forEach(([property, value]) => {
+      root.style.setProperty(property, value)
+    })
+
+    return () => {
+      Object.entries(previousValues).forEach(([property, value]) => {
+        if (value) root.style.setProperty(property, value)
+        else root.style.removeProperty(property)
+      })
+    }
+  }, [shellAccentColor, themeMode])
+
   const shellBackgroundStyle = useMemo(
     () => ({
       backgroundImage: isDarkTheme
@@ -100,25 +120,6 @@ function AppShell() {
     }),
     [isDarkTheme, shellAccentColor],
   )
-
-  const contentBackgroundStyle = useMemo(() => {
-    return {
-      backgroundImage: isDarkTheme
-        ? [
-            `radial-gradient(circle at 14% 0%, ${hexToRgba(shellAccentColor, 0.3)}, transparent 24%)`,
-            `radial-gradient(circle at 88% 10%, ${hexToRgba(shellAccentColor, 0.2)}, transparent 22%)`,
-            `radial-gradient(circle at 50% 110%, ${hexToRgba(shellAccentColor, 0.12)}, transparent 34%)`,
-            'linear-gradient(180deg, rgba(8,12,20,0.76), rgba(8,12,20,0.9) 42%, rgba(8,12,20,0.94))',
-          ].join(', ')
-        : [
-            `radial-gradient(circle at 10% 0%, ${hexToRgba(shellAccentColor, 0.2)}, transparent 28%)`,
-            `radial-gradient(circle at 92% 12%, ${hexToRgba(shellAccentColor, 0.14)}, transparent 24%)`,
-            `linear-gradient(120deg, ${hexToRgba(shellAccentColor, 0.07)}, transparent 36%)`,
-            'linear-gradient(180deg, rgba(255,255,255,0.68), rgba(248,250,252,0.56) 48%, rgba(241,245,249,0.72))',
-          ].join(', '),
-      backgroundBlendMode: 'screen, screen, normal, normal',
-    }
-  }, [isDarkTheme, shellAccentColor])
 
   return (
     <div
@@ -176,21 +177,12 @@ function AppShell() {
 
         <main
           className={[
-            'relative flex-1 overscroll-contain',
+            'app-content-scroll--nova relative flex-1 overscroll-contain',
             isChatRoute
               ? 'overflow-hidden min-[1024px]:overflow-y-auto'
               : 'overflow-y-auto',
           ].join(' ')}
-          style={contentBackgroundStyle}
         >
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              backgroundImage: isDarkTheme
-                ? `linear-gradient(180deg, ${hexToRgba(shellAccentColor, 0.07)}, transparent 18%, transparent 100%)`
-                : `linear-gradient(180deg, ${hexToRgba(shellAccentColor, 0.09)}, transparent 16%, transparent 100%)`,
-            }}
-          />
           <div
             className={[
               'relative',

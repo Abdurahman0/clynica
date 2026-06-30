@@ -31,7 +31,7 @@ interface DataTableProps<T> {
 }
 
 const TABLE_SHELL_CLASS_NAME = [
-  'table-shell overflow-x-auto rounded-xl bg-surface-card p-2 shadow-sm ring-1 ring-border-soft/40',
+  'table-shell table-scroll-region overflow-x-auto rounded-xl bg-surface-card p-2 shadow-sm ring-1 ring-border-soft/40',
   '[-webkit-overflow-scrolling:touch]',
   '[&>div]:min-h-[240px] [&>div]:rounded-none [&>div]:border-0 [&>div]:bg-transparent [&>div]:shadow-none [&>div]:ring-0',
 ].join(' ');
@@ -45,7 +45,7 @@ const ROW_CLASS_NAME =
 
 const CLICKABLE_ROW_CLASS_NAME = [
   ROW_CLASS_NAME,
-  'data-table__row--clickable cursor-pointer transition-colors duration-fast hover:bg-primary/8',
+  'data-table__row--clickable cursor-pointer hover:bg-primary/8',
 ].join(' ');
 
 const SELECTED_ROW_CLASS_NAME =

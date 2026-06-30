@@ -57,7 +57,7 @@ export function DataTable<T extends Record<string, any>>({
 
 	return (
 		<div className={`flex flex-col gap-4 ${className}`}>
-			<div className='overflow-x-auto rounded-lg border border-border-soft'>
+			<div className='table-scroll-region overflow-x-auto rounded-lg border border-border-soft'>
 				<table className='w-full text-sm'>
 					<thead className='border-b border-border-soft bg-surface-subtle'>
 						<tr>
@@ -96,7 +96,7 @@ export function DataTable<T extends Record<string, any>>({
 								<tr
 									key={rowKey(item, idx)}
 									onClick={() => onRowClick?.(item)}
-									className={`border-b border-border-soft/50 transition-colors ${
+									className={`border-b border-border-soft/50 ${
 										onRowClick ? 'cursor-pointer hover:bg-surface-subtle' : ''
 									}`}
 								>

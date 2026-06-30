@@ -14,7 +14,7 @@ interface StatCardProps {
 
 const CARD_CLASS_NAME = [
   'stat-card relative flex min-h-[148px] items-start justify-between gap-3 overflow-hidden rounded-[20px]',
-  'bg-surface-card p-5 shadow-sm ring-1 ring-border-soft/25 backdrop-blur-[12px] max-[640px]:p-4',
+  'bg-surface-card p-5 shadow-sm ring-1 ring-border-soft/25 max-[640px]:p-4',
 ].join(' ');
 
 const TREND_CLASS_NAMES: Record<StatTrendDirection, string> = {

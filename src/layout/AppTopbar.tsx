@@ -422,7 +422,7 @@ function AppTopbar({
 												className={[
 													'flex items-center justify-between gap-3 rounded-2xl border px-3.5 py-3 text-left transition duration-fast',
 													isActive
-														? 'border-primary/45 bg-primary/8 shadow-[0_18px_36px_-28px_rgba(99,102,241,0.42)]'
+														? 'border-primary/45 bg-primary/8 shadow-[0_18px_36px_-28px_rgb(var(--color-primary)/0.42)]'
 														: 'border-border-soft/60 bg-surface-subtle hover:border-primary/25 hover:bg-surface-card',
 												].join(' ')}
 											>
