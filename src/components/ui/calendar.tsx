@@ -11,6 +11,7 @@ function joinClassNames(...parts: Array<string | undefined>): string {
 function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
   return (
     <DayPicker
+      weekStartsOn={1}
       showOutsideDays={showOutsideDays}
       className={joinClassNames('p-0', className)}
       classNames={{

@@ -51,6 +51,18 @@ const HANDMADE_MONTHS: Record<'uz' | 'ru' | 'en', string[]> = {
   en: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
 };
 
+// Index 0=Sun,1=Mon,2=Tue,3=Wed,4=Thu,5=Fri,6=Sat
+const HANDMADE_WEEKDAYS: Record<'uz' | 'ru' | 'en', string[]> = {
+  uz: ['Ya', 'Du', 'Se', 'Ch', 'Pa', 'Ju', 'Sh'],
+  ru: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+  en: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+};
+
+function makeWeekdayFormatter(locale: string) {
+  const lang = resolveMonthLocale(locale);
+  return (date: Date) => HANDMADE_WEEKDAYS[lang][date.getDay()] ?? '';
+}
+
 function resolveMonthLocale(locale: string): 'uz' | 'ru' | 'en' {
   const normalized = locale.toLowerCase();
   if (normalized.startsWith('ru')) {
@@ -159,6 +171,7 @@ export function HandmadeDatePicker({
         <Calendar
           mode="single"
           selected={selectedDate}
+          formatters={{ formatWeekdayName: makeWeekdayFormatter(locale) }}
           onSelect={(date) => {
             if (!date) {
               return;
@@ -260,6 +273,7 @@ export function HandmadeDateTimePicker({
         <Calendar
           mode="single"
           selected={selectedDate}
+          formatters={{ formatWeekdayName: makeWeekdayFormatter(locale) }}
           onSelect={(date) => {
             if (!date) {
               return;
