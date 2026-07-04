@@ -7,7 +7,6 @@ export interface CrmRecall {
 	client_id: string
 	scheduled_for: string
 	remind_at: string
-	note: string
 	is_active: boolean
 	reminder_sent_at: string | null
 	created_by_name: string
@@ -18,7 +17,6 @@ export interface CrmRecall {
 export interface RecallMutationInput {
 	client_id: number
 	scheduled_for: string
-	note?: string
 	is_active?: boolean
 }
 
@@ -71,7 +69,6 @@ function mapRecall(value: unknown): CrmRecall | null {
 		client_id: clientId,
 		scheduled_for: scheduledFor,
 		remind_at: toStringValue(record.remind_at),
-		note: toStringValue(record.note),
 		is_active: record.is_active !== false,
 		reminder_sent_at: toNullableString(record.reminder_sent_at),
 		created_by_name: toStringValue(record.created_by_name),
@@ -94,7 +91,6 @@ export async function createRecall(input: RecallMutationInput): Promise<CrmRecal
 	const { data } = await apiClient.post<unknown>('/api/crm/recalls/', {
 		client_id: input.client_id,
 		scheduled_for: input.scheduled_for,
-		note: input.note ?? '',
 		is_active: input.is_active ?? true,
 	})
 
@@ -112,7 +108,6 @@ export async function updateRecall(
 	const payload: UnknownRecord = {}
 	if (input.client_id !== undefined) payload.client_id = input.client_id
 	if (input.scheduled_for !== undefined) payload.scheduled_for = input.scheduled_for
-	if (input.note !== undefined) payload.note = input.note
 	if (input.is_active !== undefined) payload.is_active = input.is_active
 
 	const { data } = await apiClient.patch<unknown>(`/api/crm/recalls/${id}/`, payload)

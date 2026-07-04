@@ -27,8 +27,6 @@ function getLabels(language: string) {
 		? {
 				title: 'Повторный звонок',
 				subtitle: 'Запланируйте напоминание для клиента.',
-				note: 'Заметка',
-				notePlaceholder: 'Что нужно уточнить или напомнить',
 				save: 'Сохранить',
 				clear: 'Очистить',
 				loading: 'Загрузка...',
@@ -39,15 +37,12 @@ function getLabels(language: string) {
 				failed: 'Не удалось сохранить напоминание.',
 				history: 'Добавленные напоминания',
 				remindAt: 'Напомнить',
-				noteEmpty: 'Без комментария',
 				sent: 'Отправлено',
 				pending: 'Активно',
 			}
 		: {
 				title: "Qayta qo'ng'iroq",
 				subtitle: 'Mijoz uchun eslatma vaqtini belgilang.',
-				note: 'Izoh',
-				notePlaceholder: 'Nimani eslatish yoki aniqlashtirish kerak',
 				save: 'Saqlash',
 				clear: 'Tozalash',
 				loading: 'Yuklanmoqda...',
@@ -58,8 +53,7 @@ function getLabels(language: string) {
 				failed: "Eslatmani saqlab bo'lmadi.",
 				history: "Qo'shilgan eslatmalar",
 				remindAt: 'Eslatish',
-				noteEmpty: "Izoh yo'q",
-				sent: 'Yuborilgan',
+			sent: 'Yuborilgan',
 				pending: 'Faol',
 			}
 }
@@ -92,11 +86,9 @@ export function RecallManagerPanel({
 	const normalizedClientId = clientId == null ? '' : String(clientId)
 	const [recallId, setRecallId] = useState<number | null>(null)
 	const [scheduledFor, setScheduledFor] = useState<string | null>(null)
-	const [note, setNote] = useState('')
 	const [initialSnapshot, setInitialSnapshot] = useState<{
 		scheduledFor: string | null
-		note: string
-	}>({ scheduledFor: null, note: '' })
+	}>({ scheduledFor: null })
 	const [clientRecalls, setClientRecalls] = useState<CrmRecall[]>([])
 	const [loading, setLoading] = useState(false)
 	const [saving, setSaving] = useState(false)
@@ -108,8 +100,7 @@ export function RecallManagerPanel({
 		if (!normalizedClientId) {
 			setRecallId(null)
 			setScheduledFor(null)
-			setNote('')
-			setInitialSnapshot({ scheduledFor: null, note: '' })
+			setInitialSnapshot({ scheduledFor: null })
 			setClientRecalls([])
 			return
 		}
@@ -130,10 +121,8 @@ export function RecallManagerPanel({
 				setClientRecalls(matchedRecalls)
 				setRecallId(matched?.id ?? null)
 				setScheduledFor(matched?.scheduled_for ?? null)
-				setNote(matched?.note ?? '')
 				setInitialSnapshot({
 					scheduledFor: matched?.scheduled_for ?? null,
-					note: matched?.note ?? '',
 				})
 			} catch {
 				if (!active) {
@@ -167,8 +156,7 @@ export function RecallManagerPanel({
 		}
 
 		const isUntouched =
-			scheduledFor === initialSnapshot.scheduledFor &&
-			note.trim() === initialSnapshot.note
+			scheduledFor === initialSnapshot.scheduledFor
 
 		if (isUntouched) {
 			return
@@ -181,7 +169,6 @@ export function RecallManagerPanel({
 			const payload = {
 				client_id: Number(normalizedClientId),
 				scheduled_for: new Date(scheduledFor).toISOString(),
-				note: note.trim(),
 				is_active: true,
 			}
 
@@ -197,8 +184,7 @@ export function RecallManagerPanel({
 			setClientRecalls(nextRecalls)
 			setRecallId(saved.id)
 			setScheduledFor(saved.scheduled_for)
-			setNote(saved.note)
-			setInitialSnapshot({ scheduledFor: saved.scheduled_for, note: saved.note })
+			setInitialSnapshot({ scheduledFor: saved.scheduled_for })
 			setMessage({ type: 'success', text: labels.saved })
 		} catch {
 			setMessage({ type: 'error', text: labels.failed })
@@ -222,10 +208,8 @@ export function RecallManagerPanel({
 			setClientRecalls(nextRecalls)
 			setRecallId(nextLatest?.id ?? null)
 			setScheduledFor(nextLatest?.scheduled_for ?? null)
-			setNote(nextLatest?.note ?? '')
 			setInitialSnapshot({
 				scheduledFor: nextLatest?.scheduled_for ?? null,
-				note: nextLatest?.note ?? '',
 			})
 			setMessage({ type: 'success', text: labels.cleared })
 		} catch {
@@ -304,9 +288,6 @@ export function RecallManagerPanel({
 												{item.reminder_sent_at ? labels.sent : labels.pending}
 											</span>
 										</div>
-										<p className='mt-2 text-sm leading-6 text-text-secondary [overflow-wrap:anywhere] whitespace-pre-wrap'>
-											{item.note || labels.noteEmpty}
-										</p>
 									</div>
 								))}
 							</div>
@@ -315,20 +296,6 @@ export function RecallManagerPanel({
 
 					{showEditor ? (
 						<>
-							<label className='grid gap-1.5'>
-								<span className='text-[11px] font-semibold uppercase tracking-[0.12em] text-text-muted'>
-									{labels.note}
-								</span>
-								<textarea
-									value={note}
-									onChange={event => setNote(event.target.value)}
-									rows={3}
-									placeholder={labels.notePlaceholder}
-									disabled={saving}
-									className='resize-none rounded-2xl border border-border-soft/60 bg-surface-subtle px-4 py-3 text-sm font-medium text-text-primary outline-none transition placeholder:text-text-muted focus:border-primary/50 focus:bg-surface-card focus:ring-2 focus:ring-primary/20'
-								/>
-							</label>
-
 							{message ? (
 								<p
 									className={[
