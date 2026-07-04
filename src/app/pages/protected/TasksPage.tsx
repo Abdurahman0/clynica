@@ -323,14 +323,17 @@ function TasksPage() {
 					return
 				}
 
-				const activeStatuses = nextStatuses.filter(status => status.is_active)
+				const statusIdsWithTasks = new Set(nextTasks.map(task => task.status))
+				const visibleStatuses = nextStatuses.filter(
+					status => status.is_active || statusIdsWithTasks.has(status.id),
+				)
 				const cards = Object.fromEntries(
 					nextTasks.map(task => [String(task.id), toCard(task)]),
 				)
 				setStatuses(nextStatuses)
 				setBoard({
 					cards,
-					columns: activeStatuses.map(status => toColumn(status, nextTasks)),
+					columns: visibleStatuses.map(status => toColumn(status, nextTasks)),
 				})
 			} catch (error) {
 				if (isMounted) {

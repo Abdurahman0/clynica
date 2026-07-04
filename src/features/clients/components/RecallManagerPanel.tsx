@@ -93,6 +93,10 @@ export function RecallManagerPanel({
 	const [recallId, setRecallId] = useState<number | null>(null)
 	const [scheduledFor, setScheduledFor] = useState<string | null>(null)
 	const [note, setNote] = useState('')
+	const [initialSnapshot, setInitialSnapshot] = useState<{
+		scheduledFor: string | null
+		note: string
+	}>({ scheduledFor: null, note: '' })
 	const [clientRecalls, setClientRecalls] = useState<CrmRecall[]>([])
 	const [loading, setLoading] = useState(false)
 	const [saving, setSaving] = useState(false)
@@ -105,6 +109,7 @@ export function RecallManagerPanel({
 			setRecallId(null)
 			setScheduledFor(null)
 			setNote('')
+			setInitialSnapshot({ scheduledFor: null, note: '' })
 			setClientRecalls([])
 			return
 		}
@@ -126,6 +131,10 @@ export function RecallManagerPanel({
 				setRecallId(matched?.id ?? null)
 				setScheduledFor(matched?.scheduled_for ?? null)
 				setNote(matched?.note ?? '')
+				setInitialSnapshot({
+					scheduledFor: matched?.scheduled_for ?? null,
+					note: matched?.note ?? '',
+				})
 			} catch {
 				if (!active) {
 					return
@@ -157,6 +166,14 @@ export function RecallManagerPanel({
 			return
 		}
 
+		const isUntouched =
+			scheduledFor === initialSnapshot.scheduledFor &&
+			note.trim() === initialSnapshot.note
+
+		if (isUntouched) {
+			return
+		}
+
 		setSaving(true)
 		setMessage(null)
 
@@ -181,6 +198,7 @@ export function RecallManagerPanel({
 			setRecallId(saved.id)
 			setScheduledFor(saved.scheduled_for)
 			setNote(saved.note)
+			setInitialSnapshot({ scheduledFor: saved.scheduled_for, note: saved.note })
 			setMessage({ type: 'success', text: labels.saved })
 		} catch {
 			setMessage({ type: 'error', text: labels.failed })
@@ -205,6 +223,10 @@ export function RecallManagerPanel({
 			setRecallId(nextLatest?.id ?? null)
 			setScheduledFor(nextLatest?.scheduled_for ?? null)
 			setNote(nextLatest?.note ?? '')
+			setInitialSnapshot({
+				scheduledFor: nextLatest?.scheduled_for ?? null,
+				note: nextLatest?.note ?? '',
+			})
 			setMessage({ type: 'success', text: labels.cleared })
 		} catch {
 			setMessage({ type: 'error', text: labels.failed })

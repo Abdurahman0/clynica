@@ -112,6 +112,28 @@ function extractItems(value: unknown): unknown[] {
 	return []
 }
 
+async function fetchAllPages(
+	url: string,
+	params: Record<string, unknown>,
+): Promise<unknown[]> {
+	const items: unknown[] = []
+	let page = 1
+
+	for (;;) {
+		const { data } = await apiClient.get<unknown>(url, { params: { ...params, page } })
+		items.push(...extractItems(data))
+
+		const record = toRecord(data)
+		const hasNext = typeof record.next === 'string' && record.next.length > 0
+		if (!hasNext) {
+			break
+		}
+		page += 1
+	}
+
+	return items
+}
+
 function mapStatus(value: unknown): CrmTaskStatus {
 	const record = toRecord(value)
 	return {
@@ -183,10 +205,8 @@ function toPartialTaskPayload(input: Partial<TaskMutationInput>): Record<string,
 }
 
 export async function listTaskStatuses(): Promise<CrmTaskStatus[]> {
-	const { data } = await apiClient.get<unknown>('/api/crm/task-statuses/', {
-		params: { page_size: 200 },
-	})
-	return extractItems(data)
+	const items = await fetchAllPages('/api/crm/task-statuses/', { page_size: 200 })
+	return items
 		.map(mapStatus)
 		.filter(status => status.id > 0)
 		.sort((left, right) => left.position - right.position)
@@ -215,22 +235,18 @@ export async function deleteTaskStatus(id: number): Promise<void> {
 }
 
 export async function listTasks(params?: TaskListParams): Promise<CrmTask[]> {
-	const { data } = await apiClient.get<unknown>('/api/crm/tasks/', {
-		params: {
-			page_size: params?.page_size ?? 200,
-			ordering: params?.ordering ?? 'status__position',
-			status: params?.status,
-			client: params?.client,
-			booking: params?.booking,
-			assigned_to: params?.assigned_to,
-			kind: params?.kind,
-			priority: params?.priority,
-			search: params?.search,
-		},
+	const items = await fetchAllPages('/api/crm/tasks/', {
+		page_size: params?.page_size ?? 200,
+		ordering: params?.ordering ?? 'status__position',
+		status: params?.status,
+		client: params?.client,
+		booking: params?.booking,
+		assigned_to: params?.assigned_to,
+		kind: params?.kind,
+		priority: params?.priority,
+		search: params?.search,
 	})
-	return extractItems(data)
-		.map(mapTask)
-		.filter(task => task.id > 0)
+	return items.map(mapTask).filter(task => task.id > 0)
 }
 
 export async function createTask(input: TaskMutationInput): Promise<CrmTask> {
