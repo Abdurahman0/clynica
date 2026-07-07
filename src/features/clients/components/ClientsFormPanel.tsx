@@ -12,6 +12,7 @@ import type {
   CreateClientInput,
   UpdateClientInput,
 } from '../../../services/contracts';
+import type { SelectOption } from '../../../types/common';
 import { HandmadeDatePicker, HandmadeDateTimePicker } from './HandmadeDatePickers';
 import { RecallManagerPanel } from './RecallManagerPanel';
 
@@ -219,7 +220,7 @@ export function ClientsFormPanel({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [statusOptionsFromApi, setStatusOptionsFromApi] = useState<Array<{ label: string; value: string }>>([]);
+  const [statusOptionsFromApi, setStatusOptionsFromApi] = useState<SelectOption[]>([]);
   const [bookingAt, setBookingAt] = useState('');
   const [bookingStatus, setBookingStatus] = useState<'pending' | 'confirmed' | 'came' | 'no_show' | 'cancelled'>('pending');
   const [bookingRequestedDate, setBookingRequestedDate] = useState('');
@@ -237,13 +238,18 @@ export function ClientsFormPanel({
     return fullNameOk && phoneOk && statusOk && sourceOk;
   }, [form.full_name, form.phone, form.source_platform, form.status]);
 
-  const statusOptions = useMemo(() => {
+  const statusOptions = useMemo<SelectOption[]>(() => {
     if (statusOptionsFromApi.length > 0) {
       return statusOptionsFromApi;
     }
 
     if (currentClient?.status && currentClient?.status_label) {
-      return [{ value: String(currentClient.status), label: String(currentClient.status_label) }];
+      return [
+        {
+          value: String(currentClient.status),
+          label: String(currentClient.status_label),
+        },
+      ];
     }
 
     return [{ value: '', label: isRu ? 'Выберите статус' : 'Holatni tanlang' }];
@@ -320,6 +326,12 @@ export function ClientsFormPanel({
           .map((item: any) => ({
             value: String(item.id),
             label: String(item.name),
+            color:
+              typeof item.color === 'string' && /^#?[0-9a-f]{6}$/i.test(item.color)
+                ? item.color.startsWith('#')
+                  ? item.color
+                  : `#${item.color}`
+                : undefined,
           }));
 
         if (mapped.length > 0) {
