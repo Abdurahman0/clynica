@@ -1078,7 +1078,7 @@ function TasksPage() {
 															? 'scale-[0.98] opacity-45 ring-2 ring-primary/50'
 															: ''
 													}`}
-													style={{ borderLeftColor: column.color }}
+													style={{ borderLeftColor: column.color, backgroundColor: hexToRgba(column.color, 0.06) }}
 												>
 													<div
 														className={`mb-3 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-black ${priorityClasses[card.priority]}`}
