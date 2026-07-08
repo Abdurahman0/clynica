@@ -20,8 +20,8 @@ import {
 } from '../../../features/clients/components/HandmadeDatePickers'
 import { RecallManagerPanel } from '../../../features/clients/components/RecallManagerPanel'
 
-const DEFAULT_START_HOUR = 0
-const DEFAULT_END_HOUR = 23
+const DEFAULT_START_HOUR = 8
+const DEFAULT_END_HOUR = 20
 const HOUR_ROW_HEIGHT = 96
 const PIXELS_PER_MINUTE = HOUR_ROW_HEIGHT / 60
 const MAX_FETCH_PAGES = 30

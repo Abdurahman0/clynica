@@ -9,6 +9,7 @@ import { formatLocalizedDate } from '../../../i18n/date-format';
 import { services } from '../../../services';
 import { routePaths } from '../../../config/routes';
 import type { Client } from '../../../services/contracts';
+import { RecallManagerPanel } from './RecallManagerPanel';
 
 export interface ClientsDetailPanelProps {
   clientId: string;
@@ -498,6 +499,14 @@ export function ClientsDetailPanel({
           </div>
         </div>
       </PageCard>
+
+      <RecallManagerPanel
+        clientId={clientId}
+        language={i18n.language}
+        locale={locale}
+        showEditor={false}
+        showHistory={true}
+      />
 
       {canViewBookings ? (
         <PageCard>
