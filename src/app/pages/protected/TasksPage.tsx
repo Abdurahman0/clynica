@@ -71,6 +71,12 @@ interface TaskBoard {
 	cards: Record<string, TaskCard>
 }
 
+function hexToRgba(hex: string, alpha: number): string {
+	const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+	if (!result) return `rgba(0,0,0,${alpha})`
+	return `rgba(${parseInt(result[1], 16)},${parseInt(result[2], 16)},${parseInt(result[3], 16)},${alpha})`
+}
+
 const columnToneClasses: Record<
 	ColumnTone,
 	{ top: string; badge: string; add: string }
@@ -1018,8 +1024,8 @@ function TasksPage() {
 									key={column.id}
 									onDragOver={event => event.preventDefault()}
 									onDrop={event => handleColumnDrop(event, column.id)}
-									className='task-column--nova flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 bg-surface-card shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]'
-									style={{ borderTopColor: column.color }}
+									className='task-column--nova flex max-h-[66vh] w-[290px] shrink-0 flex-col rounded-[22px] border border-border-soft/55 border-t-4 shadow-sm ring-1 ring-border-soft/25 sm:w-[320px]'
+									style={{ borderTopColor: column.color, backgroundColor: hexToRgba(column.color, 0.045) }}
 								>
 									<div className='flex items-center justify-between gap-3 border-b border-border-soft/45 px-4 py-4'>
 										<div className='flex min-w-0 items-center gap-2'>
@@ -1067,11 +1073,12 @@ function TasksPage() {
 													onDragEnd={handleDragEnd}
 													onDragOver={event => event.preventDefault()}
 													onDrop={event => handleCardDrop(event, column, card.id)}
-													className={`task-card--nova ${canManageTaskMoves ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} rounded-2xl bg-surface-subtle/75 p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-card hover:ring-border-soft/80 ${
+													className={`task-card--nova ${canManageTaskMoves ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'} rounded-2xl border-l-[3px] bg-surface-card p-3 text-left shadow-sm ring-1 ring-border-soft/45 transition hover:-translate-y-0.5 hover:bg-surface-subtle hover:ring-border-soft/80 ${
 														draggingCardId === card.id
 															? 'scale-[0.98] opacity-45 ring-2 ring-primary/50'
 															: ''
 													}`}
+													style={{ borderLeftColor: column.color }}
 												>
 													<div
 														className={`mb-3 inline-flex rounded-full border px-2 py-0.5 text-[11px] font-black ${priorityClasses[card.priority]}`}
