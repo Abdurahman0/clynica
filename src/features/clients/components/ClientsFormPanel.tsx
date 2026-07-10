@@ -565,6 +565,7 @@ export function ClientsFormPanel({
             clientId={currentClient.id}
             language={i18n.language}
             locale={locale}
+            showHistory={true}
           />
         ) : null}
 

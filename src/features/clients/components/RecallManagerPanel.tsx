@@ -190,6 +190,27 @@ export function RecallManagerPanel({
 		}
 	}
 
+	async function handleDeleteItem(itemId: number) {
+		setSaving(true)
+		setMessage(null)
+		try {
+			await deleteRecall(itemId)
+			const nextRecalls = clientRecalls.filter(item => item.id !== itemId)
+			const nextLatest = nextRecalls[0] ?? null
+			setClientRecalls(nextRecalls)
+			if (recallId === itemId) {
+				setRecallId(nextLatest?.id ?? null)
+				setScheduledFor(nextLatest?.scheduled_for ?? null)
+				setInitialSnapshot({ scheduledFor: nextLatest?.scheduled_for ?? null })
+			}
+			setMessage({ type: 'success', text: labels.cleared })
+		} catch {
+			setMessage({ type: 'error', text: labels.failed })
+		} finally {
+			setSaving(false)
+		}
+	}
+
 	async function handleClear() {
 		setSaving(true)
 		setMessage(null)
@@ -281,9 +302,22 @@ export function RecallManagerPanel({
 													})}
 												</p>
 											</div>
-											<span className='inline-flex min-h-7 items-center rounded-pill bg-primary/10 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary'>
-												{item.reminder_sent_at ? labels.sent : labels.pending}
-											</span>
+											<div className='flex items-center gap-2'>
+												<span className='inline-flex min-h-7 items-center rounded-pill bg-primary/10 px-2.5 text-[10px] font-semibold uppercase tracking-[0.08em] text-primary'>
+													{item.reminder_sent_at ? labels.sent : labels.pending}
+												</span>
+												{showEditor && item.is_active ? (
+													<button
+														type='button'
+														onClick={() => void handleDeleteItem(item.id)}
+														disabled={saving}
+														className='inline-flex h-7 w-7 items-center justify-center rounded-lg bg-danger-bg/70 text-danger transition hover:bg-danger-bg disabled:opacity-50'
+														aria-label='Delete'
+													>
+														<AppIcon name='trash' className='h-3.5 w-3.5' />
+													</button>
+												) : null}
+											</div>
 										</div>
 									</div>
 								))}
