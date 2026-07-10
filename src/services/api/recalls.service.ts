@@ -87,6 +87,14 @@ export async function listRecalls(): Promise<CrmRecall[]> {
 		.filter((item): item is CrmRecall => item !== null)
 }
 
+export async function listRecallsByClient(clientId: string | number): Promise<CrmRecall[]> {
+	const { data } = await apiClient.get<unknown>(`/api/crm/recalls/by-client/${clientId}/`)
+
+	return extractItems(data)
+		.map(mapRecall)
+		.filter((item): item is CrmRecall => item !== null)
+}
+
 export async function createRecall(input: RecallMutationInput): Promise<CrmRecall> {
 	const { data } = await apiClient.post<unknown>('/api/crm/recalls/', {
 		client_id: input.client_id,

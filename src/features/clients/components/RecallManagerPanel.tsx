@@ -4,7 +4,7 @@ import { formatLocalizedDate } from '../../../i18n/date-format'
 import {
 	createRecall,
 	deleteRecall,
-	listRecalls,
+	listRecallsByClient,
 	updateRecall,
 	type CrmRecall,
 } from '../../../services/api/recalls.service'
@@ -58,19 +58,16 @@ function getLabels(language: string) {
 			}
 }
 
-function sortRecallsForClient(clientId: string, recalls: CrmRecall[]): CrmRecall[] {
-	return recalls
-		.filter(item => item.client_id === clientId)
-		.sort((left, right) => {
-			if (left.is_active !== right.is_active) {
-				return Number(right.is_active) - Number(left.is_active)
-			}
-
-			return (
-				new Date(right.scheduled_for).getTime() -
-				new Date(left.scheduled_for).getTime()
-			)
-		})
+function sortRecalls(recalls: CrmRecall[]): CrmRecall[] {
+	return [...recalls].sort((left, right) => {
+		if (left.is_active !== right.is_active) {
+			return Number(right.is_active) - Number(left.is_active)
+		}
+		return (
+			new Date(right.scheduled_for).getTime() -
+			new Date(left.scheduled_for).getTime()
+		)
+	})
 }
 
 export function RecallManagerPanel({
@@ -111,12 +108,12 @@ export function RecallManagerPanel({
 
 		void (async () => {
 			try {
-				const recalls = await listRecalls()
+				const recalls = await listRecallsByClient(normalizedClientId)
 				if (!active) {
 					return
 				}
 
-				const matchedRecalls = sortRecallsForClient(normalizedClientId, recalls)
+				const matchedRecalls = sortRecalls(recalls)
 				const matched = matchedRecalls[0] ?? null
 				setClientRecalls(matchedRecalls)
 				setRecallId(matched?.id ?? null)
@@ -176,7 +173,7 @@ export function RecallManagerPanel({
 				? await updateRecall(recallId, payload)
 				: await createRecall(payload)
 
-			const nextRecalls = sortRecallsForClient(normalizedClientId, [
+			const nextRecalls = sortRecalls([
 				saved,
 				...clientRecalls.filter(item => item.id !== saved.id),
 			])
