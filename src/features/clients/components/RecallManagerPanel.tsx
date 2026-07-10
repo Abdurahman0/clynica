@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import AppIcon from '../../../components/shared/icons/AppIcon'
+import ConfirmDialog from '../../../components/shared/dialogs/ConfirmDialog'
 import { formatLocalizedDate } from '../../../i18n/date-format'
 import {
 	createRecall,
@@ -39,6 +40,10 @@ function getLabels(language: string) {
 				remindAt: 'Напомнить',
 				sent: 'Отправлено',
 				pending: 'Активно',
+				deleteConfirmTitle: 'Напоминание будет удалено',
+				deleteConfirmDesc: 'Это действие нельзя отменить.',
+				deleteConfirmLabel: 'Удалить',
+				cancelLabel: 'Отмена',
 			}
 		: {
 				title: "Qayta qo'ng'iroq",
@@ -55,6 +60,10 @@ function getLabels(language: string) {
 				remindAt: 'Eslatish',
 			sent: 'Yuborilgan',
 				pending: 'Faol',
+				deleteConfirmTitle: 'Eslatma o\'chiriladi',
+				deleteConfirmDesc: 'Bu amalni bekor qilib bo\'lmaydi.',
+				deleteConfirmLabel: 'O\'chirish',
+				cancelLabel: 'Bekor qilish',
 			}
 }
 
@@ -89,6 +98,7 @@ export function RecallManagerPanel({
 	const [clientRecalls, setClientRecalls] = useState<CrmRecall[]>([])
 	const [loading, setLoading] = useState(false)
 	const [saving, setSaving] = useState(false)
+	const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null)
 	const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(
 		null,
 	)
@@ -309,7 +319,7 @@ export function RecallManagerPanel({
 												{showEditor && item.is_active ? (
 													<button
 														type='button'
-														onClick={() => void handleDeleteItem(item.id)}
+														onClick={() => setPendingDeleteId(item.id)}
 														disabled={saving}
 														className='inline-flex h-7 w-7 items-center justify-center rounded-lg bg-danger-bg/70 text-danger transition hover:bg-danger-bg disabled:opacity-50'
 														aria-label='Delete'
@@ -363,6 +373,24 @@ export function RecallManagerPanel({
 					) : null}
 				</div>
 			)}
+
+			{pendingDeleteId !== null ? (
+				<ConfirmDialog
+					title={labels.deleteConfirmTitle}
+					description={labels.deleteConfirmDesc}
+					confirmLabel={labels.deleteConfirmLabel}
+					cancelLabel={labels.cancelLabel}
+					confirmTone='danger'
+					isBusy={saving}
+					ariaLabel={labels.deleteConfirmTitle}
+					onCancel={() => setPendingDeleteId(null)}
+					onConfirm={() => {
+						const id = pendingDeleteId
+						setPendingDeleteId(null)
+						if (id !== null) void handleDeleteItem(id)
+					}}
+				/>
+			) : null}
 		</div>
 	)
 }
